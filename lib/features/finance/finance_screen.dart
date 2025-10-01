@@ -99,14 +99,29 @@ class FinanceScreenState extends State<FinanceScreen>
             ),
             body: Column(
               children: [
-                Material(
-                  color: theme.scaffoldBackgroundColor,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                // Floating-style tabbar similar to ProfileScreen's appearance.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+                  child: Material(
+                    elevation: 6,
+                    borderRadius: BorderRadius.circular(14),
+                    color: Colors.transparent,
                     child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
-                        color: scheme.surfaceContainerHighest,
+                        // Use theme surface so TabBar adapts to selected theme and brightness
+                        color: scheme.surface,
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            // Slightly stronger shadow on light themes, subtler on dark
+                            color: theme.brightness == Brightness.light
+                                ? Colors.black.withOpacity(0.06)
+                                : Colors.black.withOpacity(0.18),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       padding: const EdgeInsets.all(2),
                       child: TabBar(
@@ -117,8 +132,13 @@ class FinanceScreenState extends State<FinanceScreen>
                         overlayColor: WidgetStatePropertyAll(
                           scheme.primary.withValues(alpha: 0.06),
                         ),
-                        labelColor: scheme.onPrimaryContainer,
-                        unselectedLabelColor: scheme.onSurfaceVariant,
+                        labelColor: theme.brightness == Brightness.light
+                            ? scheme.onPrimaryContainer
+                            : scheme.onSurface,
+                        unselectedLabelColor:
+                            theme.brightness == Brightness.light
+                            ? scheme.onSurfaceVariant
+                            : scheme.onSurfaceVariant.withOpacity(0.8),
                         indicator: BoxDecoration(
                           color: scheme.primaryContainer,
                           borderRadius: BorderRadius.circular(10),
@@ -651,23 +671,32 @@ class _FinanceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        dense: true,
-        visualDensity: const VisualDensity(horizontal: 0, vertical: -2),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
         onLongPress: onLongPress,
-        leading: (leadingEmoji != null && leadingEmoji!.isNotEmpty)
-            ? Text(leadingEmoji!, style: const TextStyle(fontSize: 20))
-            : Icon(leadingIcon, color: leadingColor),
-        title: Text(title ?? ''),
-        subtitle: subtitle == null ? null : Text(subtitle!),
-        trailing: Text(
-          trailing ?? '',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: trailingColor,
+        borderRadius: BorderRadius.circular(12),
+        child: ListTile(
+          dense: true,
+          visualDensity: const VisualDensity(horizontal: 0, vertical: -2),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 2,
           ),
-          textAlign: TextAlign.right,
+          // Removed onLongPress from ListTile so InkWell controls the splash
+          leading: (leadingEmoji != null && leadingEmoji!.isNotEmpty)
+              ? Text(leadingEmoji!, style: const TextStyle(fontSize: 20))
+              : Icon(leadingIcon, color: leadingColor),
+          title: Text(title ?? ''),
+          subtitle: subtitle == null ? null : Text(subtitle!),
+          trailing: Text(
+            trailing ?? '',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: trailingColor,
+            ),
+            textAlign: TextAlign.right,
+          ),
         ),
       ),
     );

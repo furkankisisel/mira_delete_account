@@ -3,11 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../design_system/theme/theme_variations.dart';
 import 'package:intl/intl.dart';
+import 'dart:math' as math;
 import '../../l10n/app_localizations.dart';
 import 'data/transaction_repository.dart';
 import 'data/transaction_model.dart';
 import 'data/finance_category_repository.dart';
 import 'data/budget_repository.dart';
+
+// Mode for the analysis period selector
+enum PeriodMode { month, year }
 
 // Deterministic color mapping per emoji to keep chart colors consistent and distinct.
 Color _colorForEmoji(String? emoji, TransactionType? type) {
@@ -58,6 +62,11 @@ class FinanceAnalysisScreen extends StatefulWidget {
 }
 
 class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
+  // Controls whether the analysis shows a single month or a whole year.
+  // We keep the original constructor param `month` as the initial selected period.
+  late PeriodMode _mode;
+  late DateTime
+  _selectedPeriod; // if month -> year+month used; if year -> year used (month=1)
   late final TransactionRepository _repo;
   late final FinanceCategoryRepository _catRepo;
   late final BudgetRepository _budgetRepo;
@@ -70,6 +79,8 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
     _repo = TransactionRepository();
     _catRepo = FinanceCategoryRepository();
     _budgetRepo = BudgetRepository();
+    _mode = PeriodMode.month;
+    _selectedPeriod = DateTime(widget.month.year, widget.month.month, 1);
     Future.wait([
       _repo.initialize(),
       _catRepo.initialize(),
@@ -94,36 +105,33 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
   Widget build(BuildContext context) {
     final isWorld = widget.variant == ThemeVariant.world;
     final locale = Localizations.localeOf(context).toString();
-    final titleStr = DateFormat.yMMMM(
-      locale,
-    ).format(DateTime(widget.month.year, widget.month.month, 1));
+    final titleStr = _mode == PeriodMode.month
+        ? DateFormat.yMMMM(locale).format(_selectedPeriod)
+        : DateFormat.y(locale).format(DateTime(_selectedPeriod.year));
 
+    // Compute transactions according to selected mode (month vs year)
     final incomes = _loading
         ? const <FinanceTransaction>[]
-        : _repo.incomesForMonth(widget.month);
+        : (_mode == PeriodMode.month
+              ? _repo.incomesForMonth(_selectedPeriod)
+              : _aggregateIncomesForYear(_selectedPeriod.year));
     final expenses = _loading
         ? const <FinanceTransaction>[]
-        : _repo.expensesForMonth(widget.month);
+        : (_mode == PeriodMode.month
+              ? _repo.expensesForMonth(_selectedPeriod)
+              : _aggregateExpensesForYear(_selectedPeriod.year));
     final allTx = _loading
         ? const <FinanceTransaction>[]
-        : _repo.forMonth(widget.month);
+        : (_mode == PeriodMode.month
+              ? _repo.forMonth(_selectedPeriod)
+              : _aggregateForYear(_selectedPeriod.year));
 
     final incomeTotal = incomes.fold<double>(0, (s, e) => s + e.amount);
     final expenseTotal = expenses.fold<double>(0, (s, e) => s + e.amount);
     final net = incomeTotal - expenseTotal;
 
     // Previous month comparison
-    final prevMonth = DateTime(widget.month.year, widget.month.month - 1, 1);
-    final prevIncomeTotal = _loading
-        ? 0.0
-        : _repo
-              .incomesForMonth(prevMonth)
-              .fold<double>(0, (s, e) => s + e.amount);
-    final prevExpenseTotal = _loading
-        ? 0.0
-        : _repo
-              .expensesForMonth(prevMonth)
-              .fold<double>(0, (s, e) => s + e.amount);
+    // previous month comparison omitted (not used currently)
 
     final content = Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -144,7 +152,7 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   _BudgetPlanner(
-                    month: widget.month,
+                    month: _selectedPeriod,
                     plannedMonthlySpend: _plannedMonthlySpend,
                     onSave: (v) async {
                       await _budgetRepo.setBudgetForMonth(
@@ -154,6 +162,14 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
                       if (mounted) setState(() => _plannedMonthlySpend = v);
                     },
                     repo: _repo,
+                  ),
+                  const SizedBox(height: 12),
+                  // Mode selector + period chooser
+                  _ModeAndPeriodSelector(
+                    mode: _mode,
+                    selected: _selectedPeriod,
+                    onModeChanged: (m) => setState(() => _mode = m),
+                    onPeriodChanged: (d) => setState(() => _selectedPeriod = d),
                   ),
                   const SizedBox(height: 12),
                   // Top KPIs
@@ -177,11 +193,22 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
                   const SizedBox(height: 16),
                   // Removed delta chips (income/expense changes) as requested
                   Text(
-                    AppLocalizations.of(context).monthlyTrend,
+                    _mode == PeriodMode.month
+                        ? AppLocalizations.of(context).monthlyTrend
+                        : AppLocalizations.of(context).yearlyProgress,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
-                  _MonthlyTrendChart(month: widget.month, transactions: allTx),
+                  if (_mode == PeriodMode.month)
+                    _MonthlyTrendChart(
+                      month: _selectedPeriod,
+                      transactions: allTx,
+                    )
+                  else
+                    _YearlyTrendChart(
+                      year: _selectedPeriod.year,
+                      transactions: allTx,
+                    ),
                   const SizedBox(height: 16),
                   Text(
                     AppLocalizations.of(context).expenseDistributionPie,
@@ -189,9 +216,10 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
                   ),
                   const SizedBox(height: 8),
                   _ExpensePieChart(
-                    month: widget.month,
+                    month: _selectedPeriod,
                     repo: _repo,
                     catRepo: _catRepo,
+                    transactions: expenses,
                     // Grafik dilimlerine tıklayınca açılmasın
                     onSelect: null,
                   ),
@@ -202,7 +230,8 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
                   ),
                   const SizedBox(height: 8),
                   _CategoryBreakdown(
-                    month: widget.month,
+                    month: _selectedPeriod,
+                    transactions: allTx,
                     repo: _repo,
                     catRepo: _catRepo,
                     onSelect: (catId) => _showCategoryDetails(context, catId),
@@ -235,10 +264,13 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
     final color = categoryId == null
         ? scheme.primary
         : _colorForEmoji(cats[categoryId]?.emoji, cats[categoryId]?.type);
-    final txs = _repo
-        .expensesForMonth(widget.month)
-        .where((e) => (e.categoryId ?? '_none') == (categoryId ?? '_none'))
-        .toList();
+    // Respect currently selected period
+    final txs =
+        (_mode == PeriodMode.month
+                ? _repo.expensesForMonth(_selectedPeriod)
+                : _aggregateExpensesForYear(_selectedPeriod.year))
+            .where((e) => (e.categoryId ?? '_none') == (categoryId ?? '_none'))
+            .toList();
 
     showModalBottomSheet(
       context: context,
@@ -425,66 +457,14 @@ class _BudgetPlannerState extends State<_BudgetPlanner> {
 
   @override
   Widget build(BuildContext context) {
+    // Compact savings card: show only current target and an Edit button which opens a dialog
     final l10n = AppLocalizations.of(context);
-    final firstDay = DateTime(widget.month.year, widget.month.month, 1);
-    final end = DateTime(
-      widget.month.year,
-      widget.month.month + 1,
-      1,
-    ).subtract(const Duration(days: 1));
-    final daysInMonth = end.day;
-
-    final planned = _parseNumeric(_controller.text);
-    final perDay = (planned != null && planned > 0)
-        ? planned / daysInMonth
-        : null;
-
-    // Month-to-date spend and average per day so far
-    final today = DateTime.now();
-    final isSameMonth =
-        today.year == widget.month.year && today.month == widget.month.month;
-    final upToDay = isSameMonth ? today.day : daysInMonth;
-    final mtdExpenses = widget.repo
-        .expensesForMonth(widget.month)
-        .where(
-          (e) =>
-              e.date.isAfter(firstDay.subtract(const Duration(days: 1))) &&
-              e.date.isBefore(
-                DateTime(widget.month.year, widget.month.month, upToDay + 1),
-              ),
-        )
-        .fold<double>(0, (s, e) => s + e.amount);
-    final mtdAvgPerDay = upToDay > 0 ? (mtdExpenses / upToDay) : 0.0;
-
-    // Today's remaining = perDay - today's expenses (only when current month)
-    final todayExpenses = isSameMonth
-        ? widget.repo
-              .expensesForMonth(widget.month)
-              .where(
-                (e) =>
-                    e.date.year == today.year &&
-                    e.date.month == today.month &&
-                    e.date.day == today.day,
-              )
-              .fold<double>(0, (s, e) => s + e.amount)
-        : 0.0;
-    final todayRemaining = perDay != null && isSameMonth
-        ? (perDay - todayExpenses)
-        : null;
-
-    // String commentary() {
-    //   if (perDay == null) return 'Aylık plan girin, günlük limit hesaplayalım.';
-    //   final diff = perDay - mtdAvgPerDay;
-    //   if (diff.abs() < 0.01) return 'Günlük limitte ilerliyorsunuz.';
-    //   if (diff > 0) {
-    //     return 'Harika! Günlük ortalama ${diff.toStringAsFixed(0)} daha az harcıyorsunuz.';
-    //   } else {
-    //     return 'Dikkat! Günlük ortalama ${(diff.abs()).toStringAsFixed(0)} fazla harcıyorsunuz.';
-    //   }
-    // }
+    final localeName = Localizations.localeOf(context).toString();
+    final nf = NumberFormat.simpleCurrency(locale: localeName);
+    final target = widget.plannedMonthlySpend;
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
@@ -494,113 +474,112 @@ class _BudgetPlannerState extends State<_BudgetPlanner> {
               : Colors.transparent,
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            AppLocalizations.of(context).savingsBudgetPlan,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 420;
-              final field = TextField(
-                controller: _controller,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: false,
-                  signed: false,
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  _ThousandsFormatter(() => _groupFormat),
-                ],
-                decoration: InputDecoration(
-                  labelText: l10n.plannedMonthlySpend,
-                  prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
-                ),
-              );
-              final saveBtn = FilledButton.icon(
-                onPressed: () async {
-                  final v = _parseNumeric(_controller.text);
-                  if (v == null || v <= 0) return;
-                  await widget.onSave(v);
-                },
-                icon: const Icon(Icons.check),
-                label: Text(l10n.save),
-              );
-
-              if (isNarrow) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [field, const SizedBox(height: 8), saveBtn],
-                );
-              }
-              return Row(
-                children: [
-                  Expanded(child: field),
-                  const SizedBox(width: 8),
-                  saveBtn,
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          if (perDay != null)
-            Wrap(
-              spacing: 12,
-              runSpacing: 6,
-              crossAxisAlignment: WrapCrossAlignment.center,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.calendar_view_day,
-                      size: 18,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${AppLocalizations.of(context).dailyLimit}: ${perDay.toStringAsFixed(0)}',
-                    ),
-                  ],
-                ),
                 Text(
-                  '${AppLocalizations.of(context).mtdAverageShort}: ${mtdAvgPerDay.toStringAsFixed(0)}',
+                  l10n.savingsBudgetPlan,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                if (todayRemaining != null)
-                  Text(
-                    '${AppLocalizations.of(context).remainingToday}: ${todayRemaining.toStringAsFixed(0)}',
-                    style: TextStyle(
-                      color: todayRemaining >= 0
-                          ? Colors.green
-                          : Colors.redAccent,
-                      fontWeight: FontWeight.w600,
-                    ),
+                const SizedBox(height: 6),
+                Text(
+                  target == null ? l10n.noDataThisMonth : nf.format(target),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
                   ),
+                ),
               ],
             ),
-          const SizedBox(height: 6),
-          // Use a local promoted variable to avoid unnecessary non-null assertions
-          Builder(
-            builder: (context) {
-              final pd = perDay; // double?
-              final color = pd == null
-                  ? Theme.of(context).colorScheme.onSurface
-                  : (mtdAvgPerDay <= pd ? Colors.green : Colors.redAccent);
-              return Text(
-                _commentaryLocalized(context, perDay, mtdAvgPerDay),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: () async {
+              final newTarget = await _showEditBudgetDialog(
+                context,
+                widget.plannedMonthlySpend,
+                nf,
+                l10n,
               );
+              if (newTarget != null && newTarget > 0) {
+                await widget.onSave(newTarget);
+                if (mounted) setState(() {});
+              }
             },
+            child: Text(l10n.edit),
           ),
         ],
       ),
     );
+  }
+
+  Future<double?> _showEditBudgetDialog(
+    BuildContext context,
+    double? initial,
+    NumberFormat nf,
+    AppLocalizations l10n,
+  ) async {
+    final controller = TextEditingController(
+      text: initial != null ? initial.round().toString() : '',
+    );
+    final result = await showDialog<double?>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(l10n.edit),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: false,
+                  signed: false,
+                ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: l10n.plannedMonthlySpend,
+                  prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (initial != null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    nf.format(initial),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                final digits = controller.text.replaceAll(
+                  RegExp(r'[^0-9]'),
+                  '',
+                );
+                if (digits.isEmpty) return;
+                final v = double.tryParse(digits);
+                Navigator.of(ctx).pop(v);
+              },
+              child: Text(l10n.save),
+            ),
+          ],
+        );
+      },
+    );
+    return result;
   }
 }
 
@@ -656,11 +635,13 @@ class _ThousandsFormatter extends TextInputFormatter {
 class _CategoryBreakdown extends StatelessWidget {
   const _CategoryBreakdown({
     required this.month,
+    required this.transactions,
     required this.repo,
     required this.catRepo,
     this.onSelect,
   });
   final DateTime month;
+  final List<FinanceTransaction> transactions;
   final TransactionRepository repo;
   final FinanceCategoryRepository catRepo;
   final void Function(String? categoryId)? onSelect;
@@ -668,7 +649,7 @@ class _CategoryBreakdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cats = {for (final c in catRepo.all()) c.id: c};
-    final txs = repo.forMonth(month);
+    final txs = transactions;
 
     final byCat = <String, double>{};
     for (final tx in txs) {
@@ -875,22 +856,131 @@ class _MonthlyTrendChart extends StatelessWidget {
   }
 }
 
+class _YearlyTrendChart extends StatelessWidget {
+  const _YearlyTrendChart({required this.year, required this.transactions});
+  final int year;
+  final List<FinanceTransaction> transactions;
+
+  @override
+  Widget build(BuildContext context) {
+    // Aggregate monthly totals for the year
+    final months = List<double>.generate(12, (_) => 0.0);
+    for (final tx in transactions) {
+      if (tx.date.year != year) continue;
+      final idx = tx.date.month - 1;
+      months[idx] += tx.type == TransactionType.expense
+          ? -tx.amount
+          : tx.amount;
+    }
+
+    // Build bar groups
+    final groups = <BarChartGroupData>[];
+    double maxAbs = 0;
+    for (var i = 0; i < 12; i++) {
+      final v = months[i];
+      final isPos = v >= 0;
+      groups.add(
+        BarChartGroupData(
+          x: i + 1,
+          barRods: [
+            BarChartRodData(
+              toY: v,
+              color: isPos ? Colors.green : Colors.redAccent,
+              width: 10,
+              borderRadius: isPos
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
+                    )
+                  : const BorderRadius.only(
+                      bottomLeft: Radius.circular(4),
+                      bottomRight: Radius.circular(4),
+                    ),
+            ),
+          ],
+        ),
+      );
+      if (v.abs() > maxAbs) maxAbs = v.abs();
+    }
+    final maxY = ((maxAbs * 1.4).clamp(100.0, double.infinity)).toDouble();
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      height: 220,
+      child: BarChart(
+        BarChartData(
+          minY: -maxY,
+          maxY: maxY,
+          gridData: const FlGridData(show: false),
+          borderData: FlBorderData(show: false),
+          alignment: BarChartAlignment.spaceBetween,
+          barGroups: groups,
+          titlesData: FlTitlesData(
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 24,
+                getTitlesWidget: (v, meta) {
+                  final m = v.toInt();
+                  final label = DateFormat.MMM(
+                    Localizations.localeOf(context).toString(),
+                  ).format(DateTime(year, m, 1));
+                  return Text(
+                    label,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  );
+                },
+              ),
+            ),
+          ),
+          extraLinesData: ExtraLinesData(
+            horizontalLines: [
+              HorizontalLine(
+                y: 0,
+                color: Theme.of(context).colorScheme.outlineVariant,
+                strokeWidth: 1,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ExpensePieChart extends StatelessWidget {
   const _ExpensePieChart({
     required this.month,
     required this.repo,
     required this.catRepo,
+    required this.transactions,
     this.onSelect,
   });
   final DateTime month;
   final TransactionRepository repo;
   final FinanceCategoryRepository catRepo;
+  final List<FinanceTransaction> transactions;
   final void Function(String? categoryId)? onSelect;
 
   @override
   Widget build(BuildContext context) {
     final cats = {for (final c in catRepo.all()) c.id: c};
-    final expenses = repo.expensesForMonth(month);
+    final expenses = transactions
+        .where((t) => t.type == TransactionType.expense)
+        .toList();
     if (expenses.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -911,13 +1001,75 @@ class _ExpensePieChart extends StatelessWidget {
     final sections = <PieChartSectionData>[];
     final entries = byCat.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
+
+    // Deterministic fallback palette (reuse same hues as emoji mapper)
+    const fallbackPalette = <Color>[
+      Color(0xFFE53935), // red
+      Color(0xFFD81B60), // pink
+      Color(0xFF8E24AA), // purple
+      Color(0xFF5E35B1), // deepPurple
+      Color(0xFF3949AB), // indigo
+      Color(0xFF1E88E5), // blue
+      Color(0xFF039BE5), // lightBlue
+      Color(0xFF00ACC1), // cyan
+      Color(0xFF00897B), // teal
+      Color(0xFF43A047), // green
+      Color(0xFF7CB342), // lightGreen
+      Color(0xFFC0CA33), // lime
+      Color(0xFFFDD835), // yellow/amber
+      Color(0xFFFB8C00), // orange
+      Color(0xFFF4511E), // deepOrange
+      Color(0xFF6D4C41), // brown
+      Color(0xFF546E7A), // blueGrey
+    ];
+
+    // Build a distinct color for each category id deterministically,
+    // preferring explicit category colors when available and falling back
+    // to emoji-based color or the palette while avoiding duplicates.
+    final used = <int>{};
+    final colorMap = <String, Color>{};
+    var palIdx = 0;
+    for (final entry in entries) {
+      final id = entry.key;
+      if (id == '_none') {
+        colorMap[id] = Theme.of(context).colorScheme.primary;
+        used.add(colorMap[id]!.value);
+        continue;
+      }
+      final cat = cats[id];
+      Color chosen;
+      if (cat != null) {
+        // If category has an explicit color and it's not already used, prefer it
+        chosen = Color(cat.colorValue);
+        if (used.contains(chosen.value)) {
+          // try emoji-derived color next
+          chosen = _colorForEmoji(cat.emoji, cat.type);
+        }
+      } else {
+        chosen = _colorForEmoji(null, null);
+      }
+
+      // If still duplicate, pick next from fallback palette
+      if (used.contains(chosen.value)) {
+        // find next unused palette color
+        Color next;
+        var attempts = 0;
+        do {
+          next = fallbackPalette[palIdx % fallbackPalette.length];
+          palIdx++;
+          attempts++;
+        } while (used.contains(next.value) &&
+            attempts < fallbackPalette.length * 2);
+        chosen = next;
+      }
+
+      colorMap[id] = chosen;
+      used.add(chosen.value);
+    }
+
     var idx = 0;
     for (final e in entries) {
-      final isOther = e.key == '_none';
-      final cat = isOther ? null : cats[e.key];
-      final color = isOther
-          ? Theme.of(context).colorScheme.primary
-          : _colorForEmoji(cat?.emoji, cat?.type);
+      final color = colorMap[e.key] ?? Theme.of(context).colorScheme.primary;
       final percent = total == 0 ? 0 : (e.value / total) * 100;
       sections.add(
         PieChartSectionData(
@@ -977,12 +1129,9 @@ class _ExpensePieChart extends StatelessWidget {
                           width: 10,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: e.key == '_none'
-                                ? Theme.of(context).colorScheme.primary
-                                : _colorForEmoji(
-                                    cats[e.key]?.emoji,
-                                    cats[e.key]?.type,
-                                  ),
+                            color:
+                                colorMap[e.key] ??
+                                Theme.of(context).colorScheme.primary,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -1007,4 +1156,361 @@ class _ExpensePieChart extends StatelessWidget {
       ),
     );
   }
+}
+
+// Helper aggregation functions (client-side yearly aggregation)
+extension on _FinanceAnalysisScreenState {
+  List<FinanceTransaction> _aggregateForYear(int year) {
+    // Collect transactions for each month and merge
+    final all = <FinanceTransaction>[];
+    for (var m = 1; m <= 12; m++) {
+      all.addAll(_repo.forMonth(DateTime(year, m, 1)));
+    }
+    all.sort((a, b) => b.date.compareTo(a.date));
+    return all;
+  }
+
+  List<FinanceTransaction> _aggregateIncomesForYear(int year) =>
+      _aggregateForYear(
+        year,
+      ).where((e) => e.type == TransactionType.income).toList();
+
+  List<FinanceTransaction> _aggregateExpensesForYear(int year) =>
+      _aggregateForYear(
+        year,
+      ).where((e) => e.type == TransactionType.expense).toList();
+}
+
+// Mode and period selector widget
+class _ModeAndPeriodSelector extends StatelessWidget {
+  const _ModeAndPeriodSelector({
+    required this.mode,
+    required this.selected,
+    required this.onModeChanged,
+    required this.onPeriodChanged,
+  });
+  final PeriodMode mode;
+  final DateTime selected;
+  final void Function(PeriodMode) onModeChanged;
+  final void Function(DateTime) onPeriodChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        ToggleButtons(
+          isSelected: [mode == PeriodMode.month, mode == PeriodMode.year],
+          onPressed: (i) {
+            final m = i == 0 ? PeriodMode.month : PeriodMode.year;
+            onModeChanged(m);
+          },
+          borderRadius: BorderRadius.circular(24),
+          selectedBorderColor: Theme.of(
+            context,
+          ).colorScheme.primary.withOpacity(0.12),
+          fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.12),
+          selectedColor: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          constraints: const BoxConstraints(minHeight: 36),
+          textStyle: Theme.of(context).textTheme.bodyMedium,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(l10n.monthly),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(l10n.yearly),
+            ),
+          ],
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _PeriodPickerButton(
+            selected: selected,
+            mode: mode,
+            onChanged: onPeriodChanged,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PeriodPickerButton extends StatelessWidget {
+  const _PeriodPickerButton({
+    required this.selected,
+    required this.mode,
+    required this.onChanged,
+  });
+  final DateTime selected;
+  final PeriodMode mode;
+  final void Function(DateTime) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).toString();
+    final label = mode == PeriodMode.month
+        ? DateFormat.yMMMM(locale).format(selected)
+        : DateFormat.y(locale).format(DateTime(selected.year));
+    return FilledButton.icon(
+      onPressed: () async {
+        if (mode == PeriodMode.month) {
+          final picked = await showCustomMonthPicker(
+            context: context,
+            initial: selected,
+          );
+          if (picked != null) onChanged(DateTime(picked.year, picked.month, 1));
+        } else {
+          final pickedYear = await showCustomYearPicker(
+            context: context,
+            initialYear: selected.year,
+          );
+          if (pickedYear != null) onChanged(DateTime(pickedYear, 1, 1));
+        }
+      },
+      icon: const Icon(Icons.calendar_month),
+      label: Text(label),
+    );
+  }
+}
+
+// Minimal month picker helper using showDatePicker but limited to months.
+// This is a small convenience to pick a month (year+month) without day precision.
+Future<DateTime?> showMonthPicker({
+  required BuildContext context,
+  required DateTime initialDate,
+}) async {
+  final first = DateTime(2000);
+  final last = DateTime.now().add(const Duration(days: 365 * 5));
+  final picked = await showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: first,
+    lastDate: last,
+    helpText: 'Select month',
+    fieldHintText: 'Month/Year',
+    selectableDayPredicate: (d) => true,
+  );
+  if (picked == null) return null;
+  return DateTime(picked.year, picked.month, 1);
+}
+
+// Custom month picker dialog: shows year selector and a grid of months
+Future<DateTime?> showCustomMonthPicker({
+  required BuildContext context,
+  required DateTime initial,
+}) async {
+  int year = initial.year;
+  return showDialog<DateTime>(
+    context: context,
+    builder: (ctx) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: () => year = year - 1,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          year.toString(),
+                          style: Theme.of(ctx).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          AppLocalizations.of(ctx).select,
+                          style: Theme.of(ctx).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: () => year = year + 1,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              GridView.count(
+                crossAxisCount: 3,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 2.6,
+                children: List.generate(12, (i) {
+                  final m = i + 1;
+                  final label = DateFormat.MMM(
+                    Localizations.localeOf(ctx).toString(),
+                  ).format(DateTime(year, m, 1));
+                  final selected = (year == initial.year && m == initial.month);
+                  return GestureDetector(
+                    onTap: () => Navigator.of(ctx).pop(DateTime(year, m, 1)),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? Theme.of(ctx).colorScheme.primary
+                            : Theme.of(ctx).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: selected
+                              ? Theme.of(ctx).colorScheme.primary
+                              : Theme.of(ctx).dividerColor,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        label,
+                        style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                          color: selected
+                              ? Theme.of(ctx).colorScheme.onPrimary
+                              : null,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(null),
+                    child: Text(AppLocalizations.of(ctx).cancel),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      TextButton(
+                        onPressed: () => year = DateTime.now().year,
+                        child: Text(AppLocalizations.of(ctx).select),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton(
+                        onPressed: () => Navigator.of(ctx).pop(DateTime.now()),
+                        child: Text(AppLocalizations.of(ctx).select),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// Custom year picker: simple dialog with a scrollable list of years
+Future<int?> showCustomYearPicker({
+  required BuildContext context,
+  required int initialYear,
+}) async {
+  final minYear = 2000;
+  final maxYear = 2053;
+  final controller = ScrollController(
+    initialScrollOffset: (initialYear - minYear) * 50.0,
+  );
+  return showDialog<int>(
+    context: context,
+    builder: (ctx) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(ctx).select,
+                      style: Theme.of(ctx).textTheme.titleMedium,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(ctx).pop(null),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 360),
+                child: SingleChildScrollView(
+                  controller: controller,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(maxYear - minYear + 1, (idx) {
+                      final y = minYear + idx;
+                      final selected = y == initialYear;
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => Navigator.of(ctx).pop(y),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: selected
+                                ? Theme.of(ctx).colorScheme.primary
+                                : Theme.of(ctx).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: selected
+                                  ? Theme.of(ctx).colorScheme.primary
+                                  : Theme.of(ctx).dividerColor,
+                            ),
+                          ),
+                          child: Text(
+                            y.toString(),
+                            style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                              color: selected
+                                  ? Theme.of(ctx).colorScheme.onPrimary
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(null),
+                    child: Text(AppLocalizations.of(ctx).cancel),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

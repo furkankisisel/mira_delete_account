@@ -97,6 +97,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final dateLabel = DateFormat.yMMMd(localeName).format(_selectedDate);
     final isWorld = widget.variant == ThemeVariant.world;
     final scaffold = Scaffold(
+      backgroundColor: isWorld ? Colors.white : null,
       appBar: AppBar(title: Text(title)),
       body: ListView(
         padding: const EdgeInsets.all(16),
