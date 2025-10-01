@@ -50,11 +50,6 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
     Colors.blue,
     Colors.indigo,
     Colors.deepPurple,
-    Colors.purple,
-    Colors.pink,
-    Colors.brown,
-    Colors.blueGrey,
-    Colors.grey,
   ];
 
   final List<String> _emojiPresets = kEmojiPresets;
@@ -146,39 +141,46 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
                   style: Theme.of(ctx).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: _emojiPresets.map((e) {
-                    final sel = _selectedEmoji == e;
-                    return ChoiceChip(
-                      selected: sel,
-                      onSelected: (_) => setState(() {
-                        _selectedEmoji = e;
-                        Navigator.of(ctx).pop();
-                      }),
-                      showCheckmark: false,
-                      visualDensity: VisualDensity.compact,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      selectedColor: _selectedColor.withOpacity(0.18),
-                      backgroundColor: scheme.surfaceVariant.withOpacity(0.4),
-                      shape: StadiumBorder(
-                        side: BorderSide(
-                          color: sel ? _selectedColor : scheme.outlineVariant,
-                          width: sel ? 1.5 : 1,
+                // Center the emoji chips so rows are balanced; reduce spacing
+                // slightly so one more column can fit on narrower widths.
+                Center(
+                  child: Wrap(
+                    spacing: 4,
+                    runSpacing: 6,
+                    alignment: WrapAlignment.center,
+                    children: _emojiPresets.map((e) {
+                      final sel = _selectedEmoji == e;
+                      return ChoiceChip(
+                        selected: sel,
+                        onSelected: (_) => setState(() {
+                          _selectedEmoji = e;
+                          Navigator.of(ctx).pop();
+                        }),
+                        showCheckmark: false,
+                        visualDensity: VisualDensity.compact,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        selectedColor: _selectedColor.withOpacity(0.18),
+                        backgroundColor: scheme.surfaceVariant.withOpacity(0.4),
+                        shape: StadiumBorder(
+                          side: BorderSide(
+                            color: sel ? _selectedColor : scheme.outlineVariant,
+                            width: sel ? 1.5 : 1,
+                          ),
                         ),
-                      ),
-                      label: Text(
-                        e,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: sel
-                              ? scheme.onPrimaryContainer
-                              : scheme.onSurfaceVariant,
+                        // Slightly smaller emoji text to help fitting an extra
+                        // column while keeping visual balance.
+                        label: Text(
+                          e,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: sel
+                                ? scheme.onPrimaryContainer
+                                : scheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextField(

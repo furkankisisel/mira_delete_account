@@ -46,10 +46,24 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as String
+            // Use safe property access to avoid casting null to String which crashes the Gradle script.
+            val keyAliasProp: String? = keystoreProperties.getProperty("keyAlias")
+            val keyPasswordProp: String? = keystoreProperties.getProperty("keyPassword")
+            val storeFileProp: String? = keystoreProperties.getProperty("storeFile")
+            val storePasswordProp: String? = keystoreProperties.getProperty("storePassword")
+
+            if (!keyAliasProp.isNullOrBlank()) {
+                keyAlias = keyAliasProp
+            }
+            if (!keyPasswordProp.isNullOrBlank()) {
+                keyPassword = keyPasswordProp
+            }
+            if (!storeFileProp.isNullOrBlank()) {
+                storeFile = file(storeFileProp)
+            }
+            if (!storePasswordProp.isNullOrBlank()) {
+                storePassword = storePasswordProp
+            }
         }
     }
     buildTypes {

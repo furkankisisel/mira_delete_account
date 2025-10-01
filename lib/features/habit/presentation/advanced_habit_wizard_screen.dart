@@ -7,7 +7,7 @@ import '../domain/category_repository.dart';
 
 // Logical step identifiers to allow reordering without changing logic.
 // Enums cannot be declared inside classes in Dart, so this must be top-level.
-enum _StepId { category, type, details, frequency, scheduling }
+enum _StepId { type, details, frequency, scheduling }
 
 class AdvancedHabitWizardScreen extends StatefulWidget {
   final bool isEditing;
@@ -41,26 +41,19 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
   List<_StepId> get _steps {
     // In vision-day-offsets mode, frequency step is not needed; remove it.
     if (widget.useVisionDayOffsets) {
-      return const [
-        _StepId.category,
-        _StepId.type,
-        _StepId.details,
-        _StepId.scheduling,
-      ];
+      return const [_StepId.details, _StepId.type, _StepId.scheduling];
     }
     // Default: retain configurable order of frequency/scheduling
     return widget.scheduleBeforeFrequency
         ? const [
-            _StepId.category,
-            _StepId.type,
             _StepId.details,
+            _StepId.type,
             _StepId.scheduling,
             _StepId.frequency,
           ]
         : const [
-            _StepId.category,
-            _StepId.type,
             _StepId.details,
+            _StepId.type,
             _StepId.frequency,
             _StepId.scheduling,
           ];
@@ -120,6 +113,10 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
   // Step 3: Details
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+
+  // Visual identity when not using predefined category
+  Color _selectedColor = Colors.blue;
+  String _selectedEmoji = '🌟';
 
   // Additional controllers for manual input
   final _numericalTargetController = TextEditingController();
@@ -414,9 +411,10 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       setState(() {
         _currentStep++;
       });
+      // Slightly longer duration and smoother easing for a more polished feel
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeInOutCubic,
       );
     }
   }
@@ -426,9 +424,10 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       setState(() {
         _currentStep--;
       });
+      // Match the forward duration for symmetry
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeInOutCubic,
       );
     }
   }
@@ -436,9 +435,6 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
   bool _canProceed() {
     final current = _steps[_currentStep];
     switch (current) {
-      case _StepId.category:
-        // Oluştururken kategori (ikon/rengi için) seçilsin, düzenlemede opsiyonel
-        return widget.isEditing ? true : _selectedCategoryId != null;
       case _StepId.type:
         if (_selectedHabitType == null) return false;
         switch (_selectedHabitType!) {
@@ -488,7 +484,8 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       'type': _selectedHabitType.toString(),
       'name': _nameController.text,
       'description': _descriptionController.text,
-      // Persist visual identity from the chosen "category" only if selected
+      // Persist visual identity from the chosen "category" only if selected;
+      // otherwise include manually selected color/emoji
       if (selectedCategory != null) ...{
         'icon': selectedCategory.icon.codePoint,
         'color': selectedCategory.color.value,
@@ -504,6 +501,10 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                 AppLocalizations.of(context),
               )
             : selectedCategory.name,
+      } else ...{
+        'icon': Icons.star.codePoint,
+        'color': _selectedColor.value,
+        'emoji': _selectedEmoji,
       },
 
       // Habit type specific configuration
@@ -619,11 +620,10 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       ),
       body: PageView(
         controller: _pageController,
+        // Keep user swipes disabled but ensure programmatic animations feel smooth
         physics: const NeverScrollableScrollPhysics(),
         children: _steps.map<Widget>((s) {
           switch (s) {
-            case _StepId.category:
-              return _buildCategorySelectionPage(l10n, theme, colorScheme);
             case _StepId.type:
               return _buildHabitTypeSelectionPage(l10n, theme, colorScheme);
             case _StepId.details:
@@ -1302,8 +1302,218 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
             maxLines: 4,
             minLines: 3,
           ),
+
+          const SizedBox(height: 24),
+
+          // Color and Emoji selection buttons
+          Row(
+            children: [
+              Expanded(
+                child: Builder(
+                  builder: (buttonCtx) => OutlinedButton.icon(
+                    onPressed: () async {
+                      final color = await _openColorPopup(buttonCtx);
+                      if (color != null) setState(() => _selectedColor = color);
+                    },
+                    icon: Icon(Icons.color_lens, color: _selectedColor),
+                    label: Text(l10n.chooseColor),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Builder(
+                  builder: (buttonCtx) => OutlinedButton.icon(
+                    onPressed: () async {
+                      final emoji = await _openEmojiPopup(buttonCtx);
+                      if (emoji != null && emoji.isNotEmpty)
+                        setState(() => _selectedEmoji = emoji);
+                    },
+                    icon: Text(
+                      _selectedEmoji,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    label: Text(l10n.chooseEmoji),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
+    );
+  }
+
+  Future<Color?> _openColorPopup(BuildContext buttonCtx) async {
+    // Show a centered AlertDialog page listing colors in a grid and return
+    // the selected color.
+    // Expanded, more curated palette including softer/pastel tones.
+    final colors = [
+      // Vibrant options
+      Colors.red.shade600,
+      Colors.deepOrange.shade600,
+      Colors.orange.shade400,
+      Colors.amber.shade600,
+      Colors.yellow.shade600,
+      Colors.lime.shade600,
+      Colors.green.shade600,
+      Colors.teal.shade600,
+      Colors.cyan.shade400,
+      Colors.lightBlue.shade400,
+      Colors.blue.shade600,
+      Colors.indigo.shade600,
+      Colors.deepPurple.shade400,
+
+      // Pastel / softer tones
+      Colors.pink.shade200,
+      Colors.orange.shade200,
+      Colors.amber.shade200,
+      Colors.lime.shade200,
+      Colors.lightGreen.shade200,
+      Colors.teal.shade200,
+      Colors.cyan.shade200,
+      Colors.lightBlue.shade200,
+      Colors.blue.shade200,
+      Colors.indigo.shade200,
+      Colors.deepPurple.shade200,
+    ];
+
+    return showDialog<Color?>(
+      context: buttonCtx,
+      builder: (dctx) {
+        final l10n = AppLocalizations.of(dctx);
+        return AlertDialog(
+          title: Text(l10n.chooseColor),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: SingleChildScrollView(
+              child: Center(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: colors
+                      .map(
+                        (color) => GestureDetector(
+                          onTap: () => Navigator.of(dctx).pop(color),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              // minimal subtle shadow for depth
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dctx).pop(),
+              child: Text(l10n.cancel),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String?> _openEmojiPopup(BuildContext buttonCtx) async {
+    // Show a centered AlertDialog with emoji presets and a small input for
+    // custom emoji text.
+    final l10n = AppLocalizations.of(buttonCtx);
+    String custom = '';
+    String selected = _selectedEmoji;
+    return showDialog<String?>(
+      context: buttonCtx,
+      builder: (dctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) => AlertDialog(
+            title: Text(l10n.chooseEmoji),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    alignment: WrapAlignment.center,
+                    children: kEmojiPresets
+                        .map(
+                          (e) => GestureDetector(
+                            onTap: () => setDialogState(() => selected = e),
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: selected == e
+                                      ? Theme.of(ctx).colorScheme.primary
+                                      : Colors.transparent,
+                                  width: selected == e ? 2 : 0,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                e,
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  // Minimal custom emoji input (small height)
+                  SizedBox(
+                    height: 40,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        hintText: l10n.customEmojiOptional,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onChanged: (v) => setDialogState(() => custom = v),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dctx).pop(),
+                child: Text(l10n.cancel),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(
+                  dctx,
+                ).pop((custom.trim().isNotEmpty) ? custom.trim() : selected),
+                child: Text(l10n.select),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

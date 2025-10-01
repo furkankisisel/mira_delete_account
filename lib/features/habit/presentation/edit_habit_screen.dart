@@ -298,10 +298,5 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     Colors.blue,
     Colors.indigo,
     Colors.deepPurple,
-    Colors.purple,
-    Colors.pink,
-    Colors.brown,
-    Colors.blueGrey,
-    Colors.grey,
   ];
 }
