@@ -1,0 +1,141 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"problemMatcher": [
+				"$flutter-analyze"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"isBackground": false,
+			"problemMatcher": [
+				"$flutter-analyze"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter_analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"args": [],
+			"problemMatcher": [
+				"$dart-json"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter_analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"args": [],
+			"problemMatcher": [
+				"$dart-json"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter_analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"args": [],
+			"problemMatcher": [
+				"$dart-json"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter analyze",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze"
+			],
+			"problemMatcher": [
+				"$dart-build"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter run (debug)",
+			"type": "shell",
+			"command": "flutter run",
+			"problemMatcher": [
+				"$dart"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter run (debug)",
+			"type": "shell",
+			"command": "flutter run",
+			"problemMatcher": [
+				"$dart"
+			],
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze-and-test",
+			"type": "shell",
+			"command": "flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "flutter-analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "sync-arb-and-build",
+			"type": "shell",
+			"command": "dart run tool/sync_arb.dart ; flutter gen-l10n ; flutter analyze ; flutter test -r compact",
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}

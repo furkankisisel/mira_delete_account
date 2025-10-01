@@ -1,0 +1,576 @@
+[
+    {
+        "id": "vision_health",
+        "title": "Sağlıklı Yaşam",
+        "description": "Bilime dayalı, sürdürülebilir sağlık rutinleri.",
+        "emoji": "💪",
+        "colorValue": 4280287232,
+        "autoSeed": true,
+        "habits": [
+            {
+                "title": "Su İçmek",
+                "description": "Günde en az 8 bardak (yaklaşık 2L).",
+                "type": "numerical",
+                "target": 8,
+                "unit": "bardak",
+                "numericalTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "water_drop",
+                "colorValue": 4280391411
+            },
+            {
+                "title": "Direnç Antrenmanı 1",
+                "description": "İlerleme (Gün 1-10): 30 dk, 2 günde bir (≈haftada 3).",
+                "type": "timer",
+                "target": 30,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 10,
+                "frequencyType": "periodic",
+                "periodicDays": 2,
+                "iconName": "fitness_center",
+                "colorValue": 4294924066
+            },
+            {
+                "title": "Direnç Antrenmanı 2",
+                "description": "İlerleme (Gün 11-20): 35 dk, 2 günde bir.",
+                "type": "timer",
+                "target": 35,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 11,
+                "endDay": 20,
+                "frequencyType": "periodic",
+                "periodicDays": 2,
+                "iconName": "fitness_center",
+                "colorValue": 4294924066
+            },
+            {
+                "title": "Direnç Antrenmanı 3",
+                "description": "İlerleme (Gün 21-30): 40 dk, 2 günde bir.",
+                "type": "timer",
+                "target": 40,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 21,
+                "endDay": 30,
+                "frequencyType": "periodic",
+                "periodicDays": 2,
+                "iconName": "fitness_center",
+                "colorValue": 4294924066
+            },
+            {
+                "title": "Hızlı Yürüyüş 1",
+                "description": "İlerleme (Gün 2-10): 30 dk, 2 günde bir (Direnç ile dönüşümlü).",
+                "type": "timer",
+                "target": 30,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 2,
+                "endDay": 10,
+                "frequencyType": "periodic",
+                "periodicDays": 2,
+                "iconName": "fitness_center",
+                "colorValue": 4282682111
+            },
+            {
+                "title": "Hızlı Yürüyüş 2",
+                "description": "İlerleme (Gün 11-20): 35 dk, 2 günde bir.",
+                "type": "timer",
+                "target": 35,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 12,
+                "endDay": 20,
+                "frequencyType": "periodic",
+                "periodicDays": 2,
+                "iconName": "fitness_center",
+                "colorValue": 4282682111
+            },
+            {
+                "title": "Hızlı Yürüyüş 3",
+                "description": "İlerleme (Gün 21-30): 40 dk, 2 günde bir.",
+                "type": "timer",
+                "target": 40,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 22,
+                "endDay": 30,
+                "frequencyType": "periodic",
+                "periodicDays": 2,
+                "iconName": "fitness_center",
+                "colorValue": 4282682111
+            },
+            {
+                "title": "Sebze/Meyve",
+                "description": "Günde 3 porsiyon hedefle.",
+                "type": "numerical",
+                "target": 3,
+                "unit": "porsiyon",
+                "numericalTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "restaurant",
+                "colorValue": 4283215696
+            },
+            {
+                "title": "Adım",
+                "description": "Günlük 8000+ adım.",
+                "type": "numerical",
+                "target": 8000,
+                "unit": "adım",
+                "numericalTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "fitness_center",
+                "colorValue": 4284513675
+            }
+        ]
+    },
+    {
+        "id": "vision_career",
+        "title": "Kariyer Gelişimi",
+        "description": "Odaklı çalışma ve sürekli öğrenme rutini.",
+        "emoji": "🚀",
+        "colorValue": 4282532415,
+        "autoSeed": true,
+        "habits": [
+            {
+                "title": "Derin Çalışma Blok 1",
+                "description": "25 dk odak (hafta içi).",
+                "type": "timer",
+                "target": 25,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "specificWeekdays",
+                "selectedWeekdays": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "iconName": "school",
+                "colorValue": 4283215696
+            },
+            {
+                "title": "Derin Çalışma Blok 2",
+                "description": "İkinci 25 dk odak seansı (hafta içi).",
+                "type": "timer",
+                "target": 25,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "specificWeekdays",
+                "selectedWeekdays": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "iconName": "school",
+                "colorValue": 4284513675
+            },
+            {
+                "title": "Öğrenme",
+                "description": "En az 30 dk öğrenme/okuma.",
+                "type": "timer",
+                "target": 30,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "specificWeekdays",
+                "selectedWeekdays": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "iconName": "book",
+                "colorValue": 4284513675
+            },
+            {
+                "title": "Günlük Öne Çıkan",
+                "description": "Bir öncelikli işi bitir.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "check_circle",
+                "colorValue": 4284513675
+            },
+            {
+                "title": "Network",
+                "description": "Her 3 günde bir ilişki teması (≈haftada 2).",
+                "type": "simple",
+                "startDay": 2,
+                "endDay": 30,
+                "frequencyType": "periodic",
+                "periodicDays": 3,
+                "iconName": "groups",
+                "colorValue": 4278228616
+            },
+            {
+                "title": "Gün Sonu Değerlendirme",
+                "description": "Kısa yansıma ve planlama.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "check_circle",
+                "colorValue": 4282532415
+            }
+        ]
+    },
+    {
+        "id": "vision_finance",
+        "title": "Finansal Özgürlük",
+        "description": "Kayıt, kontrol ve düzenli birikim.",
+        "emoji": "💰",
+        "colorValue": 4294924066,
+        "autoSeed": true,
+        "habits": [
+            {
+                "title": "Harcama Kaydı",
+                "description": "Günlük en az 3 kalem.",
+                "type": "numerical",
+                "target": 3,
+                "unit": "kalem",
+                "numericalTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "receipt_long",
+                "colorValue": 4282682111
+            },
+            {
+                "title": "Bütçe Gözden Geçirme",
+                "description": "Haftalık bütçe kontrolü (Pazar).",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "specificWeekdays",
+                "selectedWeekdays": [
+                    7
+                ],
+                "iconName": "account_balance_wallet",
+                "colorValue": 4294947584
+            },
+            {
+                "title": "Tasarruf",
+                "description": "Günlük 50 TL ayır.",
+                "type": "numerical",
+                "target": 50,
+                "unit": "TL",
+                "numericalTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "savings",
+                "colorValue": 4286141768
+            },
+            {
+                "title": "Fatura Kontrolü",
+                "description": "7 günde bir tekrar.",
+                "type": "simple",
+                "startDay": 7,
+                "endDay": 28,
+                "frequencyType": "periodic",
+                "periodicDays": 7,
+                "iconName": "account_balance_wallet",
+                "colorValue": 4282532415
+            }
+        ]
+    },
+    {
+        "id": "vision_quit_smoking",
+        "title": "Sigarayı Bırak",
+        "description": "Kanıta dayalı azaltma ve ikame rutini.",
+        "emoji": "🚭",
+        "colorValue": 4294947584,
+        "autoSeed": false,
+        "habits": [
+            {
+                "title": "Sigara Adedi",
+                "description": "Günlük maksimum hedefi 0’a indir.",
+                "type": "numerical",
+                "target": 0,
+                "unit": "adet",
+                "numericalTargetType": "maximum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "smoke_free",
+                "colorValue": 4286141768
+            },
+            {
+                "title": "Ertele",
+                "description": "İlk sigarayı 10 dk ertele.",
+                "type": "timer",
+                "target": 10,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "bedtime",
+                "colorValue": 4280391411
+            },
+            {
+                "title": "Nefes Egzersizi",
+                "description": "Günde 5 dk nefes/gevşeme.",
+                "type": "timer",
+                "target": 5,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "free_breakfast",
+                "colorValue": 4283215696
+            }
+        ]
+    },
+    {
+        "id": "vision_reduce_social_media",
+        "title": "Sosyal Medyayı Azalt",
+        "description": "Ekran süresini bilinçli yönet.",
+        "emoji": "📵",
+        "colorValue": 4282682111,
+        "autoSeed": false,
+        "habits": [
+            {
+                "title": "Ekransız Akşam",
+                "description": "Yatmadan önce 60 dk telefonsuz.",
+                "type": "timer",
+                "target": 60,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "phonelink_off",
+                "colorValue": 4284513675
+            },
+            {
+                "title": "Bildirimler Kapalı",
+                "description": "Gereksiz bildirimleri kapat.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "notifications_off",
+                "colorValue": 4282532415
+            },
+            {
+                "title": "Okuma",
+                "description": "Her gün 20 dk kitap.",
+                "type": "timer",
+                "target": 20,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "book",
+                "colorValue": 4283215696
+            }
+        ]
+    },
+    {
+        "id": "vision_quit_sugar",
+        "title": "Şekeri Bırak",
+        "description": "Şeker tüketimini bilimsel şekilde azalt.",
+        "emoji": "🍭",
+        "colorValue": 4286141768,
+        "autoSeed": false,
+        "habits": [
+            {
+                "title": "Şekersiz Gün",
+                "description": "Rafine şeker tüketme.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "no_food",
+                "colorValue": 4294924066
+            },
+            {
+                "title": "Tatlı Porsiyonu",
+                "description": "Günlük maksimum tatlı 0.",
+                "type": "numerical",
+                "target": 0,
+                "unit": "porsiyon",
+                "numericalTargetType": "maximum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "icecream",
+                "colorValue": 4282682111
+            },
+            {
+                "title": "Su İç",
+                "description": "Tatlı isteğinde 1 bardak su iç.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "water_drop",
+                "colorValue": 4280391411
+            }
+        ]
+    },
+    {
+        "id": "vision_reduce_caffeine",
+        "title": "Kafeini Azalt",
+        "description": "Uykuyu korumak için alımı sınırla.",
+        "emoji": "☕",
+        "colorValue": 4284513675,
+        "autoSeed": false,
+        "habits": [
+            {
+                "title": "Kahve Sayısı",
+                "description": "Günlük maksimum 1 fincan.",
+                "type": "numerical",
+                "target": 1,
+                "unit": "fincan",
+                "numericalTargetType": "maximum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "free_breakfast",
+                "colorValue": 4286141768
+            },
+            {
+                "title": "14:00 Sonrası Yok",
+                "description": "Öğleden sonra kafein alma.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "dark_mode",
+                "colorValue": 4282532415
+            },
+            {
+                "title": "Bitki Çayı",
+                "description": "Alternatif içecek seç.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "free_breakfast",
+                "colorValue": 4283215696
+            }
+        ]
+    },
+    {
+        "id": "vision_reduce_alcohol",
+        "title": "Alkolü Azalt",
+        "description": "Planlı alkolsüz günlerle azalt.",
+        "emoji": "🍷",
+        "colorValue": 4284513675,
+        "autoSeed": false,
+        "habits": [
+            {
+                "title": "Alkolsüz Gün",
+                "description": "Haftada 5 gün alkolsüz.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "specificWeekdays",
+                "selectedWeekdays": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    7
+                ],
+                "iconName": "no_drinks",
+                "colorValue": 4294910464
+            },
+            {
+                "title": "Su İç",
+                "description": "Akşam en az 2 bardak su.",
+                "type": "numerical",
+                "target": 2,
+                "unit": "bardak",
+                "numericalTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "water_drop",
+                "colorValue": 4280391411
+            },
+            {
+                "title": "Akşam Aktivitesi",
+                "description": "20 dk yürüyüş/okuma.",
+                "type": "timer",
+                "target": 20,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "book",
+                "colorValue": 4283215696
+            }
+        ]
+    },
+    {
+        "id": "vision_better_sleep",
+        "title": "Daha İyi Uyku",
+        "description": "Akşam rutini ile uyku kalitesi.",
+        "emoji": "😴",
+        "colorValue": 4280391411,
+        "autoSeed": false,
+        "habits": [
+            {
+                "title": "Ekransız 90 dk",
+                "description": "Yatmadan önce ekran yok.",
+                "type": "timer",
+                "target": 90,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "phonelink_off",
+                "colorValue": 4282682111
+            },
+            {
+                "title": "Rutin",
+                "description": "Diş, bakım, gevşeme.",
+                "type": "simple",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "bedtime",
+                "colorValue": 4282532415
+            },
+            {
+                "title": "Okuma",
+                "description": "20 dk kitap.",
+                "type": "timer",
+                "target": 20,
+                "unit": "dakika",
+                "timerTargetType": "minimum",
+                "startDay": 1,
+                "endDay": 30,
+                "frequencyType": "daily",
+                "iconName": "book",
+                "colorValue": 4283215696
+            }
+        ]
+    }
+]

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "593291053883",
+    "project_id": "mira-1fdc3",
+    "storage_bucket": "mira-1fdc3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593291053883:android:3115a83d8d4e852309051e",
+        "android_client_info": {
+          "package_name": "com.example.mira"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "593291053883-e5askargi4p2cb1vghe9fh3llgiqfj7b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mira",
+            "certificate_hash": "d8da597f2607864f93eed46b212f8c5b7fcd89f4"
+          }
+        },
+        {
+          "client_id": "593291053883-6do8ebqpuckulj7pgntk9cnmlbpod4fb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3bxYHT2ZYRNeMckMkHWzgC6fX4L_PK6M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "593291053883-6do8ebqpuckulj7pgntk9cnmlbpod4fb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "593291053883-4hu1pd574kfbncgqs75qgh8p6jukaprk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mira"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

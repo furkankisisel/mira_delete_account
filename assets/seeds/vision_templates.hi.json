@@ -1,0 +1,576 @@
+[
+	{
+		"id": "vision_health",
+		"title": "Healthy Living",
+		"description": "Science-based, sustainable health routines.",
+		"emoji": "💪",
+		"colorValue": 4280287232,
+		"autoSeed": true,
+		"habits": [
+			{
+				"title": "Drink Water",
+				"description": "At least 8 glasses per day (approx. 2L).",
+				"type": "numerical",
+				"target": 8,
+				"unit": "glasses",
+				"numericalTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "water_drop",
+				"colorValue": 4280391411
+			},
+			{
+				"title": "Strength Training 1",
+				"description": "Progress (Days 1–10): 30 min, every 2 days (≈3/week).",
+				"type": "timer",
+				"target": 30,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 10,
+				"frequencyType": "periodic",
+				"periodicDays": 2,
+				"iconName": "fitness_center",
+				"colorValue": 4294924066
+			},
+			{
+				"title": "Strength Training 2",
+				"description": "Progress (Days 11–20): 35 min, every 2 days.",
+				"type": "timer",
+				"target": 35,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 11,
+				"endDay": 20,
+				"frequencyType": "periodic",
+				"periodicDays": 2,
+				"iconName": "fitness_center",
+				"colorValue": 4294924066
+			},
+			{
+				"title": "Strength Training 3",
+				"description": "Progress (Days 21–30): 40 min, every 2 days.",
+				"type": "timer",
+				"target": 40,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 21,
+				"endDay": 30,
+				"frequencyType": "periodic",
+				"periodicDays": 2,
+				"iconName": "fitness_center",
+				"colorValue": 4294924066
+			},
+			{
+				"title": "Brisk Walk 1",
+				"description": "Progress (Days 2–10): 30 min, every 2 days (alternating with Strength).",
+				"type": "timer",
+				"target": 30,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 2,
+				"endDay": 10,
+				"frequencyType": "periodic",
+				"periodicDays": 2,
+				"iconName": "fitness_center",
+				"colorValue": 4282682111
+			},
+			{
+				"title": "Brisk Walk 2",
+				"description": "Progress (Days 11–20): 35 min, every 2 days.",
+				"type": "timer",
+				"target": 35,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 12,
+				"endDay": 20,
+				"frequencyType": "periodic",
+				"periodicDays": 2,
+				"iconName": "fitness_center",
+				"colorValue": 4282682111
+			},
+			{
+				"title": "Brisk Walk 3",
+				"description": "Progress (Days 21–30): 40 min, every 2 days.",
+				"type": "timer",
+				"target": 40,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 22,
+				"endDay": 30,
+				"frequencyType": "periodic",
+				"periodicDays": 2,
+				"iconName": "fitness_center",
+				"colorValue": 4282682111
+			},
+			{
+				"title": "Vegetables/Fruit",
+				"description": "Aim for 3 servings per day.",
+				"type": "numerical",
+				"target": 3,
+				"unit": "servings",
+				"numericalTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "restaurant",
+				"colorValue": 4283215696
+			},
+			{
+				"title": "Steps",
+				"description": "8000+ steps daily.",
+				"type": "numerical",
+				"target": 8000,
+				"unit": "steps",
+				"numericalTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "fitness_center",
+				"colorValue": 4284513675
+			}
+		]
+	},
+	{
+		"id": "vision_career",
+		"title": "Career Growth",
+		"description": "Focused work and continuous learning routine.",
+		"emoji": "🚀",
+		"colorValue": 4282532415,
+		"autoSeed": true,
+		"habits": [
+			{
+				"title": "Deep Work Block 1",
+				"description": "25 min focus (weekdays).",
+				"type": "timer",
+				"target": 25,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "specificWeekdays",
+				"selectedWeekdays": [
+					1,
+					2,
+					3,
+					4,
+					5
+				],
+				"iconName": "school",
+				"colorValue": 4283215696
+			},
+			{
+				"title": "Deep Work Block 2",
+				"description": "Second 25 min focus session (weekdays).",
+				"type": "timer",
+				"target": 25,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "specificWeekdays",
+				"selectedWeekdays": [
+					1,
+					2,
+					3,
+					4,
+					5
+				],
+				"iconName": "school",
+				"colorValue": 4284513675
+			},
+			{
+				"title": "Learning",
+				"description": "At least 30 min learning/reading.",
+				"type": "timer",
+				"target": 30,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "specificWeekdays",
+				"selectedWeekdays": [
+					1,
+					2,
+					3,
+					4,
+					5
+				],
+				"iconName": "book",
+				"colorValue": 4284513675
+			},
+			{
+				"title": "Daily Highlight",
+				"description": "Finish one priority task.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "check_circle",
+				"colorValue": 4284513675
+			},
+			{
+				"title": "Networking",
+				"description": "A relationship touch every 3 days (≈2/week).",
+				"type": "simple",
+				"startDay": 2,
+				"endDay": 30,
+				"frequencyType": "periodic",
+				"periodicDays": 3,
+				"iconName": "groups",
+				"colorValue": 4278228616
+			},
+			{
+				"title": "End-of-Day Review",
+				"description": "Short reflection and planning.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "check_circle",
+				"colorValue": 4282532415
+			}
+		]
+	},
+	{
+		"id": "vision_finance",
+		"title": "Financial Freedom",
+		"description": "Tracking, control, and regular saving.",
+		"emoji": "💰",
+		"colorValue": 4294924066,
+		"autoSeed": true,
+		"habits": [
+			{
+				"title": "Expense Logging",
+				"description": "At least 3 items daily.",
+				"type": "numerical",
+				"target": 3,
+				"unit": "items",
+				"numericalTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "receipt_long",
+				"colorValue": 4282682111
+			},
+			{
+				"title": "Budget Review",
+				"description": "Weekly budget check (Sunday).",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "specificWeekdays",
+				"selectedWeekdays": [
+					7
+				],
+				"iconName": "account_balance_wallet",
+				"colorValue": 4294947584
+			},
+			{
+				"title": "Savings",
+				"description": "Set aside 50 TRY daily.",
+				"type": "numerical",
+				"target": 50,
+				"unit": "TRY",
+				"numericalTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "savings",
+				"colorValue": 4286141768
+			},
+			{
+				"title": "Bill Check",
+				"description": "Repeat every 7 days.",
+				"type": "simple",
+				"startDay": 7,
+				"endDay": 28,
+				"frequencyType": "periodic",
+				"periodicDays": 7,
+				"iconName": "account_balance_wallet",
+				"colorValue": 4282532415
+			}
+		]
+	},
+	{
+		"id": "vision_quit_smoking",
+		"title": "Quit Smoking",
+		"description": "Evidence-based reduction and substitution routine.",
+		"emoji": "🚭",
+		"colorValue": 4294947584,
+		"autoSeed": false,
+		"habits": [
+			{
+				"title": "Cigarette Count",
+				"description": "Reduce daily maximum target to 0.",
+				"type": "numerical",
+				"target": 0,
+				"unit": "cigarettes",
+				"numericalTargetType": "maximum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "smoke_free",
+				"colorValue": 4286141768
+			},
+			{
+				"title": "Delay",
+				"description": "Delay the first cigarette by 10 min.",
+				"type": "timer",
+				"target": 10,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "bedtime",
+				"colorValue": 4280391411
+			},
+			{
+				"title": "Breathing Exercise",
+				"description": "5 min breathing/relaxation per day.",
+				"type": "timer",
+				"target": 5,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "free_breakfast",
+				"colorValue": 4283215696
+			}
+		]
+	},
+	{
+		"id": "vision_reduce_social_media",
+		"title": "Reduce Social Media",
+		"description": "Manage screen time mindfully.",
+		"emoji": "📵",
+		"colorValue": 4282682111,
+		"autoSeed": false,
+		"habits": [
+			{
+				"title": "Screen-Free Evening",
+				"description": "No phone 60 min before bed.",
+				"type": "timer",
+				"target": 60,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "phonelink_off",
+				"colorValue": 4284513675
+			},
+			{
+				"title": "Notifications Off",
+				"description": "Turn off unnecessary notifications.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "notifications_off",
+				"colorValue": 4282532415
+			},
+			{
+				"title": "Reading",
+				"description": "20 min of reading daily.",
+				"type": "timer",
+				"target": 20,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "book",
+				"colorValue": 4283215696
+			}
+		]
+	},
+	{
+		"id": "vision_quit_sugar",
+		"title": "Quit Sugar",
+		"description": "Reduce sugar intake scientifically.",
+		"emoji": "🍭",
+		"colorValue": 4286141768,
+		"autoSeed": false,
+		"habits": [
+			{
+				"title": "Sugar-Free Day",
+				"description": "Avoid refined sugar.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "no_food",
+				"colorValue": 4294924066
+			},
+			{
+				"title": "Dessert Portion",
+				"description": "Daily maximum desserts 0.",
+				"type": "numerical",
+				"target": 0,
+				"unit": "servings",
+				"numericalTargetType": "maximum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "icecream",
+				"colorValue": 4282682111
+			},
+			{
+				"title": "Drink Water",
+				"description": "When craving sweets, drink 1 glass of water.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "water_drop",
+				"colorValue": 4280391411
+			}
+		]
+	},
+	{
+		"id": "vision_reduce_caffeine",
+		"title": "Reduce Caffeine",
+		"description": "Limit intake to protect sleep.",
+		"emoji": "☕",
+		"colorValue": 4284513675,
+		"autoSeed": false,
+		"habits": [
+			{
+				"title": "Coffee Count",
+				"description": "Maximum 1 cup per day.",
+				"type": "numerical",
+				"target": 1,
+				"unit": "cups",
+				"numericalTargetType": "maximum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "free_breakfast",
+				"colorValue": 4286141768
+			},
+			{
+				"title": "No After 2:00 PM",
+				"description": "No caffeine in the afternoon.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "dark_mode",
+				"colorValue": 4282532415
+			},
+			{
+				"title": "Herbal Tea",
+				"description": "Choose an alternative beverage.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "free_breakfast",
+				"colorValue": 4283215696
+			}
+		]
+	},
+	{
+		"id": "vision_reduce_alcohol",
+		"title": "Reduce Alcohol",
+		"description": "Reduce with planned alcohol-free days.",
+		"emoji": "🍷",
+		"colorValue": 4284513675,
+		"autoSeed": false,
+		"habits": [
+			{
+				"title": "Alcohol-Free Day",
+				"description": "Five alcohol-free days per week.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "specificWeekdays",
+				"selectedWeekdays": [
+					1,
+					2,
+					3,
+					4,
+					7
+				],
+				"iconName": "no_drinks",
+				"colorValue": 4294910464
+			},
+			{
+				"title": "Drink Water",
+				"description": "At least 2 glasses of water in the evening.",
+				"type": "numerical",
+				"target": 2,
+				"unit": "glasses",
+				"numericalTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "water_drop",
+				"colorValue": 4280391411
+			},
+			{
+				"title": "Evening Activity",
+				"description": "20 min walk/reading.",
+				"type": "timer",
+				"target": 20,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "book",
+				"colorValue": 4283215696
+			}
+		]
+	},
+	{
+		"id": "vision_better_sleep",
+		"title": "Better Sleep",
+		"description": "Sleep quality through an evening routine.",
+		"emoji": "😴",
+		"colorValue": 4280391411,
+		"autoSeed": false,
+		"habits": [
+			{
+				"title": "Screen-Free 90 min",
+				"description": "No screens before bed.",
+				"type": "timer",
+				"target": 90,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "phonelink_off",
+				"colorValue": 4282682111
+			},
+			{
+				"title": "Routine",
+				"description": "Teeth, care, relaxation.",
+				"type": "simple",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "bedtime",
+				"colorValue": 4282532415
+			},
+			{
+				"title": "Reading",
+				"description": "20 min reading.",
+				"type": "timer",
+				"target": 20,
+				"unit": "minutes",
+				"timerTargetType": "minimum",
+				"startDay": 1,
+				"endDay": 30,
+				"frequencyType": "daily",
+				"iconName": "book",
+				"colorValue": 4283215696
+			}
+		]
+	}
+]

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="156" viewBox="0 0 120 156" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ana yumurta şekli - Toprak yeşili -->
+  <defs>
+    <linearGradient id="earthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7B8471;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#7B8471;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#5A6152;stop-opacity:0.6" />
+    </linearGradient>
+    
+    <!-- Glow filtresi -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Gölge filtresi -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#5A6152" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Ana yumurta şekli -->
+  <ellipse cx="60" cy="100" rx="50" ry="65" 
+           fill="url(#earthGradient)" 
+           filter="url(#shadow)"
+           transform="scale(1, 1.2)"/>
+
+  <!-- Highlight efekti -->
+  <ellipse cx="45" cy="45" rx="15" ry="10" 
+           fill="url(#highlightGradient)" 
+           opacity="0.4"/>
+  
+  <defs>
+    <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.4" />
+      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Doğal speckled pattern -->
+  <g opacity="0.3">
+    <circle cx="35" cy="50" r="2" fill="#5A6152"/>
+    <circle cx="75" cy="65" r="1.5" fill="#5A6152"/>
+    <circle cx="50" cy="80" r="2.5" fill="#5A6152"/>
+    <circle cx="80" cy="95" r="1" fill="#5A6152"/>
+    <circle cx="40" cy="110" r="1.8" fill="#5A6152"/>
+    <circle cx="65" cy="125" r="2.2" fill="#5A6152"/>
+    <circle cx="25" cy="85" r="1.2" fill="#5A6152"/>
+    <circle cx="85" cy="75" r="1.6" fill="#5A6152"/>
+  </g>
+</svg>

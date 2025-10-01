@@ -1,0 +1,346 @@
+{
+    "fortune_answers": [
+        {
+            "id": "pos_001",
+            "text": "Evet, kesinlikle! Önünde açık bir yol var.",
+            "type": "positive",
+            "emoji": "✨"
+        },
+        {
+            "id": "pos_002",
+            "text": "Şansın yaver gidecek, cesur ol!",
+            "type": "positive",
+            "emoji": "🍀"
+        },
+        {
+            "id": "pos_003",
+            "text": "Kalbin ne istiyorsa onu yap, doğru seçim bu!",
+            "type": "positive",
+            "emoji": "💖"
+        },
+        {
+            "id": "pos_004",
+            "text": "Güzel günler seni bekliyor, ileri git!",
+            "type": "positive",
+            "emoji": "🌅"
+        },
+        {
+            "id": "pos_005",
+            "text": "Bu fırsat kaçırılmaz, hemen harekete geç!",
+            "type": "positive",
+            "emoji": "🎯"
+        },
+        {
+            "id": "pos_006",
+            "text": "Yıldızlar senin lehine, zafer yakın!",
+            "type": "positive",
+            "emoji": "⭐"
+        },
+        {
+            "id": "pos_007",
+            "text": "İçindeki sesi dinle, seni doğru yere götürecek!",
+            "type": "positive",
+            "emoji": "🎵"
+        },
+        {
+            "id": "pos_008",
+            "text": "Hayır diyemeyeceğin bir teklif gelecek!",
+            "type": "positive",
+            "emoji": "🎁"
+        },
+        {
+            "id": "pos_009",
+            "text": "Cesaretin ödüllendirilecek, korkma!",
+            "type": "positive",
+            "emoji": "🦁"
+        },
+        {
+            "id": "pos_010",
+            "text": "Mükemmel zamanlama! Şimdi tam zamanı.",
+            "type": "positive",
+            "emoji": "⏰"
+        },
+        {
+            "id": "neg_001",
+            "text": "Şimdi değil, biraz daha bekle.",
+            "type": "negative",
+            "emoji": "⏳"
+        },
+        {
+            "id": "neg_002",
+            "text": "Bu yol seni istediğin yere götürmeyebilir.",
+            "type": "negative",
+            "emoji": "🚫"
+        },
+        {
+            "id": "neg_003",
+            "text": "Aceleci olma, daha fazla araştır.",
+            "type": "negative",
+            "emoji": "🔍"
+        },
+        {
+            "id": "neg_004",
+            "text": "Risk çok yüksek, alternatif ara.",
+            "type": "negative",
+            "emoji": "⚠️"
+        },
+        {
+            "id": "neg_005",
+            "text": "Şu an odaklanman gereken başka şeyler var.",
+            "type": "negative",
+            "emoji": "🎯"
+        },
+        {
+            "id": "neg_006",
+            "text": "Henüz hazır değilsin, kendini geliştir.",
+            "type": "negative",
+            "emoji": "💪"
+        },
+        {
+            "id": "neg_007",
+            "text": "Bu karar için çok erken, sabırlı ol.",
+            "type": "negative",
+            "emoji": "🌱"
+        },
+        {
+            "id": "neg_008",
+            "text": "Başkalarının fikrini de al, tek başına karar verme.",
+            "type": "negative",
+            "emoji": "🤝"
+        },
+        {
+            "id": "neu_001",
+            "text": "Her iki seçenek de eşit değerde, sen karar ver.",
+            "type": "neutral",
+            "emoji": "⚖️"
+        },
+        {
+            "id": "neu_002",
+            "text": "Sonuç ne olursa olsun, önemli olan tecrübe.",
+            "type": "neutral",
+            "emoji": "📚"
+        },
+        {
+            "id": "neu_003",
+            "text": "Bu karar seni değiştirmeyecek, rahat ol.",
+            "type": "neutral",
+            "emoji": "🧘"
+        },
+        {
+            "id": "neu_004",
+            "text": "Düşündüğün kadar önemli değil, akışına bırak.",
+            "type": "neutral",
+            "emoji": "🌊"
+        },
+        {
+            "id": "neu_005",
+            "text": "İkisi de doğru yol, hangisini seçersen seç kazanırsın.",
+            "type": "neutral",
+            "emoji": "🎭"
+        },
+        {
+            "id": "mys_001",
+            "text": "Cevap rüyalarında gizli, dikkatli dinle.",
+            "type": "mysterious",
+            "emoji": "🌙"
+        },
+        {
+            "id": "mys_002",
+            "text": "Üç gün sonra netleşecek, sabır...",
+            "type": "mysterious",
+            "emoji": "🔮"
+        },
+        {
+            "id": "mys_003",
+            "text": "Aradığın işaret hiç beklemediğin yerden gelecek.",
+            "type": "mysterious",
+            "emoji": "👁️"
+        },
+        {
+            "id": "mys_004",
+            "text": "Geçmişinden bir sır bu kararını etkileyecek.",
+            "type": "mysterious",
+            "emoji": "🗝️"
+        },
+        {
+            "id": "mys_005",
+            "text": "Karşında belirecek kapı, aradığın cevabı verecek.",
+            "type": "mysterious",
+            "emoji": "🚪"
+        },
+        {
+            "id": "mys_006",
+            "text": "Ayın dolunayında cevabın kristal berraklığında olacak.",
+            "type": "mysterious",
+            "emoji": "🌕"
+        },
+        {
+            "id": "mys_007",
+            "text": "Yedi adım sonra durup etrafa bak, işaret orada.",
+            "type": "mysterious",
+            "emoji": "👣"
+        },
+        {
+            "id": "fun_001",
+            "text": "Yazı tura at! En azından adil olur! 😄",
+            "type": "funny",
+            "emoji": "🪙"
+        },
+        {
+            "id": "fun_002",
+            "text": "Kedine sor, onlar hep doğru bilir! 🐱",
+            "type": "funny",
+            "emoji": "😸"
+        },
+        {
+            "id": "fun_003",
+            "text": "Bugün çift çorap giy, şansını artırır! 🧦",
+            "type": "funny",
+            "emoji": "😂"
+        },
+        {
+            "id": "fun_004",
+            "text": "Önce bir çay iç, kafan netleşsin! ☕",
+            "type": "funny",
+            "emoji": "😄"
+        },
+        {
+            "id": "fun_005",
+            "text": "Dans et! Doğru karar dans ederken gelir! 💃",
+            "type": "funny",
+            "emoji": "🕺"
+        },
+        {
+            "id": "fun_006",
+            "text": "Gülümse! Gülen yüze hiçbir kapı kapanmaz! 😊",
+            "type": "funny",
+            "emoji": "😁"
+        },
+        {
+            "id": "fun_007",
+            "text": "Pizza sipariş et, tok karınla daha iyi düşünürsün! 🍕",
+            "type": "funny",
+            "emoji": "😋"
+        },
+        {
+            "id": "fun_008",
+            "text": "Önce telefonunu şarj et, sonra karar ver! 🔋",
+            "type": "funny",
+            "emoji": "😉"
+        },
+        {
+            "id": "wis_001",
+            "text": "Kalbinin sesini dinle, akıl yanlış yönlendirebilir.",
+            "type": "wise",
+            "emoji": "💭"
+        },
+        {
+            "id": "wis_002",
+            "text": "En kötü senaryo ne olabilir? Buna hazırsan ilerle.",
+            "type": "wise",
+            "emoji": "🤔"
+        },
+        {
+            "id": "wis_003",
+            "text": "Bu karar 5 yıl sonra önemli olacak mı? Ona göre değerlendir.",
+            "type": "wise",
+            "emoji": "🕰️"
+        },
+        {
+            "id": "wis_004",
+            "text": "Korku mu heyecan mı? Heyecanı seç, pişman olmazsın.",
+            "type": "wise",
+            "emoji": "🎢"
+        },
+        {
+            "id": "wis_005",
+            "text": "Başkasının yerinde olsan ne yapardın? Onu yap.",
+            "type": "wise",
+            "emoji": "🪞"
+        },
+        {
+            "id": "wis_006",
+            "text": "Her 'hayır' seni daha doğru 'evet'e yaklaştırır.",
+            "type": "wise",
+            "emoji": "🎯"
+        },
+        {
+            "id": "wis_007",
+            "text": "Değişmekten korkma, durgunluk daha tehlikeli.",
+            "type": "wise",
+            "emoji": "🦋"
+        },
+        {
+            "id": "wis_008",
+            "text": "İlk içgüdün genellikle doğrudur, ona güven.",
+            "type": "wise",
+            "emoji": "⚡"
+        },
+        {
+            "id": "pos_011",
+            "text": "Bugün şanslı günün! Hiç tereddüt etme.",
+            "type": "positive",
+            "emoji": "🎰"
+        },
+        {
+            "id": "pos_012",
+            "text": "Evrendeki tüm güçler seninle, başarısız olman imkansız!",
+            "type": "positive",
+            "emoji": "🌌"
+        },
+        {
+            "id": "mys_008",
+            "text": "Bir kuş sana işaret verecek, gözlerini açık tut.",
+            "type": "mysterious",
+            "emoji": "🕊️"
+        },
+        {
+            "id": "fun_009",
+            "text": "Çoraplarını ters giy, hayat seni şaşırtacak! 🧦",
+            "type": "funny",
+            "emoji": "🙃"
+        },
+        {
+            "id": "wis_009",
+            "text": "Pişmanlık geçicidir, fırsat kaçırmak kalıcıdır.",
+            "type": "wise",
+            "emoji": "⌛"
+        },
+        {
+            "id": "neg_009",
+            "text": "Bu karar seni önderse daha iyi, geri adım at.",
+            "type": "negative",
+            "emoji": "⏪"
+        },
+        {
+            "id": "neu_006",
+            "text": "Bazen karar vermemek de bir karardır.",
+            "type": "neutral",
+            "emoji": "🤷"
+        },
+        {
+            "id": "pos_013",
+            "text": "Tüm kapılar sana açık, hangisinden girersen gir kazanırsın!",
+            "type": "positive",
+            "emoji": "🚪"
+        },
+        {
+            "id": "mys_009",
+            "text": "Aynaya bak, oradaki kişi cevabı biliyor.",
+            "type": "mysterious",
+            "emoji": "🪞"
+        },
+        {
+            "id": "fun_010",
+            "text": "Bugün şarkı söyle! Melodide cevap gizli! 🎤",
+            "type": "funny",
+            "emoji": "🎶"
+        },
+        {
+            "id": "wis_010",
+            "text": "En büyük risk, hiç risk almamaktır.",
+            "type": "wise",
+            "emoji": "🎲"
+        }
+    ]
+}
