@@ -1127,30 +1127,31 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
           // Target type
           Text(l10n.targetType, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          SegmentedButton<NumericalTargetType>(
-            segments: [
-              ButtonSegment(
-                value: NumericalTargetType.minimum,
-                label: Text(l10n.atLeast),
-                icon: const Icon(Icons.trending_up),
-              ),
-              ButtonSegment(
-                value: NumericalTargetType.exact,
-                label: Text(l10n.exact),
-                icon: const Icon(Icons.my_location),
-              ),
-              ButtonSegment(
-                value: NumericalTargetType.maximum,
-                label: Text(l10n.atMost),
-                icon: const Icon(Icons.trending_down),
-              ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              for (final t in [
+                NumericalTargetType.minimum,
+                NumericalTargetType.exact,
+                NumericalTargetType.maximum,
+              ])
+                t == _numericalTargetType
+                    ? FilledButton.icon(
+                        style: _selectedCompactStyle(),
+                        onPressed: () {},
+                        icon: Icon(_iconForNumericalType(t), size: 20),
+                        label: Text(_labelForNumericalType(context, l10n, t)),
+                      )
+                    : OutlinedButton.icon(
+                        style: _unselectedCompactStyle(),
+                        onPressed: () =>
+                            setState(() => _numericalTargetType = t),
+                        icon: Icon(_iconForNumericalType(t), size: 20),
+                        label: Text(_labelForNumericalType(context, l10n, t)),
+                      ),
             ],
-            selected: {_numericalTargetType},
-            onSelectionChanged: (selection) {
-              setState(() {
-                _numericalTargetType = selection.first;
-              });
-            },
           ),
 
           const SizedBox(height: 16),
@@ -1213,30 +1214,30 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          SegmentedButton<TimerTargetType>(
-            segments: [
-              ButtonSegment(
-                value: TimerTargetType.minimum,
-                label: Text(l10n.atLeast),
-                icon: const Icon(Icons.timer),
-              ),
-              ButtonSegment(
-                value: TimerTargetType.exact,
-                label: Text(l10n.exact),
-                icon: const Icon(Icons.schedule),
-              ),
-              ButtonSegment(
-                value: TimerTargetType.maximum,
-                label: Text(l10n.atMost),
-                icon: const Icon(Icons.timer_off),
-              ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              for (final t in [
+                TimerTargetType.minimum,
+                TimerTargetType.exact,
+                TimerTargetType.maximum,
+              ])
+                t == _timerTargetType
+                    ? FilledButton.icon(
+                        style: _selectedCompactStyle(),
+                        onPressed: () {},
+                        icon: Icon(_iconForTimerType(t), size: 20),
+                        label: Text(_labelForTimerType(context, l10n, t)),
+                      )
+                    : OutlinedButton.icon(
+                        style: _unselectedCompactStyle(),
+                        onPressed: () => setState(() => _timerTargetType = t),
+                        icon: Icon(_iconForTimerType(t), size: 20),
+                        label: Text(_labelForTimerType(context, l10n, t)),
+                      ),
             ],
-            selected: {_timerTargetType},
-            onSelectionChanged: (selection) {
-              setState(() {
-                _timerTargetType = selection.first;
-              });
-            },
           ),
 
           const SizedBox(height: 16),
@@ -1244,6 +1245,77 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
           // Daily frequency & completion period removed per simplified configuration
         ],
       ),
+    );
+  }
+
+  IconData _iconForNumericalType(NumericalTargetType t) {
+    switch (t) {
+      case NumericalTargetType.minimum:
+        return Icons.trending_up;
+      case NumericalTargetType.exact:
+        return Icons.my_location;
+      case NumericalTargetType.maximum:
+        return Icons.trending_down;
+    }
+  }
+
+  String _labelForNumericalType(
+    BuildContext context,
+    AppLocalizations l10n,
+    NumericalTargetType t,
+  ) {
+    switch (t) {
+      case NumericalTargetType.minimum:
+        return l10n.atLeast;
+      case NumericalTargetType.exact:
+        return l10n.exact;
+      case NumericalTargetType.maximum:
+        return l10n.atMost;
+    }
+  }
+
+  IconData _iconForTimerType(TimerTargetType t) {
+    switch (t) {
+      case TimerTargetType.minimum:
+        return Icons.timer;
+      case TimerTargetType.exact:
+        return Icons.schedule;
+      case TimerTargetType.maximum:
+        return Icons.timer_off;
+    }
+  }
+
+  String _labelForTimerType(
+    BuildContext context,
+    AppLocalizations l10n,
+    TimerTargetType t,
+  ) {
+    switch (t) {
+      case TimerTargetType.minimum:
+        return l10n.atLeast;
+      case TimerTargetType.exact:
+        return l10n.exact;
+      case TimerTargetType.maximum:
+        return l10n.atMost;
+    }
+  }
+
+  // Compact button styles used for target-type buttons so they fit side-by-side
+  ButtonStyle _selectedCompactStyle() {
+    return FilledButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      minimumSize: const Size(64, 40),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      textStyle: Theme.of(context).textTheme.bodyMedium,
+    );
+  }
+
+  ButtonStyle _unselectedCompactStyle() {
+    return OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      minimumSize: const Size(60, 40),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      textStyle: Theme.of(context).textTheme.bodyMedium,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../design_system/theme/theme_variations.dart';
+import '../../design_system/tokens/colors.dart';
 import '../timer/widgets/dashboard_timer_card.dart';
 import 'widgets/dashboard_mood_card.dart';
 import 'widgets/dashboard_finance_chart_card.dart';
@@ -34,7 +35,7 @@ class DashboardScreen extends StatelessWidget {
                 Expanded(child: DashboardMoodCard(variant: variant)),
                 const SizedBox(width: 12),
                 // Make fortune eggs card share available width equally with mood card
-                Expanded(child: const DashboardFortuneEggsCard()),
+                Expanded(child: DashboardFortuneEggsCard(variant: variant)),
               ],
             ),
           ),
@@ -45,7 +46,18 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _DashboardHabitCarousel(),
           const SizedBox(height: 16),
-          const DashboardVisionCard(),
+          if (variant == ThemeVariant.world)
+            Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColors.accentPurple,
+                  secondary: AppColors.accentPurple,
+                ),
+              ),
+              child: const DashboardVisionCard(),
+            )
+          else
+            const DashboardVisionCard(),
           const SizedBox(height: 16),
           // ... ileride başka panel kartları eklenecek
         ],
@@ -84,6 +96,9 @@ class _DashboardHeaderState extends State<_DashboardHeader> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    // Purple accent for world panels
+    final Color worldPurple = AppColors.accentPurple;
     final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final hour = now.hour;
@@ -101,7 +116,7 @@ class _DashboardHeaderState extends State<_DashboardHeader> {
         .length;
 
     final headerFill = Color.alphaBlend(
-      cs.primary.withValues(alpha: 0.12),
+      (isWorld ? worldPurple : cs.primary).withValues(alpha: 0.12),
       cs.surfaceContainerHighest,
     );
     return Container(
@@ -144,13 +159,13 @@ class _DashboardHeaderState extends State<_DashboardHeader> {
                     _HeaderPill(
                       label: l10n.headerHabitsLabel,
                       value: '$doneHabits/$totalHabits',
-                      color: cs.primary,
+                      color: isWorld ? worldPurple : cs.primary,
                     ),
                     const SizedBox(width: 8),
                     _HeaderPill(
                       label: l10n.headerFocusLabel,
                       value: l10n.headerFocusReady,
-                      color: cs.tertiary,
+                      color: isWorld ? worldPurple : cs.tertiary,
                     ),
                   ],
                 ),

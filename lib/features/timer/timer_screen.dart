@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import '../../l10n/app_localizations.dart';
 import '../../core/timer/timer_controller.dart';
 import '../../design_system/theme/theme_variations.dart';
+import '../../design_system/tokens/colors.dart';
 import '../habit/domain/habit_repository.dart';
 import '../habit/domain/habit_types.dart';
 import 'widgets/landscape_timer_screen.dart';
@@ -62,7 +64,8 @@ class _TimerScreenState extends State<TimerScreen>
     final theme = Theme.of(context);
     final bool isWorld = widget.variant == ThemeVariant.world;
     final Color accent = isWorld
-        ? ThemeVariant.ocean.config.primary
+        ? AppColors
+              .accentPurple // World variant now uses mystic purple
         : theme.colorScheme.primary;
     return Theme(
       data: theme.copyWith(
@@ -82,7 +85,8 @@ class _TimerScreenState extends State<TimerScreen>
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => const LandscapeTimerScreen(),
+                    builder: (_) =>
+                        LandscapeTimerScreen(variant: widget.variant),
                   ),
                 );
               },
@@ -215,6 +219,12 @@ class _TimerScreenState extends State<TimerScreen>
         : 0.0;
     final isRunning =
         controller.isRunning && controller.activeMode == TimerMode.countdown;
+    // Re-derive accent (was only in build root) to avoid undefined reference
+    final theme = Theme.of(context);
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    final Color accent = isWorld
+        ? AppColors.accentPurple
+        : theme.colorScheme.primary;
     return Column(
       children: [
         Padding(
@@ -223,24 +233,22 @@ class _TimerScreenState extends State<TimerScreen>
             children: [
               _buildHabitSelector(),
               const SizedBox(height: 12),
-              SizedBox(
-                width: 180,
-                height: 180,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CircularProgressIndicator(
-                      value: hasDuration ? progress.clamp(0.0, 1.0) : 0,
-                      strokeWidth: 10,
-                    ),
-                    Center(
+              // Simple centered time display for countdown (removed circular progress ring)
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final maxSide = math.min(constraints.maxWidth, 360.0);
+                  final diameter = math.min(180.0, maxSide * 0.6);
+                  return SizedBox(
+                    width: diameter,
+                    height: diameter,
+                    child: Center(
                       child: _timeDisplay(
                         controller.formatDuration(rem),
                         context,
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
               if (hasDuration)
                 Padding(
@@ -448,6 +456,12 @@ class _TimerScreenState extends State<TimerScreen>
   Widget _buildHistoryList() {
     final l10n = AppLocalizations.of(context);
     final sessions = controller.sessions;
+    // Derive accent locally (mirrors build & countdown logic) so we can avoid hardcoded green
+    final theme = Theme.of(context);
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    final Color accent = isWorld
+        ? AppColors.accentPurple
+        : theme.colorScheme.primary;
     if (sessions.isEmpty) {
       return Center(child: Text(l10n.noEntriesYet));
     }
@@ -470,17 +484,14 @@ class _TimerScreenState extends State<TimerScreen>
             children: [
               Icon(
                 _iconForMode(s.mode),
-                color: s.assigned ? Colors.green : null,
+                // Use accent for assigned sessions instead of hardcoded green
+                color: s.assigned ? accent : null,
               ),
               if (s.assigned)
-                const Positioned(
+                Positioned(
                   right: 0,
                   bottom: 0,
-                  child: Icon(
-                    Icons.check_circle,
-                    size: 14,
-                    color: Colors.green,
-                  ),
+                  child: Icon(Icons.check_circle, size: 14, color: accent),
                 ),
             ],
           ),
@@ -488,6 +499,38 @@ class _TimerScreenState extends State<TimerScreen>
           subtitle: Text(s.assigned ? '$timeStr\n(${l10n.saved})' : timeStr),
           isThreeLine: s.assigned,
           onTap: () => _onSessionTap(index),
+          onLongPress: () {
+            // Confirm deletion
+            final theme = Theme.of(context);
+            final bool isWorld = widget.variant == ThemeVariant.world;
+            final Color accentLocal = isWorld ? AppColors.accentPurple : theme.colorScheme.primary;
+            final themed = theme.copyWith(
+              colorScheme: theme.colorScheme.copyWith(primary: accentLocal),
+            );
+            showDialog<void>(
+              context: context,
+              builder: (ctx) => Theme(
+                data: themed,
+                child: AlertDialog(
+                  title: Text(l10n.delete ?? 'Delete'),
+                  content: Text(l10n.deleteEntryConfirm ?? 'Delete this timer entry?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text(l10n.cancel),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        controller.removeSessionAt(index);
+                      },
+                      child: Text(l10n.delete ?? 'Delete', style: const TextStyle(color: Colors.red)),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -525,52 +568,64 @@ class _TimerScreenState extends State<TimerScreen>
         (timerHabits.isNotEmpty ? timerHabits.first.id : null);
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.timerSaveDurationTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.timerPendingDurationLabel(
-                controller.formatDuration(controller.pendingDuration),
-              ),
+      builder: (ctx) {
+        final theme = Theme.of(context);
+        final bool isWorld = widget.variant == ThemeVariant.world;
+        final Color accentLocal = isWorld
+            ? AppColors.accentPurple
+            : theme.colorScheme.primary;
+        final themed = theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(primary: accentLocal),
+        );
+        return Theme(
+          data: themed,
+          child: AlertDialog(
+            title: Text(l10n.timerSaveDurationTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.timerPendingDurationLabel(
+                    controller.formatDuration(controller.pendingDuration),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedId,
+                  decoration: InputDecoration(
+                    labelText: l10n.habit,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: timerHabits
+                      .map(
+                        (h) =>
+                            DropdownMenuItem(value: h.id, child: Text(h.title)),
+                      )
+                      .toList(),
+                  onChanged: (v) => selectedId = v,
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              initialValue: selectedId,
-              decoration: InputDecoration(
-                labelText: l10n.habit,
-                border: const OutlineInputBorder(),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel),
               ),
-              items: timerHabits
-                  .map(
-                    (h) => DropdownMenuItem(value: h.id, child: Text(h.title)),
-                  )
-                  .toList(),
-              onChanged: (v) {
-                selectedId = v;
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
+              ElevatedButton(
+                onPressed: () async {
+                  if (selectedId != null) {
+                    await controller.savePendingToHabit(selectedId!);
+                    controller.setActiveTimerHabit(selectedId);
+                  }
+                  if (ctx.mounted) Navigator.pop(ctx);
+                },
+                child: Text(l10n.save),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              if (selectedId != null) {
-                await controller.savePendingToHabit(selectedId!);
-                controller.setActiveTimerHabit(selectedId); // seçim hatırlansın
-              }
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -598,48 +653,62 @@ class _TimerScreenState extends State<TimerScreen>
     String? selectedId = controller.activeTimerHabitId ?? timerHabits.first.id;
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.timerSaveSessionTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${l10n.duration}: ${controller.formatDuration(s.duration)}'),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              initialValue: selectedId,
-              decoration: InputDecoration(
-                labelText: l10n.habit,
-                border: const OutlineInputBorder(),
-              ),
-              items: timerHabits
-                  .map(
-                    (h) => DropdownMenuItem(value: h.id, child: Text(h.title)),
-                  )
-                  .toList(),
-              onChanged: (v) {
-                selectedId = v;
-              },
+      builder: (ctx) {
+        final theme = Theme.of(context);
+        final bool isWorld = widget.variant == ThemeVariant.world;
+        final Color accentLocal = isWorld
+            ? AppColors.accentPurple
+            : theme.colorScheme.primary;
+        final themed = theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(primary: accentLocal),
+        );
+        return Theme(
+          data: themed,
+          child: AlertDialog(
+            title: Text(l10n.timerSaveSessionTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${l10n.duration}: ${controller.formatDuration(s.duration)}',
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedId,
+                  decoration: InputDecoration(
+                    labelText: l10n.habit,
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: timerHabits
+                      .map(
+                        (h) =>
+                            DropdownMenuItem(value: h.id, child: Text(h.title)),
+                      )
+                      .toList(),
+                  onChanged: (v) => selectedId = v,
+                ),
+              ],
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (selectedId != null) {
+                    await controller.assignSessionToHabit(index, selectedId!);
+                    controller.setActiveTimerHabit(selectedId);
+                  }
+                  if (ctx.mounted) Navigator.pop(ctx);
+                },
+                child: Text(l10n.save),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              if (selectedId != null) {
-                await controller.assignSessionToHabit(index, selectedId!);
-                controller.setActiveTimerHabit(selectedId);
-              }
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -648,59 +717,75 @@ class _TimerScreenState extends State<TimerScreen>
     final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.countdownConfigureTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+      builder: (ctx) {
+        final theme = Theme.of(context);
+        final bool isWorld = widget.variant == ThemeVariant.world;
+        final Color accentLocal = isWorld
+            ? AppColors.accentPurple
+            : theme.colorScheme.primary;
+        final themed = theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(primary: accentLocal),
+        );
+        return Theme(
+          data: themed,
+          child: AlertDialog(
+            title: Text(l10n.countdownConfigureTitle),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: _timeField(controller: _cdHours, label: l10n.hours),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _timeField(
+                        controller: _cdHours,
+                        label: l10n.hours,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _timeField(
+                        controller: _cdMinutes,
+                        label: l10n.minutes,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _timeField(
+                        controller: _cdSeconds,
+                        label: l10n.seconds,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _timeField(
-                    controller: _cdMinutes,
-                    label: l10n.minutes,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _timeField(
-                    controller: _cdSeconds,
-                    label: l10n.seconds,
-                  ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    _presetButton('1m', minutes: 1),
+                    _presetButton('5m', minutes: 5),
+                    _presetButton('10m', minutes: 10),
+                    _presetButton('25m', minutes: 25),
+                    _presetButton('1h', hours: 1),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              children: [
-                _presetButton('1m', minutes: 1),
-                _presetButton('5m', minutes: 5),
-                _presetButton('10m', minutes: 10),
-                _presetButton('25m', minutes: 25),
-                _presetButton('1h', hours: 1),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _applyCountdown();
+                  Navigator.pop(ctx);
+                },
+                child: Text(l10n.save),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              _applyCountdown();
-              Navigator.pop(ctx);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -721,48 +806,67 @@ class _TimerScreenState extends State<TimerScreen>
     );
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.timerPomodoroSettings),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _numberField(workCtrl, l10n.timerPomodoroWorkMinutesLabel),
-              const SizedBox(height: 12),
-              _numberField(shortCtrl, l10n.timerPomodoroShortBreakMinutesLabel),
-              const SizedBox(height: 12),
-              _numberField(longCtrl, l10n.timerPomodoroLongBreakMinutesLabel),
-              const SizedBox(height: 12),
-              _numberField(
-                intervalCtrl,
-                l10n.timerPomodoroLongBreakIntervalLabel,
+      builder: (ctx) {
+        final theme = Theme.of(context);
+        final bool isWorld = widget.variant == ThemeVariant.world;
+        final Color accentLocal = isWorld
+            ? AppColors.accentPurple
+            : theme.colorScheme.primary;
+        final themed = theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(primary: accentLocal),
+        );
+        return Theme(
+          data: themed,
+          child: AlertDialog(
+            title: Text(l10n.timerPomodoroSettings),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _numberField(workCtrl, l10n.timerPomodoroWorkMinutesLabel),
+                  const SizedBox(height: 12),
+                  _numberField(
+                    shortCtrl,
+                    l10n.timerPomodoroShortBreakMinutesLabel,
+                  ),
+                  const SizedBox(height: 12),
+                  _numberField(
+                    longCtrl,
+                    l10n.timerPomodoroLongBreakMinutesLabel,
+                  ),
+                  const SizedBox(height: 12),
+                  _numberField(
+                    intervalCtrl,
+                    l10n.timerPomodoroLongBreakIntervalLabel,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final w = int.tryParse(workCtrl.text) ?? 25;
+                  final s = int.tryParse(shortCtrl.text) ?? 5;
+                  final l = int.tryParse(longCtrl.text) ?? 15;
+                  final iv = int.tryParse(intervalCtrl.text) ?? 4;
+                  controller.setPomodoroConfig(
+                    work: Duration(minutes: w),
+                    shortBreak: Duration(minutes: s),
+                    longBreak: Duration(minutes: l),
+                    longBreakInterval: iv,
+                  );
+                  Navigator.pop(ctx);
+                },
+                child: Text(l10n.save),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final w = int.tryParse(workCtrl.text) ?? 25;
-              final s = int.tryParse(shortCtrl.text) ?? 5;
-              final l = int.tryParse(longCtrl.text) ?? 15;
-              final iv = int.tryParse(intervalCtrl.text) ?? 4;
-              controller.setPomodoroConfig(
-                work: Duration(minutes: w),
-                shortBreak: Duration(minutes: s),
-                longBreak: Duration(minutes: l),
-                longBreakInterval: iv,
-              );
-              Navigator.pop(ctx);
-            },
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

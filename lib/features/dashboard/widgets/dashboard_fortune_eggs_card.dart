@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../design_system/tokens/colors.dart';
 import '../../fortune_eggs/presentation/fortune_eggs_screen.dart';
 import '../../fortune_eggs/widgets/fortune_egg.dart' as fe;
 import '../../fortune_eggs/data/answers.dart';
 import 'dart:math';
 
+import '../../../design_system/theme/theme_variations.dart';
+
 class DashboardFortuneEggsCard extends StatefulWidget {
-  const DashboardFortuneEggsCard({super.key});
+  const DashboardFortuneEggsCard({super.key, required this.variant});
+  final ThemeVariant variant;
 
   @override
   State<DashboardFortuneEggsCard> createState() =>
@@ -104,13 +108,15 @@ class _DashboardFortuneEggsCardState extends State<DashboardFortuneEggsCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    final Color accent = isWorld ? AppColors.accentPurple : cs.secondary;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: Color.alphaBlend(
-          cs.secondary.withValues(alpha: 0.12),
+          accent.withValues(alpha: 0.12),
           cs.surfaceContainerHighest,
         ),
       ),

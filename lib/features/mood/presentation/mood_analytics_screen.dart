@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../design_system/theme/theme_variations.dart';
+import '../../../design_system/tokens/colors.dart';
 import '../data/mood_models.dart';
 import '../data/detailed_mood_repository.dart';
 
 class MoodAnalyticsScreen extends StatefulWidget {
-  const MoodAnalyticsScreen({super.key});
+  const MoodAnalyticsScreen({super.key, this.variant});
+  final ThemeVariant? variant;
 
   @override
   State<MoodAnalyticsScreen> createState() => _MoodAnalyticsScreenState();
@@ -58,29 +61,44 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.moodAnalytics ?? 'Mood Analytics'),
-        centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: l10n.overview ?? 'Overview'),
-            Tab(text: l10n.trends ?? 'Trends'),
-            Tab(text: l10n.history ?? 'History'),
-          ],
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    final Color accent = isWorld
+        ? AppColors.accentPurple
+        : theme.colorScheme.primary;
+
+    final themed = theme.copyWith(
+      colorScheme: theme.colorScheme.copyWith(primary: accent),
+      appBarTheme: theme.appBarTheme.copyWith(foregroundColor: accent),
+      iconTheme: theme.iconTheme.copyWith(color: accent),
+    );
+
+    return Theme(
+      data: themed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.moodAnalytics ?? 'Mood Analytics'),
+          centerTitle: true,
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: l10n.overview ?? 'Overview'),
+              Tab(text: l10n.trends ?? 'Trends'),
+              Tab(text: l10n.history ?? 'History'),
+            ],
+          ),
         ),
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : TabBarView(
+                controller: _tabController,
+                children: [
+                  // Use the themed ThemeData so widgets inside pick up the world accent when active
+                  _buildOverviewTab(themed, l10n),
+                  _buildTrendsTab(themed, l10n),
+                  _buildHistoryTab(themed, l10n),
+                ],
+              ),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : TabBarView(
-              controller: _tabController,
-              children: [
-                _buildOverviewTab(theme, l10n),
-                _buildTrendsTab(theme, l10n),
-                _buildHistoryTab(theme, l10n),
-              ],
-            ),
     );
   }
 
@@ -352,6 +370,168 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
     );
   }
 
+  void _showHistoryEntryActions(MoodEntry entry) {
+    final l10n = AppLocalizations.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        final bool isWorld = widget.variant == ThemeVariant.world;
+        final Color accent = isWorld ? AppColors.accentPurple : theme.colorScheme.primary;
+        final themed = theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(primary: accent),
+          appBarTheme: theme.appBarTheme.copyWith(foregroundColor: accent),
+          iconTheme: theme.iconTheme.copyWith(color: accent),
+        );
+
+        return Theme(
+          data: themed,
+          child: AlertDialog(
+            title: Text(l10n.delete ?? 'Actions'),
+            content: Text(l10n.deleteEntryConfirm ?? ''),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _showEditEntryDialog(entry);
+                },
+                child: Text(l10n.edit ?? 'Edit'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel ?? 'Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(ctx);
+                  await _repository.deleteMoodEntry(entry.id);
+                  await _loadData();
+                },
+                child: Text(
+                  l10n.delete ?? 'Delete',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showEditEntryDialog(MoodEntry entry) {
+    final l10n = AppLocalizations.of(context);
+    final noteCtrl = TextEditingController(text: entry.journalText);
+    var selectedMood = entry.mood;
+    var selectedSubEmotion = entry.subEmotion;
+    var selectedReason = entry.reason;
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        final bool isWorld = widget.variant == ThemeVariant.world;
+        final Color accent = isWorld ? AppColors.accentPurple : theme.colorScheme.primary;
+        final themed = theme.copyWith(
+          colorScheme: theme.colorScheme.copyWith(primary: accent),
+          appBarTheme: theme.appBarTheme.copyWith(foregroundColor: accent),
+          iconTheme: theme.iconTheme.copyWith(color: accent),
+        );
+
+        return Theme(
+          data: themed,
+          child: AlertDialog(
+            title: Text(l10n.edit ?? 'Edit Entry'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<MoodLevel>(
+                    value: selectedMood,
+                    decoration: InputDecoration(labelText: l10n.mood ?? 'Mood'),
+                    items: MoodLevel.values
+                        .map(
+                          (m) => DropdownMenuItem(
+                            value: m,
+                            child: Text(_getMoodTitle(m, l10n)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) selectedMood = v;
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<SubEmotion>(
+                    value: selectedSubEmotion,
+                    decoration: InputDecoration(labelText: l10n.selectSubEmotion ?? 'Sub-emotion'),
+                    items: SubEmotion.values
+                        .map(
+                          (s) => DropdownMenuItem(
+                            value: s,
+                            child: Text(_getSubEmotionTitle(s, l10n)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) selectedSubEmotion = v;
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<ReasonCategory>(
+                    value: selectedReason,
+                    decoration: InputDecoration(labelText: l10n.selectReason ?? 'Reason'),
+                    items: ReasonCategory.values
+                        .map(
+                          (r) => DropdownMenuItem(
+                            value: r,
+                            child: Text(_getReasonTitle(r, l10n)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) {
+                      if (v != null) selectedReason = v;
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: noteCtrl,
+                    decoration: InputDecoration(labelText: l10n.noteOptional ?? 'Note'),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel ?? 'Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final updated = MoodEntry(
+                    id: entry.id,
+                    mood: selectedMood,
+                    subEmotion: selectedSubEmotion,
+                    reason: selectedReason,
+                    journalText: noteCtrl.text.trim(),
+                    timestamp: entry.timestamp,
+                  );
+                  await _repository.updateMoodEntry(updated);
+                  if (mounted) {
+                    Navigator.pop(ctx);
+                    await _loadData();
+                  }
+                },
+                child: Text(l10n.save ?? 'Save'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildCategoryRow(
     String label,
     String value,
@@ -542,70 +722,73 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
     ThemeData theme,
     AppLocalizations l10n,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: _getMoodColor(entry.mood.index + 1.0).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+    return InkWell(
+      onLongPress: () => _showHistoryEntryActions(entry),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _getMoodColor(entry.mood.index + 1.0).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    _getMoodIcon(entry.mood),
+                    color: _getMoodColor(entry.mood.index + 1.0),
+                    size: 20,
+                  ),
                 ),
-                child: Icon(
-                  _getMoodIcon(entry.mood),
-                  color: _getMoodColor(entry.mood.index + 1.0),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getMoodTitle(entry.mood, l10n),
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _getMoodTitle(entry.mood, l10n),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      _formatDateTime(entry.timestamp),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      Text(
+                        _formatDateTime(entry.timestamp),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ],
+            ),
+            if (entry.journalText.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                entry.journalText,
+                style: theme.textTheme.bodyMedium,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
-          ),
-          if (entry.journalText.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              entry.journalText,
-              style: theme.textTheme.bodyMedium,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                _buildTag(_getSubEmotionTitle(entry.subEmotion, l10n), theme),
+                const SizedBox(width: 8),
+                _buildTag(_getReasonTitle(entry.reason, l10n), theme),
+              ],
             ),
           ],
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              _buildTag(_getSubEmotionTitle(entry.subEmotion, l10n), theme),
-              const SizedBox(width: 8),
-              _buildTag(_getReasonTitle(entry.reason, l10n), theme),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

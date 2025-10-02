@@ -118,12 +118,15 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: widget.habitColor.withValues(alpha: 0.10),
+                // Use a stronger surfaceVariant in dark mode so the card separates
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? colorScheme.surfaceVariant.withValues(alpha: 0.18)
+                    : widget.habitColor.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: Theme.of(context).brightness == Brightness.light
                       ? widget.habitColor.withValues(alpha: 0.40)
-                      : Colors.transparent,
+                      : widget.habitColor.withValues(alpha: 0.28),
                   width: 1,
                 ),
               ),
@@ -133,7 +136,9 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: widget.habitColor.withValues(alpha: 0.20),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? widget.habitColor.withValues(alpha: 0.30)
+                          : widget.habitColor.withValues(alpha: 0.20),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -255,19 +260,23 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
               height: 300,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? colorScheme.surfaceVariant.withValues(alpha: 0.06)
+                    : colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black.withValues(alpha: 0.10)
+                        : Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 12,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
                   color: Theme.of(context).brightness == Brightness.light
                       ? colorScheme.outlineVariant.withValues(alpha: 0.50)
-                      : Colors.transparent,
+                      : colorScheme.outline.withValues(alpha: 0.10),
                 ),
               ),
               child: Column(
@@ -303,14 +312,23 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    widget.habitColor.withValues(alpha: 0.10),
-                    widget.habitColor.withValues(alpha: 0.05),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: Theme.of(context).brightness == Brightness.dark
+                    ? LinearGradient(
+                        colors: [
+                          colorScheme.surfaceVariant.withValues(alpha: 0.12),
+                          colorScheme.surface.withValues(alpha: 0.04),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : LinearGradient(
+                        colors: [
+                          widget.habitColor.withValues(alpha: 0.10),
+                          widget.habitColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -355,11 +373,15 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.10)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withValues(alpha: 0.10)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -369,7 +391,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
               ? Theme.of(
                   context,
                 ).colorScheme.outlineVariant.withValues(alpha: 0.50)
-              : Colors.transparent,
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.12),
         ),
       ),
       child: Column(
@@ -494,46 +516,102 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
         ),
       );
     } else {
-      // Aylık/Yıllık çizgi grafik
-      return LineChart(
-        LineChartData(
+      // Aylık / Yıllık / Genel -> sütun (bar) grafik
+      final bars = (_selectedPeriod == 1
+              ? _computedMonthly
+              : _selectedPeriod == 2
+                  ? _computedYearly
+                  : _computedGeneral)
+          .asMap()
+          .entries
+          .toList();
+
+      final count = bars.length;
+      // adapt bar width: many bars -> narrow, few bars -> thicker
+      final barWidth = count > 20 ? 8.0 : (count > 12 ? 12.0 : 20.0);
+
+      String locale = Localizations.localeOf(context).languageCode;
+
+      Widget bottomTitleWidget(double value, TitleMeta meta) {
+        final idx = value.toInt();
+        if (idx < 0 || idx >= count) return const Text('');
+        if (_selectedPeriod == 0) {
+          // weekly handled earlier — shouldn't reach here
+          return Text(weekDays[idx], style: Theme.of(context).textTheme.labelSmall);
+        } else if (_selectedPeriod == 1) {
+          // monthly: show day numbers for a reasonable count
+          if (count <= 31) {
+            return Text('${idx + 1}', style: Theme.of(context).textTheme.labelSmall);
+          }
+          return const Text('');
+        } else if (_selectedPeriod == 2) {
+          // yearly: show month short names
+          final monthDate = DateTime(DateTime.now().year, idx + 1, 1);
+          final label = DateFormat.MMM(locale).format(monthDate);
+          return Text(label, style: Theme.of(context).textTheme.labelSmall);
+        } else {
+          // overall: show every Nth label to avoid crowding
+          final step = (count / 6).ceil();
+          if (step <= 0) return const Text('');
+          if (idx % step == 0) return Text('${idx + 1}', style: Theme.of(context).textTheme.labelSmall);
+          return const Text('');
+        }
+      }
+
+      return BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: 100,
+          barTouchData: BarTouchData(enabled: false),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: bottomTitleWidget,
+                reservedSize: 32,
+              ),
+            ),
+            leftTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+          ),
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
-            getDrawingHorizontalLine: (value) {
-              return FlLine(
-                color: Theme.of(
-                  context,
-                ).colorScheme.outline.withValues(alpha: 0.20),
-                strokeWidth: 1,
-              );
-            },
-          ),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots:
-                  (_selectedPeriod == 1
-                          ? _computedMonthly
-                          : _selectedPeriod == 2
-                          ? _computedYearly
-                          : _computedGeneral)
-                      .asMap()
-                      .entries
-                      .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                      .toList(),
-              isCurved: true,
-              color: widget.habitColor,
-              barWidth: 3,
-              isStrokeCapRound: true,
-              dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(
-                show: true,
-                color: widget.habitColor.withValues(alpha: 0.10),
-              ),
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.36)
+                  : Theme.of(context).colorScheme.outline.withValues(alpha: 0.20),
+              strokeWidth: 1,
             ),
-          ],
+          ),
+          borderData: FlBorderData(show: false),
+          barGroups: bars.map((entry) {
+            final x = entry.key;
+            // ensure a double is passed to BarChartRodData.toY
+            final y = entry.value.clamp(0, 100).toDouble();
+            return BarChartGroupData(
+              x: x,
+              barRods: [
+                BarChartRodData(
+                  toY: y,
+                  color: widget.habitColor,
+                  width: barWidth,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(4),
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
         ),
       );
     }
@@ -691,18 +769,20 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(
-          color: Theme.of(context).brightness == Brightness.light
-              ? colorScheme.outlineVariant.withValues(alpha: 0.50)
-              : Colors.transparent,
-        ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black.withValues(alpha: 0.10)
+                        : Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? colorScheme.outlineVariant.withValues(alpha: 0.50)
+                      : colorScheme.outline.withValues(alpha: 0.10),
+                ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -996,15 +1076,24 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? colorScheme.surfaceVariant.withValues(alpha: 0.06)
+            : colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withValues(alpha: 0.10)
+                : Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? colorScheme.outline.withValues(alpha: 0.10)
+              : Colors.transparent,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1144,17 +1233,26 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? colorScheme.surfaceVariant.withValues(alpha: 0.08)
+                    : colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black.withValues(alpha: 0.10)
+                        : Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? colorScheme.outline.withValues(alpha: 0.10)
+                      : Colors.transparent,
                 ),
-              ],
-            ),
+              ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -59,13 +59,14 @@ class _DashboardTimerCardState extends State<DashboardTimerCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final isRunning = controller.isRunning;
-    // Dünya temasında mavi (ocean primary) kullan, diğerlerinde variant'a göre
-    final bool forceBlue = widget.variant == ThemeVariant.world;
-    final accent = forceBlue ? AppColors.accentBlue : theme.colorScheme.primary;
+    // Dünya temasında mor accent kullan
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    final Color accent = isWorld ? AppColors.accentPurple : scheme.primary;
     final fill = Color.alphaBlend(
       accent.withValues(alpha: 0.12),
-      theme.colorScheme.surfaceContainerHighest,
+      scheme.surfaceContainerHighest,
     );
 
     return InkWell(
@@ -201,6 +202,10 @@ class _ExpandedControls extends StatelessWidget {
                 controller.reset();
               },
               icon: Icon(Icons.restart_alt, color: accent),
+              style: IconButton.styleFrom(
+                backgroundColor: accent.withValues(alpha: 0.15),
+                foregroundColor: accent,
+              ),
             ),
             const SizedBox(width: 10),
             IconButton.filled(
@@ -236,6 +241,10 @@ class _ExpandedControls extends StatelessWidget {
               tooltip: l10n.fullScreen,
               onPressed: onOpenFull,
               icon: Icon(Icons.open_in_full, color: accent),
+              style: IconButton.styleFrom(
+                backgroundColor: accent.withValues(alpha: 0.15),
+                foregroundColor: accent,
+              ),
             ),
             const SizedBox(width: 10),
             IconButton.filledTonal(
@@ -244,6 +253,12 @@ class _ExpandedControls extends StatelessWidget {
               icon: Icon(
                 Icons.close,
                 color: theme.colorScheme.onSurfaceVariant,
+              ),
+              style: IconButton.styleFrom(
+                backgroundColor: theme.colorScheme.outlineVariant.withValues(
+                  alpha: 0.10,
+                ),
+                foregroundColor: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ],

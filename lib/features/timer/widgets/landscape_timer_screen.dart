@@ -6,11 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/timer/timer_controller.dart';
+import '../../../design_system/theme/theme_variations.dart';
+import '../../../design_system/tokens/colors.dart';
 
 /// Fullscreen landscape timer view optimized for OLED (true black background)
 /// and focus. Shows large time with minimal chrome.
 class LandscapeTimerScreen extends StatefulWidget {
-  const LandscapeTimerScreen({super.key});
+  const LandscapeTimerScreen({super.key, this.variant});
+  final ThemeVariant? variant;
 
   @override
   State<LandscapeTimerScreen> createState() => _LandscapeTimerScreenState();
@@ -52,11 +55,26 @@ class _LandscapeTimerScreenState extends State<LandscapeTimerScreen>
   Color _outline(BuildContext context) => _useOledTheme
       ? Colors.white24
       : Theme.of(context).colorScheme.outlineVariant;
-  Color _primaryFill(BuildContext context) => _useOledTheme
-      ? Colors.white
-      : Theme.of(context).colorScheme.primaryContainer;
+  bool get _isWorld => widget.variant == ThemeVariant.world;
+  Color _accent(BuildContext context) =>
+      _isWorld ? AppColors.accentPurple : Theme.of(context).colorScheme.primary;
+  Color _primaryFill(BuildContext context) {
+    if (_useOledTheme) return Colors.white;
+    // World variant: custom blended panel style for purple accent
+    if (_isWorld) {
+      final surface = Theme.of(context).colorScheme.surfaceContainerHighest;
+      return Color.alphaBlend(
+        _accent(context).withValues(alpha: 0.12),
+        surface,
+      );
+    }
+    return Theme.of(context).colorScheme.primaryContainer;
+  }
+
   Color _onPrimaryFill(BuildContext context) => _useOledTheme
       ? Colors.black
+      : _isWorld
+      ? _accent(context)
       : Theme.of(context).colorScheme.onPrimaryContainer;
   Color _inactiveFill(BuildContext context) => _useOledTheme
       ? Colors.white10
@@ -68,7 +86,7 @@ class _LandscapeTimerScreenState extends State<LandscapeTimerScreen>
       ? Colors.white12
       : Theme.of(context).colorScheme.surfaceVariant;
   Color _primaryColor(BuildContext context) =>
-      _useOledTheme ? Colors.white : Theme.of(context).colorScheme.primary;
+      _useOledTheme ? Colors.white : _accent(context);
 
   @override
   void initState() {

@@ -387,6 +387,14 @@ class TimerController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Remove a session at [index] from history. Safe no-op if index is out of
+  /// range.
+  void removeSessionAt(int index) {
+    if (index < 0 || index >= _sessions.length) return;
+    _sessions.removeAt(index);
+    notifyListeners();
+  }
+
   Future<bool> assignSessionToHabit(int index, String habitId) async {
     if (index < 0 || index >= _sessions.length) return false;
     final session = _sessions[index];

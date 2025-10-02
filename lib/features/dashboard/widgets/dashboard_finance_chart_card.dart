@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../design_system/tokens/colors.dart';
 
 import '../../finance/data/transaction_model.dart';
 import '../../finance/data/transaction_repository.dart';
@@ -44,10 +45,13 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    final Color worldPurple = AppColors.accentPurple;
     final l10n = AppLocalizations.of(context);
     final fill = Color.alphaBlend(
-      scheme.primary.withValues(alpha: 0.12),
+      (isWorld ? worldPurple : scheme.primary).withValues(alpha: 0.12),
       scheme.surfaceContainerHighest,
     );
     final days = _last7Days();
@@ -84,7 +88,7 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
                 children: [
                   Icon(
                     Icons.payments_outlined,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: isWorld ? worldPurple : scheme.primary,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -123,14 +127,6 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
       ),
     );
 
-    // If the app is in World variant, finance surfaces use the Ocean theme.
-    if (widget.variant == ThemeVariant.world) {
-      final brightness = Theme.of(context).brightness;
-      final themed = brightness == Brightness.dark
-          ? ThemeVariations.dark(ThemeVariant.ocean)
-          : ThemeVariations.light(ThemeVariant.ocean);
-      return Theme(data: themed, child: card);
-    }
     return card;
   }
 

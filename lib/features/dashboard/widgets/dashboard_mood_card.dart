@@ -9,6 +9,7 @@ import '../../mood/data/mood_models.dart';
 import '../../mood/presentation/mood_selection_screen.dart';
 import '../../mood/presentation/mood_analytics_screen.dart';
 import '../../../design_system/theme/theme_variations.dart';
+import '../../../l10n/app_localizations.dart';
 
 enum Mood { terrible, bad, ok, good, great }
 
@@ -107,25 +108,27 @@ class _DashboardMoodCardState extends State<DashboardMoodCard> {
   }
 
   void _openAnalytics() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const MoodAnalyticsScreen()));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MoodAnalyticsScreen(variant: widget.variant),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final base = Theme.of(context);
-    final bool usePurple = widget.variant == ThemeVariant.world;
-    final localTheme = usePurple
-        ? base.copyWith(
-            colorScheme: base.colorScheme.copyWith(
-              primary: AppColors.accentPurple,
-            ),
-          )
-        : base;
+    final scheme = base.colorScheme;
+    final bool isWorld = widget.variant == ThemeVariant.world;
+    // Use the same accent logic as finance chart card
+    final Color accent = isWorld ? AppColors.accentPurple : scheme.primary;
     final fill = Color.alphaBlend(
-      localTheme.colorScheme.primary.withValues(alpha: 0.12),
-      localTheme.colorScheme.surfaceContainerHighest,
+      accent.withValues(alpha: 0.12),
+      scheme.surfaceContainerHighest,
+    );
+    // Provide a themed context so nested widgets using Theme.of pick up accent as primary
+    final localTheme = base.copyWith(
+      colorScheme: scheme.copyWith(primary: accent),
     );
     return Theme(
       data: localTheme,
@@ -138,6 +141,7 @@ class _DashboardMoodCardState extends State<DashboardMoodCard> {
             Expanded(
               child: Builder(
                 builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx);
                   final swipeBg = Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     alignment: Alignment.center,
@@ -160,32 +164,64 @@ class _DashboardMoodCardState extends State<DashboardMoodCard> {
                       _openAnalytics();
                       return false;
                     },
-                    child: InkWell(
-                      customBorder: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                      ),
-                      onTap: _openMoodScreen,
-                      child: Center(
-                        child: Padding(
-                          // Use symmetric vertical padding to keep the icon centered visually
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        InkWell(
+                          customBorder: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
                           ),
-                          child: Icon(
-                            _selected != null
-                                ? _iconFor(_selected!)
-                                : Icons.sentiment_neutral,
-                            color: _selected != null
-                                ? _colorFor(_selected!)
-                                : localTheme.colorScheme.onSurfaceVariant,
-                            size: 56,
+                          onTap: _openMoodScreen,
+                          child: Center(
+                            child: Padding(
+                              // Use symmetric vertical padding to keep the icon centered visually
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              child: Icon(
+                                _selected != null
+                                    ? _iconFor(_selected!)
+                                    : Icons.sentiment_neutral,
+                                color: _selected != null
+                                    ? _colorFor(_selected!)
+                                    : accent, // idle state uses same accent as finance widget icon
+                                size: 56,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        // Edge chevrons hint overlay (no text)
+                        IgnorePointer(
+                          child: Opacity(
+                            opacity: 0.18,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Icon(
+                                    Icons.chevron_left,
+                                    size: 28,
+                                    color: accent,
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 28,
+                                    color: accent,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
