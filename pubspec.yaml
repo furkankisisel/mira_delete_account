@@ -49,10 +49,14 @@ dependencies:
   http: ^1.1.0
   google_sign_in: ^6.0.0
   firebase_core: ^4.1.0
+  # For rendering SVG assets if needed for scalable logo variants
+  flutter_svg: ^2.0.10
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.2.13
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -107,5 +111,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icons/miralogo.png
+  adaptive_icon_background: "#121212"
+  adaptive_icon_foreground: assets/icons/miralogo.png
+  remove_alpha_ios: true
+
+flutter_native_splash:
+  color: "#000000"
+  image: assets/icons/mirasplash.png
+  android: true
+  ios: true
+  web: false
 
 

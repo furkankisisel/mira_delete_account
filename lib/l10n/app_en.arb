@@ -165,6 +165,7 @@
     "nDaysLabel": "{count} days",
     "scheduleHabit": "Set your habit's schedule",
     "visionStartDayQuestion": "On which day of the vision should it start?",
+    "visionDurationDaysLabel": "Duration (days)",
     "visionStartDayInvalid": "Start day must be between 1 and 365",
     "visionEndDayLess": "End day cannot be less than start day",
     "visionEndDayInvalid": "End day must be between 1 and 365",

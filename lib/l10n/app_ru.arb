@@ -450,6 +450,7 @@
   "visionPlural": "Видения",
   "visionStartDayInvalid": "День начала должен быть между 1 и 365",
   "visionStartDayQuestion": "В какой день видения оно должно начаться?",
+  "visionDurationDaysLabel": "Продолжительность (дни)",
   "visionStartFailed": "Не удалось начать видение.",
   "visionStartedMessage": "Видение начато: {title}",
   "visual": "Визуальный",

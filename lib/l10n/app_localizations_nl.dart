@@ -1258,6 +1258,9 @@ class AppLocalizationsNl extends AppLocalizations {
       'Op welke dag van de visie moet deze beginnen?';
 
   @override
+  String get visionDurationDaysLabel => 'Duur (dagen)';
+
+  @override
   String get visionStartFailed => 'Kon de visie niet starten.';
 
   @override

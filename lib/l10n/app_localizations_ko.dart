@@ -1247,6 +1247,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get visionStartDayQuestion => '비전의 며칠째에 시작해야 합니까?';
 
   @override
+  String get visionDurationDaysLabel => '기간(일)';
+
+  @override
   String get visionStartFailed => '비전을 시작할 수 없습니다.';
 
   @override

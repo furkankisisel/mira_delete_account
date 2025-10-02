@@ -1256,6 +1256,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get visionStartDayQuestion => 'Vizyonun hangi gününde başlamalı?';
 
   @override
+  String get visionDurationDaysLabel => 'Süre (gün)';
+
+  @override
   String get visionStartFailed => 'Vizyon başlatılamadı.';
 
   @override

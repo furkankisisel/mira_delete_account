@@ -1262,6 +1262,9 @@ class AppLocalizationsIt extends AppLocalizations {
       'In quale giorno della visione dovrebbe iniziare?';
 
   @override
+  String get visionDurationDaysLabel => 'Durata (giorni)';
+
+  @override
   String get visionStartFailed => 'Impossibile avviare la visione.';
 
   @override

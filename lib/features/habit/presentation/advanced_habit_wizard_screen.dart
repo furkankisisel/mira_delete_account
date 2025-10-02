@@ -39,16 +39,12 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
   int get _totalSteps => _steps.length;
 
   List<_StepId> get _steps {
-    // In vision-day-offsets mode, frequency step is not needed; remove it.
-    if (widget.useVisionDayOffsets) {
-      return const [_StepId.details, _StepId.type, _StepId.scheduling];
-    }
-    // Default: retain configurable order of frequency/scheduling
+    // Vision offsets modunda da artık sıklık seçimi gösterilecek.
     return widget.scheduleBeforeFrequency
         ? const [
             _StepId.details,
             _StepId.type,
-            _StepId.scheduling,
+            _StepId.scheduling, // start offset + duration
             _StepId.frequency,
           ]
         : const [
@@ -140,12 +136,14 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
   // Vision-day scheduling (1-365) when enabled
   int _visionStartDay = 1;
   int? _visionEndDay;
+  int? _visionDurationDays; // yeni: süre (gün)
   String? _visionEndError;
   String? _visionStartError;
   final TextEditingController _visionStartDayCtrl = TextEditingController();
   final TextEditingController _visionEndDayCtrl = TextEditingController();
-  // Manual active days within [start..end] when using vision offsets
-  final Set<int> _activeOffsets = <int>{};
+  // NOTE: Previous implementation allowed selecting specific active offsets (days) within
+  // the start/end range. New vision scheduling model simplifies this to Start Day + Duration.
+  // Manual per-day selection & _activeOffsets set removed.
 
   @override
   void initState() {
@@ -159,6 +157,106 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
 
     // Load persisted custom categories
     _loadCustomCategories();
+  }
+
+  void _initializeControllers() {
+    _numericalTargetController.text = _numericalTarget.toString();
+    _timerTargetController.text = _timerTargetMinutes.toString();
+    _visionStartDayCtrl.text = _visionStartDay.toString();
+    if (_visionDurationDays != null) {
+      _visionEndDayCtrl.text = _visionDurationDays.toString();
+    }
+  }
+
+  @override
+  void dispose() {
+    CategoryRepository.instance.removeListener(_onCategoriesChanged);
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _numericalTargetController.dispose();
+    _numericalUnitController.dispose();
+    _timerTargetController.dispose();
+    _visionStartDayCtrl.dispose();
+    _visionEndDayCtrl.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  HabitCategory? _getSelectedCategory() {
+    // Find in predefined first
+    final pre = _predefinedCategories
+        .where((c) => c.id == _selectedCategoryId)
+        .toList();
+    if (pre.isNotEmpty) return pre.first;
+    final custom = _customCategories
+        .where((c) => c.id == _selectedCategoryId)
+        .toList();
+    if (custom.isNotEmpty) return custom.first;
+    return null;
+  }
+
+  String _localizedCategoryName(String id, AppLocalizations l10n) {
+    // Existing localization keys for categories not found; fallback to capitalized id.
+    if (id.isEmpty) return id;
+    return id[0].toUpperCase() + id.substring(1);
+  }
+
+  void _previousStep() {
+    if (_currentStep == 0) return;
+    setState(() => _currentStep--);
+    _pageController.animateToPage(
+      _currentStep,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _nextStep() {
+    if (_currentStep >= _totalSteps - 1) return;
+    setState(() => _currentStep++);
+    _pageController.animateToPage(
+      _currentStep,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  bool _canProceed() {
+    // Basic validation for each step
+    final step = _steps[_currentStep];
+    switch (step) {
+      case _StepId.details:
+        return _nameController.text.trim().isNotEmpty;
+      case _StepId.type:
+        return _selectedHabitType != null;
+      case _StepId.frequency:
+        if (_selectedFrequencyType == null) return false;
+        switch (_selectedFrequencyType!) {
+          case FrequencyType.daily:
+            return true;
+          case FrequencyType.specificWeekdays:
+            return _selectedWeekdays.isNotEmpty;
+          case FrequencyType.specificMonthDays:
+            return _selectedMonthDays.isNotEmpty;
+          case FrequencyType.specificYearDays:
+            return _selectedYearDays.isNotEmpty;
+          case FrequencyType.periodic:
+            return _periodicDays > 0;
+        }
+      case _StepId.scheduling:
+        if (widget.useVisionDayOffsets) {
+          if (_visionStartDay < 1 || _visionStartDay > 365) return false;
+          if (_visionDurationDays == null || _visionDurationDays! < 1) {
+            return false;
+          }
+          final end = _visionStartDay + _visionDurationDays! - 1;
+          if (end > 365) return false;
+          return true;
+        } else {
+          // Calendar-based always valid; optional end date
+          return true;
+        }
+    }
   }
 
   Future<void> _loadCustomCategories() async {
@@ -226,7 +324,6 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
         }
       }
     } catch (_) {}
-
     // Tip özel ayarları yükle
     if (_selectedHabitType == HabitType.numerical) {
       _numericalTarget = habit['targetCount'] ?? 1;
@@ -285,31 +382,15 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
         _visionStartDay = _startDate.difference(base).inDays + 1;
         if (_visionStartDay < 1) _visionStartDay = 1;
         _visionEndDay = (_endDate ?? _startDate).difference(base).inDays + 1;
-        if (_visionEndDay! < _visionStartDay) {
-          _visionEndDay = _visionStartDay;
-        }
-        _visionStartDayCtrl.text = _visionStartDay.toString();
-        _visionEndDayCtrl.text = (_visionEndDay ?? '').toString();
-
-        // Initialize manual active days from editingHabit if provided
-        final offs = habit['activeOffsets'];
-        final sched = habit['scheduledDates'];
-        _activeOffsets.clear();
-        if (sched is List && sched.isNotEmpty) {
-          for (final s in sched.whereType<String>()) {
-            try {
-              final d = DateTime.parse(s);
-              final o = d.difference(today0).inDays + 1; // 1-based
-              _activeOffsets.add(o);
-            } catch (_) {}
-          }
-        } else if (offs is List) {
-          _activeOffsets.addAll(offs.whereType<num>().map((e) => e.toInt()));
-        }
-        // Clamp to new range
-        _activeOffsets.removeWhere(
-          (d) => d < _visionStartDay || d > (_visionEndDay ?? _visionStartDay),
+        if (_visionEndDay! < _visionStartDay) _visionEndDay = _visionStartDay;
+        _visionDurationDays = (_visionEndDay! - _visionStartDay + 1).clamp(
+          1,
+          365,
         );
+        _visionStartDayCtrl.text = _visionStartDay.toString();
+        _visionEndDayCtrl.text = (_visionDurationDays ?? '').toString();
+
+        // (activeOffsets deprecated) – if coming from an older saved habit, ignore.
       }
     } catch (_) {}
 
@@ -329,7 +410,6 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
           _selectedFrequencyType = FrequencyType.periodic;
         }
       }
-      // Seçimler
       final w = habit['selectedWeekdays'];
       if (w is List) {
         _selectedWeekdays = w.whereType<num>().map((e) => e.toInt()).toList();
@@ -341,139 +421,20 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       final y = habit['selectedYearDays'];
       if (y is List) {
         _selectedYearDays = y
-            .map((e) => DateTime.tryParse(e.toString()))
+            .whereType<String>()
+            .map((e) {
+              try {
+                return DateTime.parse(e);
+              } catch (_) {
+                return null;
+              }
+            })
             .whereType<DateTime>()
             .toList();
       }
-      final p = habit['periodicDays'];
-      if (p is num) _periodicDays = p.toInt();
+      final pd = habit['periodicDays'];
+      if (pd is num && pd.toInt() > 0) _periodicDays = pd.toInt();
     } catch (_) {}
-    // Eğer hiçbir şey gelmediyse varsayılan günlük
-    _selectedFrequencyType ??= FrequencyType.daily;
-  }
-
-  void _initializeControllers() {
-    _numericalTargetController.text = _numericalTarget.toString();
-    _numericalUnitController.text = _numericalUnit;
-    // Frequency controller removed
-    _timerTargetController.text = _timerTargetMinutes.toString();
-    // Timer frequency controller removed
-  }
-
-  @override
-  void dispose() {
-    // Remove repository listener
-    CategoryRepository.instance.removeListener(_onCategoriesChanged);
-    _pageController.dispose();
-    _nameController.dispose();
-    _descriptionController.dispose();
-    _numericalTargetController.dispose();
-    _numericalUnitController.dispose();
-    _timerTargetController.dispose();
-    // Removed frequency controllers dispose
-    _visionStartDayCtrl.dispose();
-    _visionEndDayCtrl.dispose();
-    super.dispose();
-  }
-
-  HabitCategory? _getSelectedCategory() {
-    if (_selectedCategoryId == null) return null;
-    final all = <HabitCategory>[..._predefinedCategories, ..._customCategories];
-    try {
-      return all.firstWhere((c) => c.id == _selectedCategoryId);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  String _localizedCategoryName(String id, AppLocalizations l10n) {
-    switch (id) {
-      case 'health':
-        return l10n.health;
-      case 'fitness':
-        return l10n.fitness;
-      case 'productivity':
-        return l10n.productivity;
-      case 'mindfulness':
-        return l10n.mindfulness;
-      case 'education':
-        return l10n.education;
-      case 'social':
-        return l10n.social;
-      default:
-        // Fallback to id for unforeseen custom cases (custom categories already store localized name directly)
-        return id;
-    }
-  }
-
-  void _nextStep() {
-    if (_currentStep < _totalSteps - 1) {
-      setState(() {
-        _currentStep++;
-      });
-      // Slightly longer duration and smoother easing for a more polished feel
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 420),
-        curve: Curves.easeInOutCubic,
-      );
-    }
-  }
-
-  void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-      // Match the forward duration for symmetry
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 420),
-        curve: Curves.easeInOutCubic,
-      );
-    }
-  }
-
-  bool _canProceed() {
-    final current = _steps[_currentStep];
-    switch (current) {
-      case _StepId.type:
-        if (_selectedHabitType == null) return false;
-        switch (_selectedHabitType!) {
-          case HabitType.simple:
-            return true;
-          case HabitType.numerical:
-            return _numericalTarget > 0 && _numericalUnit.trim().isNotEmpty;
-          case HabitType.timer:
-            return _timerTargetMinutes > 0;
-        }
-      case _StepId.details:
-        return _nameController.text.trim().isNotEmpty;
-      case _StepId.frequency:
-        // When using manual active days for vision offsets, frequency is optional
-        if (widget.useVisionDayOffsets) return true;
-        if (_selectedFrequencyType == null) return false;
-        switch (_selectedFrequencyType!) {
-          case FrequencyType.daily:
-            return true;
-          case FrequencyType.specificWeekdays:
-            return _selectedWeekdays.isNotEmpty;
-          case FrequencyType.specificMonthDays:
-            return _selectedMonthDays.isNotEmpty;
-          case FrequencyType.specificYearDays:
-            return _selectedYearDays.isNotEmpty;
-          case FrequencyType.periodic:
-            return _periodicDays > 0;
-        }
-      case _StepId.scheduling:
-        if (widget.useVisionDayOffsets) {
-          if (_visionStartDay < 1 || _visionStartDay > 365) return false;
-          if (_visionEndDay == null) return false;
-          if (_visionEndError != null) return false;
-          // Require at least one active day to be selected
-          if (_activeOffsets.isEmpty) return false;
-          return true;
-        }
-        return true;
-    }
   }
 
   void _finishHabitCreation() {
@@ -481,7 +442,9 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     final habit = {
       // Not a real category in data model anymore; used only to pick icon & color
       'categoryId': _selectedCategoryId,
+      // Keep both for backward compatibility
       'type': _selectedHabitType.toString(),
+      'habitType': _selectedHabitType,
       'name': _nameController.text,
       'description': _descriptionController.text,
       // Persist visual identity from the chosen "category" only if selected;
@@ -559,15 +522,9 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       'isAdvanced': true,
     };
 
-    // If using vision-day offsets and manual active days are selected,
-    // prefer explicit activeOffsets and ignore frequency fields
-    if (widget.useVisionDayOffsets && _activeOffsets.isNotEmpty) {
-      habit['activeOffsets'] = _activeOffsets.toList()..sort();
-      habit.remove('frequencyType');
-      habit.remove('selectedWeekdays');
-      habit.remove('selectedMonthDays');
-      habit.remove('selectedYearDays');
-      habit.remove('periodicDays');
+    // Vision offsets modunda artık explicit activeOffsets seçmiyoruz (frekans kullanıyoruz)
+    if (widget.useVisionDayOffsets) {
+      // manual activeOffsets logic removed
     }
 
     Navigator.of(context).pop(habit);
@@ -2073,40 +2030,32 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                 border: const OutlineInputBorder(),
                 errorText: _visionStartError,
               ),
-              inputFormatters: [
-                // Only digits
-                FilteringTextInputFormatter.digitsOnly,
-              ],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (value) {
                 final parsed = int.tryParse(value);
                 setState(() {
                   _visionStartDay = parsed ?? 0;
-                  // Validation for start day (no auto-correction)
                   if (_visionStartDay < 1 || _visionStartDay > 365) {
                     _visionStartError = l10n.visionStartDayInvalid;
                   } else {
                     _visionStartError = null;
                   }
-                  // Update end-day error state (do not auto-overwrite end value)
-                  if (_visionEndDay != null &&
-                      _visionEndDay! < _visionStartDay) {
-                    _visionEndError = l10n.visionEndDayLess;
-                  } else if (_visionEndDay != null &&
-                      (_visionEndDay! < 1 || _visionEndDay! > 365)) {
-                    _visionEndError = l10n.visionEndDayInvalid;
-                  } else {
-                    _visionEndError = null;
+                  // Recompute end if we already have a valid duration
+                  if (_visionDurationDays != null) {
+                    final end = _visionStartDay + _visionDurationDays! - 1;
+                    if (end > 365) {
+                      _visionEndError = l10n.visionEndDayInvalid;
+                    } else {
+                      _visionEndError = null;
+                      _visionEndDay = end;
+                    }
                   }
-                  // Prune active offsets below new start
-                  _activeOffsets.removeWhere((d) => d < _visionStartDay);
                 });
               },
             ),
             const SizedBox(height: 24),
-
-            // Vision End Day (required)
             Text(
-              l10n.visionEndDayQuestion,
+              l10n.visionDurationDaysLabel,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -2124,101 +2073,27 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
               onChanged: (value) {
                 final v = int.tryParse(value);
                 setState(() {
-                  // Allow clearing while typing; don't auto-fill
-                  _visionEndDay = v;
-                  // Validate and set error (do not modify user's text)
-                  if (v == null) {
+                  _visionDurationDays = v;
+                  if (v == null || v < 1) {
                     _visionEndError = l10n.visionEndDayRequired;
-                  } else if (v < 1 || v > 365) {
-                    _visionEndError = l10n.visionEndDayInvalid;
-                  } else if (v < _visionStartDay) {
-                    _visionEndError = l10n.visionEndDayLess;
                   } else {
-                    _visionEndError = null;
-                    // Prune active offsets above new valid end
-                    _activeOffsets.removeWhere((d) => d > v);
+                    final end = _visionStartDay + v - 1;
+                    if (end > 365) {
+                      _visionEndError = l10n.visionEndDayInvalid;
+                    } else {
+                      _visionEndError = null;
+                      _visionEndDay = end;
+                    }
                   }
                 });
               },
             ),
-
-            const SizedBox(height: 24),
-            Text(
-              l10n.whichDaysActive,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                OutlinedButton(
-                  onPressed: (_visionEndDay != null && _visionEndError == null)
-                      ? () {
-                          final end = _visionEndDay!;
-                          setState(() {
-                            _activeOffsets
-                              ..clear()
-                              ..addAll(
-                                List<int>.generate(
-                                  (end - _visionStartDay + 1),
-                                  (i) => _visionStartDay + i,
-                                ),
-                              );
-                          });
-                        }
-                      : null,
-                  child: Text(l10n.selectAll),
-                ),
-                const SizedBox(width: 12),
-                TextButton(
-                  onPressed: () {
-                    setState(() => _activeOffsets.clear());
-                  },
-                  child: Text(l10n.clear),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: colorScheme.outline.withOpacity(0.4)),
-                borderRadius: BorderRadius.circular(12),
-                color: colorScheme.surfaceVariant.withOpacity(0.2),
+            if (_visionDurationDays != null && _visionEndError == null)
+              Text(
+                'Computed end day: $_visionEndDay',
+                style: theme.textTheme.bodySmall,
               ),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  if (_visionEndDay != null && _visionEndError == null)
-                    for (int d = _visionStartDay; d <= _visionEndDay!; d++)
-                      FilterChip(
-                        selected: _activeOffsets.contains(d),
-                        label: Text(d.toString()),
-                        onSelected: (sel) {
-                          setState(() {
-                            if (sel) {
-                              _activeOffsets.add(d);
-                            } else {
-                              _activeOffsets.remove(d);
-                            }
-                          });
-                        },
-                      )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(
-                        l10n.visionEndDayRequired,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
           ] else ...[
             // Calendar-based scheduling (default)
             Text(

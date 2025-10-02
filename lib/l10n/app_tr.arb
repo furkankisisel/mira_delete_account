@@ -393,6 +393,7 @@
     "visionPlural": "Vizyonlar",
     "visionStartDayInvalid": "Başlangıç günü 1 ile 365 arasında olmalıdır",
     "visionStartDayQuestion": "Vizyonun hangi gününde başlamalı?",
+    "visionDurationDaysLabel": "Süre (gün)",
     "visionStartFailed": "Vizyon başlatılamadı.",
     "visionStartedMessage": "Vizyon başladı: {title}",
     "visual": "Görsel",

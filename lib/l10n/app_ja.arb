@@ -450,6 +450,7 @@
   "visionPlural": "ビジョン",
   "visionStartDayInvalid": "開始日は1から365の間でなければなりません",
   "visionStartDayQuestion": "ビジョンの何日目に開始しますか？",
+  "visionDurationDaysLabel": "期間（日数）",
   "visionStartFailed": "ビジョンを開始できませんでした。",
   "visionStartedMessage": "ビジョンが開始されました: {title}",
   "visual": "ビジュアル",

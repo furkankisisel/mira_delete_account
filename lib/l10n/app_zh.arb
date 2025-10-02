@@ -456,6 +456,7 @@
   "visionPlural": "愿景",
   "visionStartDayInvalid": "开始日必须介于1和365之间",
   "visionStartDayQuestion": "愿景应该在哪一天开始？",
+  "visionDurationDaysLabel": "持续时间（天）",
   "visionStartFailed": "无法启动愿景。",
   "visionStartedMessage": "愿景已启动：{title}",
   "visual": "视觉",

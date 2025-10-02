@@ -1262,6 +1262,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'В какой день видения оно должно начаться?';
 
   @override
+  String get visionDurationDaysLabel => 'Продолжительность (дни)';
+
+  @override
   String get visionStartFailed => 'Не удалось начать видение.';
 
   @override

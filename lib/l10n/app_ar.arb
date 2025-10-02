@@ -456,6 +456,7 @@
   "visionPlural": "الرؤى",
   "visionStartDayInvalid": "يجب أن يكون يوم البدء بين 1 و 365",
   "visionStartDayQuestion": "في أي يوم من الرؤية يجب أن تبدأ؟",
+  "visionDurationDaysLabel": "المدة (أيام)",
   "visionStartFailed": "تعذر بدء الرؤية.",
   "visionStartedMessage": "بدأت الرؤية: {title}",
   "visual": "مرئي",

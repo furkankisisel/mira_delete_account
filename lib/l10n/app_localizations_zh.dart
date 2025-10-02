@@ -1245,6 +1245,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get visionStartDayQuestion => '愿景应该在哪一天开始？';
 
   @override
+  String get visionDurationDaysLabel => '持续时间（天）';
+
+  @override
   String get visionStartFailed => '无法启动愿景。';
 
   @override

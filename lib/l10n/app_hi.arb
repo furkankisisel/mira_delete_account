@@ -456,6 +456,7 @@
   "visionPlural": "दृष्टियां",
   "visionStartDayInvalid": "प्रारंभ दिन 1 और 365 के बीच होना चाहिए",
   "visionStartDayQuestion": "दृष्टि के किस दिन इसे शुरू होना चाहिए?",
+  "visionDurationDaysLabel": "अवधि (दिन)",
   "visionStartFailed": "दृष्टि शुरू नहीं हो सकी।",
   "visionStartedMessage": "दृष्टि शुरू हुई: {title}",
   "visual": "दृश्य",

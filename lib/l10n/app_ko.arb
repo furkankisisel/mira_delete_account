@@ -450,6 +450,7 @@
   "visionPlural": "비전",
   "visionStartDayInvalid": "시작일은 1에서 365 사이여야 합니다",
   "visionStartDayQuestion": "비전의 며칠째에 시작해야 합니까?",
+  "visionDurationDaysLabel": "기간(일)",
   "visionStartFailed": "비전을 시작할 수 없습니다.",
   "visionStartedMessage": "비전 시작됨: {title}",
   "visual": "시각적",

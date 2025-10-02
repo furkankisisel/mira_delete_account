@@ -456,6 +456,7 @@
   "visionPlural": "Visies",
   "visionStartDayInvalid": "Startdag moet tussen 1 en 365 liggen",
   "visionStartDayQuestion": "Op welke dag van de visie moet deze beginnen?",
+  "visionDurationDaysLabel": "Duur (dagen)",
   "visionStartFailed": "Kon de visie niet starten.",
   "visionStartedMessage": "Visie gestart: {title}",
   "visual": "Visueel",

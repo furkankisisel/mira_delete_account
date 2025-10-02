@@ -1252,6 +1252,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get visionStartDayQuestion => 'في أي يوم من الرؤية يجب أن تبدأ؟';
 
   @override
+  String get visionDurationDaysLabel => 'المدة (أيام)';
+
+  @override
   String get visionStartFailed => 'تعذر بدء الرؤية.';
 
   @override

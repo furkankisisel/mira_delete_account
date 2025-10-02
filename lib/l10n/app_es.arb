@@ -455,6 +455,7 @@
   "visionPlural": "Visiones",
   "visionStartDayInvalid": "El día de inicio debe estar entre 1 y 365",
   "visionStartDayQuestion": "¿En qué día de la visión debería comenzar?",
+  "visionDurationDaysLabel": "Duración (días)",
   "visionStartFailed": "No se pudo iniciar la visión.",
   "visionStartedMessage": "Visión iniciada: {title}",
   "visual": "Visual",

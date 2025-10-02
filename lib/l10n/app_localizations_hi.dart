@@ -1251,6 +1251,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get visionStartDayQuestion => 'दृष्टि के किस दिन इसे शुरू होना चाहिए?';
 
   @override
+  String get visionDurationDaysLabel => 'अवधि (दिन)';
+
+  @override
   String get visionStartFailed => 'दृष्टि शुरू नहीं हो सकी।';
 
   @override

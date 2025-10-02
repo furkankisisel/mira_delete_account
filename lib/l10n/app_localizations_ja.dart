@@ -1247,6 +1247,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get visionStartDayQuestion => 'ビジョンの何日目に開始しますか？';
 
   @override
+  String get visionDurationDaysLabel => '期間（日数）';
+
+  @override
   String get visionStartFailed => 'ビジョンを開始できませんでした。';
 
   @override

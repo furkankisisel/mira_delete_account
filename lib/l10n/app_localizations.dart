@@ -2480,6 +2480,12 @@ abstract class AppLocalizations {
   /// **'Vizyonun hangi gününde başlamalı?'**
   String get visionStartDayQuestion;
 
+  /// No description provided for @visionDurationDaysLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süre (gün)'**
+  String get visionDurationDaysLabel;
+
   /// No description provided for @visionStartFailed.
   ///
   /// In tr, this message translates to:

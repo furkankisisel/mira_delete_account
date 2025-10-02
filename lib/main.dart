@@ -25,16 +25,13 @@ import 'features/notifications/services/notification_service.dart';
 import 'core/settings/settings_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
+import 'core/design_system/widgets/app_logo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MiraApp());
 }
-
 
 class MiraApp extends StatefulWidget {
   const MiraApp({super.key});
