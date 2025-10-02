@@ -503,7 +503,9 @@ class _TimerScreenState extends State<TimerScreen>
             // Confirm deletion
             final theme = Theme.of(context);
             final bool isWorld = widget.variant == ThemeVariant.world;
-            final Color accentLocal = isWorld ? AppColors.accentPurple : theme.colorScheme.primary;
+            final Color accentLocal = isWorld
+                ? AppColors.accentPurple
+                : theme.colorScheme.primary;
             final themed = theme.copyWith(
               colorScheme: theme.colorScheme.copyWith(primary: accentLocal),
             );
@@ -513,7 +515,9 @@ class _TimerScreenState extends State<TimerScreen>
                 data: themed,
                 child: AlertDialog(
                   title: Text(l10n.delete ?? 'Delete'),
-                  content: Text(l10n.deleteEntryConfirm ?? 'Delete this timer entry?'),
+                  content: Text(
+                    l10n.deleteEntryConfirm ?? 'Delete this timer entry?',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
@@ -524,7 +528,10 @@ class _TimerScreenState extends State<TimerScreen>
                         Navigator.pop(ctx);
                         controller.removeSessionAt(index);
                       },
-                      child: Text(l10n.delete ?? 'Delete', style: const TextStyle(color: Colors.red)),
+                      child: Text(
+                        l10n.delete ?? 'Delete',
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     ),
                   ],
                 ),

@@ -374,7 +374,9 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
-            ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.10)
+            ? Theme.of(
+                context,
+              ).colorScheme.surfaceVariant.withValues(alpha: 0.10)
             : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
@@ -517,14 +519,15 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       );
     } else {
       // Aylık / Yıllık / Genel -> sütun (bar) grafik
-      final bars = (_selectedPeriod == 1
-              ? _computedMonthly
-              : _selectedPeriod == 2
+      final bars =
+          (_selectedPeriod == 1
+                  ? _computedMonthly
+                  : _selectedPeriod == 2
                   ? _computedYearly
                   : _computedGeneral)
-          .asMap()
-          .entries
-          .toList();
+              .asMap()
+              .entries
+              .toList();
 
       final count = bars.length;
       // adapt bar width: many bars -> narrow, few bars -> thicker
@@ -537,11 +540,17 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
         if (idx < 0 || idx >= count) return const Text('');
         if (_selectedPeriod == 0) {
           // weekly handled earlier — shouldn't reach here
-          return Text(weekDays[idx], style: Theme.of(context).textTheme.labelSmall);
+          return Text(
+            weekDays[idx],
+            style: Theme.of(context).textTheme.labelSmall,
+          );
         } else if (_selectedPeriod == 1) {
           // monthly: show day numbers for a reasonable count
           if (count <= 31) {
-            return Text('${idx + 1}', style: Theme.of(context).textTheme.labelSmall);
+            return Text(
+              '${idx + 1}',
+              style: Theme.of(context).textTheme.labelSmall,
+            );
           }
           return const Text('');
         } else if (_selectedPeriod == 2) {
@@ -553,7 +562,11 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
           // overall: show every Nth label to avoid crowding
           final step = (count / 6).ceil();
           if (step <= 0) return const Text('');
-          if (idx % step == 0) return Text('${idx + 1}', style: Theme.of(context).textTheme.labelSmall);
+          if (idx % step == 0)
+            return Text(
+              '${idx + 1}',
+              style: Theme.of(context).textTheme.labelSmall,
+            );
           return const Text('');
         }
       }
@@ -587,8 +600,12 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
             drawVerticalLine: false,
             getDrawingHorizontalLine: (value) => FlLine(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.outline.withValues(alpha: 0.36)
-                  : Theme.of(context).colorScheme.outline.withValues(alpha: 0.20),
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.36)
+                  : Theme.of(
+                      context,
+                    ).colorScheme.outline.withValues(alpha: 0.20),
               strokeWidth: 1,
             ),
           ),
@@ -769,20 +786,20 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black.withValues(alpha: 0.10)
-                        : Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                border: Border.all(
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? colorScheme.outlineVariant.withValues(alpha: 0.50)
-                      : colorScheme.outline.withValues(alpha: 0.10),
-                ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withValues(alpha: 0.10)
+                : Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.light
+              ? colorScheme.outlineVariant.withValues(alpha: 0.50)
+              : colorScheme.outline.withValues(alpha: 0.10),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1233,26 +1250,26 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? colorScheme.surfaceVariant.withValues(alpha: 0.08)
-                    : colorScheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black.withValues(alpha: 0.10)
-                        : Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-                border: Border.all(
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? colorScheme.surfaceVariant.withValues(alpha: 0.08)
+                  : colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? colorScheme.outline.withValues(alpha: 0.10)
-                      : Colors.transparent,
+                      ? Colors.black.withValues(alpha: 0.10)
+                      : Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
+              ],
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? colorScheme.outline.withValues(alpha: 0.10)
+                    : Colors.transparent,
               ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

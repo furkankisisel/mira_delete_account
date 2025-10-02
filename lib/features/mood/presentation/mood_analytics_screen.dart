@@ -377,7 +377,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
       builder: (ctx) {
         final theme = Theme.of(ctx);
         final bool isWorld = widget.variant == ThemeVariant.world;
-        final Color accent = isWorld ? AppColors.accentPurple : theme.colorScheme.primary;
+        final Color accent = isWorld
+            ? AppColors.accentPurple
+            : theme.colorScheme.primary;
         final themed = theme.copyWith(
           colorScheme: theme.colorScheme.copyWith(primary: accent),
           appBarTheme: theme.appBarTheme.copyWith(foregroundColor: accent),
@@ -431,7 +433,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
       builder: (ctx) {
         final theme = Theme.of(ctx);
         final bool isWorld = widget.variant == ThemeVariant.world;
-        final Color accent = isWorld ? AppColors.accentPurple : theme.colorScheme.primary;
+        final Color accent = isWorld
+            ? AppColors.accentPurple
+            : theme.colorScheme.primary;
         final themed = theme.copyWith(
           colorScheme: theme.colorScheme.copyWith(primary: accent),
           appBarTheme: theme.appBarTheme.copyWith(foregroundColor: accent),
@@ -464,7 +468,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   const SizedBox(height: 8),
                   DropdownButtonFormField<SubEmotion>(
                     value: selectedSubEmotion,
-                    decoration: InputDecoration(labelText: l10n.selectSubEmotion ?? 'Sub-emotion'),
+                    decoration: InputDecoration(
+                      labelText: l10n.selectSubEmotion ?? 'Sub-emotion',
+                    ),
                     items: SubEmotion.values
                         .map(
                           (s) => DropdownMenuItem(
@@ -480,7 +486,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   const SizedBox(height: 8),
                   DropdownButtonFormField<ReasonCategory>(
                     value: selectedReason,
-                    decoration: InputDecoration(labelText: l10n.selectReason ?? 'Reason'),
+                    decoration: InputDecoration(
+                      labelText: l10n.selectReason ?? 'Reason',
+                    ),
                     items: ReasonCategory.values
                         .map(
                           (r) => DropdownMenuItem(
@@ -496,7 +504,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   const SizedBox(height: 8),
                   TextField(
                     controller: noteCtrl,
-                    decoration: InputDecoration(labelText: l10n.noteOptional ?? 'Note'),
+                    decoration: InputDecoration(
+                      labelText: l10n.noteOptional ?? 'Note',
+                    ),
                     maxLines: 3,
                   ),
                 ],
@@ -739,7 +749,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _getMoodColor(entry.mood.index + 1.0).withOpacity(0.1),
+                    color: _getMoodColor(
+                      entry.mood.index + 1.0,
+                    ).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
