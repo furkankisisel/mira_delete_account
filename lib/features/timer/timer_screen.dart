@@ -135,8 +135,6 @@ class _TimerScreenState extends State<TimerScreen>
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
           child: Column(
             children: [
-              _buildHabitSelector(),
-              const SizedBox(height: 12),
               _timeDisplay(
                 controller.formatDuration(controller.elapsed),
                 context,
@@ -231,8 +229,6 @@ class _TimerScreenState extends State<TimerScreen>
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
           child: Column(
             children: [
-              _buildHabitSelector(),
-              const SizedBox(height: 12),
               // Simple centered time display for countdown (removed circular progress ring)
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -335,8 +331,6 @@ class _TimerScreenState extends State<TimerScreen>
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
           child: Column(
             children: [
-              _buildHabitSelector(),
-              const SizedBox(height: 12),
               Text(phase, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
               _timeDisplay(controller.formattedTime, context),
@@ -403,52 +397,6 @@ class _TimerScreenState extends State<TimerScreen>
         ),
         const Divider(height: 1),
         Expanded(child: _buildHistoryList()),
-      ],
-    );
-  }
-
-  Widget _buildHabitSelector() {
-    final l10n = AppLocalizations.of(context);
-    final repo = HabitRepository.instance;
-    final timerHabits = repo.habits
-        .where((h) => h.habitType == HabitType.timer)
-        .toList();
-    if (timerHabits.isEmpty) return const SizedBox.shrink();
-    String? activeId = controller.activeTimerHabitId;
-    // Eğer mevcut seçili id yoksa ilkini ata (UI açıldığında otomatik)
-    if (activeId == null && timerHabits.isNotEmpty) {
-      activeId = timerHabits.first.id;
-      // Bildirimleri build sırasında tetiklememek için çerçeve sonrasına ertele
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        if (controller.activeTimerHabitId != activeId) {
-          controller.setActiveTimerHabit(activeId);
-        }
-      });
-    }
-    return Row(
-      children: [
-        Expanded(
-          child: DropdownButtonFormField<String>(
-            initialValue: activeId,
-            decoration: InputDecoration(
-              labelText: l10n.timerHabitLabel,
-              border: const OutlineInputBorder(),
-              isDense: true,
-            ),
-            items: timerHabits
-                .map(
-                  (h) => DropdownMenuItem<String>(
-                    value: h.id,
-                    child: Text(h.title),
-                  ),
-                )
-                .toList(),
-            onChanged: (val) {
-              controller.setActiveTimerHabit(val);
-            },
-          ),
-        ),
       ],
     );
   }

@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../features/habit/domain/habit_repository.dart';
 import '../../features/habit/domain/habit_types.dart';
+import '../../features/notifications/services/notification_service.dart';
 
 /// Zamanlayıcı modları
 enum TimerMode { stopwatch, countdown, pomodoro }
@@ -27,11 +30,32 @@ class TimerSession {
 
 /// Paneldeki mini widget ve tam ekran zamanlayıcı arasında paylaşılan denetleyici.
 class TimerController extends ChangeNotifier {
-  TimerController._();
+  TimerController._() {
+    // Set up notification action handler
+    NotificationService.instance.setTimerActionHandler(_handleNotificationAction);
+    // Initialize background service
+    _initializeBackgroundService();
+    // Setup MethodChannel for native timer actions
+    _setupMethodChannel();
+  }
   static final TimerController instance = TimerController._();
 
   Timer? _timer;
   DateTime? _currentStart; // aktif çalışma başlangıç zamanı
+  final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
+  static const MethodChannel _methodChannel = MethodChannel('com.example.mira/timer_actions');
+
+  void _setupMethodChannel() {
+    _methodChannel.setMethodCallHandler((call) async {
+      if (call.method == 'timerAction') {
+        final action = call.arguments as String?;
+        if (action != null) {
+          print('📱 Received native timer action: $action');
+          _handleNotificationAction(action);
+        }
+      }
+    });
+  }
 
   // Stopwatch (kronometre)
   Duration _elapsed = Duration.zero;
@@ -130,6 +154,8 @@ class TimerController extends ChangeNotifier {
     // Eğer daha önce başlamış ve pause edilmişse _currentStart null ise yeniden başlat
     _currentStart ??= DateTime.now();
     _timer = Timer.periodic(const Duration(seconds: 1), _onTick);
+    _updateNotification();
+    _startBackgroundService();
     notifyListeners();
   }
 
@@ -151,6 +177,8 @@ class TimerController extends ChangeNotifier {
         break;
     }
     _timer?.cancel();
+    _updateNotification();
+    _stopBackgroundService();
     notifyListeners();
   }
 
@@ -171,6 +199,8 @@ class TimerController extends ChangeNotifier {
         break;
     }
     _timer?.cancel();
+    NotificationService.instance.cancelTimerNotification();
+    _stopBackgroundService();
     notifyListeners();
   }
 
@@ -188,6 +218,8 @@ class TimerController extends ChangeNotifier {
     _countdownRunning = true;
     _currentStart ??= DateTime.now();
     _timer = Timer.periodic(const Duration(seconds: 1), _onTick);
+    _updateNotification();
+    _startBackgroundService();
     notifyListeners();
   }
 
@@ -198,6 +230,8 @@ class TimerController extends ChangeNotifier {
     _pomodoroRunning = true;
     _currentStart ??= DateTime.now();
     _timer = Timer.periodic(const Duration(seconds: 1), _onTick);
+    _updateNotification();
+    _startBackgroundService();
     notifyListeners();
   }
 
@@ -310,7 +344,54 @@ class TimerController extends ChangeNotifier {
         }
         break;
     }
+    _updateNotification();
     notifyListeners();
+  }
+
+  void _handleNotificationAction(String action) {
+    print('🔔 Notification action received: $action');
+    switch (action) {
+      case 'pause':
+        print('⏸️ Pausing timer...');
+        pause();
+        break;
+      case 'resume':
+        print('▶️ Resuming timer...');
+        switch (_activeMode) {
+          case TimerMode.stopwatch:
+            start();
+            break;
+          case TimerMode.countdown:
+            startCountdown();
+            break;
+          case TimerMode.pomodoro:
+            startPomodoro();
+            break;
+        }
+        break;
+      case 'stop':
+        print('⏹️ Stopping and saving timer...');
+        finish(); // Changed from reset() to finish() to save the session
+        break;
+      default:
+        print('❌ Unknown action: $action');
+    }
+  }
+
+  void _updateNotification() {
+    final String modeLabel = switch (_activeMode) {
+      TimerMode.stopwatch => 'Kronometre',
+      TimerMode.countdown => 'Geri Sayım',
+      TimerMode.pomodoro => _pomodoroWorkPhase ? 'Pomodoro - Çalışma' : 'Pomodoro - Mola',
+    };
+
+    final String time = formattedTime;
+    
+    NotificationService.instance.showTimerNotification(
+      title: modeLabel,
+      body: time,
+      isRunning: isRunning,
+    );
   }
 
   /// Bitir: O anki süreyi oturum olarak kaydet ve pending'e ekle
@@ -349,6 +430,8 @@ class TimerController extends ChangeNotifier {
         break;
     }
     _timer?.cancel();
+    NotificationService.instance.cancelTimerNotification();
+    _stopBackgroundService();
     notifyListeners();
   }
 
@@ -430,4 +513,74 @@ class TimerController extends ChangeNotifier {
     _pending = Duration.zero;
     notifyListeners();
   }
+
+  // Background Service Methods
+  Future<void> _initializeBackgroundService() async {
+    try {
+      await _backgroundService.configure(
+        iosConfiguration: IosConfiguration(
+          autoStart: false,
+          onForeground: onStart,
+          onBackground: onIosBackground,
+        ),
+        androidConfiguration: AndroidConfiguration(
+          onStart: onStart,
+          isForegroundMode: true,
+          autoStart: false,
+          autoStartOnBoot: false,
+        ),
+      );
+    } catch (e) {
+      print('Background service initialization error: $e');
+    }
+  }
+
+  Future<void> _startBackgroundService() async {
+    try {
+      final isRunning = await _backgroundService.isRunning();
+      if (!isRunning) {
+        await _backgroundService.startService();
+      }
+    } catch (e) {
+      print('Failed to start background service: $e');
+    }
+  }
+
+  Future<void> _stopBackgroundService() async {
+    try {
+      final isRunning = await _backgroundService.isRunning();
+      if (isRunning) {
+        _backgroundService.invoke('stop');
+      }
+    } catch (e) {
+      print('Failed to stop background service: $e');
+    }
+  }
+
+  @pragma('vm:entry-point')
+  static void onStart(ServiceInstance service) {
+    // This will be executed when the service starts
+    if (service is AndroidServiceInstance) {
+      service.on('stop').listen((event) {
+        service.stopSelf();
+      });
+    }
+
+    // Keep the service alive
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (service is AndroidServiceInstance) {
+        if (!await service.isForegroundService()) {
+          timer.cancel();
+          return;
+        }
+      }
+      // Service is running, timer controller handles the actual timer logic
+    });
+  }
+
+  @pragma('vm:entry-point')
+  static Future<bool> onIosBackground(ServiceInstance service) async {
+    return true;
+  }
 }
+
