@@ -16,7 +16,9 @@ class NotificationService {
   static const int _timerNotificationId = 9999;
 
   Future<void> initialize() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const iosSettings = DarwinInitializationSettings(
       requestSoundPermission: false,
       requestBadgePermission: false,
@@ -45,7 +47,8 @@ class NotificationService {
 
     await _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(androidChannel);
 
     _initialized = true;
@@ -57,7 +60,7 @@ class NotificationService {
     print('   actionId: ${response.actionId}');
     print('   payload: ${response.payload}');
     print('   notificationResponseType: ${response.notificationResponseType}');
-    
+
     // Check action ID first (for button taps)
     if (response.actionId != null && response.actionId!.isNotEmpty) {
       print('   ✅ Calling action handler with: ${response.actionId}');

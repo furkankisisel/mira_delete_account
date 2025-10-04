@@ -32,7 +32,9 @@ class TimerSession {
 class TimerController extends ChangeNotifier {
   TimerController._() {
     // Set up notification action handler
-    NotificationService.instance.setTimerActionHandler(_handleNotificationAction);
+    NotificationService.instance.setTimerActionHandler(
+      _handleNotificationAction,
+    );
     // Initialize background service
     _initializeBackgroundService();
     // Setup MethodChannel for native timer actions
@@ -42,8 +44,11 @@ class TimerController extends ChangeNotifier {
 
   Timer? _timer;
   DateTime? _currentStart; // aktif çalışma başlangıç zamanı
-  final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
-  static const MethodChannel _methodChannel = MethodChannel('com.example.mira/timer_actions');
+  final FlutterBackgroundService _backgroundService =
+      FlutterBackgroundService();
+  static const MethodChannel _methodChannel = MethodChannel(
+    'com.example.mira/timer_actions',
+  );
 
   void _setupMethodChannel() {
     _methodChannel.setMethodCallHandler((call) async {
@@ -382,11 +387,12 @@ class TimerController extends ChangeNotifier {
     final String modeLabel = switch (_activeMode) {
       TimerMode.stopwatch => 'Kronometre',
       TimerMode.countdown => 'Geri Sayım',
-      TimerMode.pomodoro => _pomodoroWorkPhase ? 'Pomodoro - Çalışma' : 'Pomodoro - Mola',
+      TimerMode.pomodoro =>
+        _pomodoroWorkPhase ? 'Pomodoro - Çalışma' : 'Pomodoro - Mola',
     };
 
     final String time = formattedTime;
-    
+
     NotificationService.instance.showTimerNotification(
       title: modeLabel,
       body: time,
@@ -583,4 +589,3 @@ class TimerController extends ChangeNotifier {
     return true;
   }
 }
-
