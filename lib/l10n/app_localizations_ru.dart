@@ -60,11 +60,69 @@ class AppLocalizationsRu extends AppLocalizations {
   String get appearance => 'Внешний вид';
 
   @override
-  String get notificationSettings => 'Bildirim ayarları';
+  String get notificationSettings => 'Настройки уведомлений';
 
   @override
   String get notificationSettingsSubtitle =>
-      'Bildirim tercihlerini yapılandırın';
+      'Настройте ваши предпочтения уведомлений';
+
+  @override
+  String get enableNotifications => 'Включить уведомления';
+
+  @override
+  String get notificationsMasterSubtitle =>
+      'Управление всеми уведомлениями приложения';
+
+  @override
+  String get notificationTypes => 'Типы уведомлений';
+
+  @override
+  String get habitReminders => 'Напоминания о привычках';
+
+  @override
+  String get habitRemindersSubtitle =>
+      'Ежедневные напоминания о ваших привычках';
+
+  @override
+  String get notificationBehavior => 'Поведение уведомлений';
+
+  @override
+  String get sound => 'Звук';
+
+  @override
+  String get soundSubtitle => 'Воспроизводить звук при уведомлениях';
+
+  @override
+  String get vibration => 'Вибрация';
+
+  @override
+  String get vibrationSubtitle => 'Вибрировать при уведомлениях';
+
+  @override
+  String get systemInfo => 'Системная информация';
+
+  @override
+  String get timezone => 'Часовой пояс';
+
+  @override
+  String get notificationPermission => 'Разрешение на уведомления';
+
+  @override
+  String get exactAlarmPermission =>
+      'Разрешение на точный будильник (Android 12+)';
+
+  @override
+  String get granted => 'Предоставлено';
+
+  @override
+  String get notGranted => 'Не предоставлено';
+
+  @override
+  String get importantNotice => 'Важное уведомление';
+
+  @override
+  String get notificationTroubleshooting =>
+      'Для правильной работы уведомлений:\n\n• ОТКЛЮЧИТЕ оптимизацию батареи\n• РАЗРЕШИТЕ фоновую активность\n• Убедитесь, что разрешения на уведомления ВКЛЮЧЕНЫ\n• Проверьте режим \'Не беспокоить\'';
 
   @override
   String approxVisionDurationDays(Object days) {
@@ -308,6 +366,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get customEmojiOptional => 'Пользовательский эмодзи (необязательно)';
 
   @override
+  String get reminder => 'Напоминание';
+
+  @override
+  String get enableReminder => 'Включить напоминание';
+
+  @override
+  String get selectTime => 'Выбрать время';
+
+  @override
   String get customFrequency => 'Индивидуально';
 
   @override
@@ -416,9 +483,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get emojiLabel => 'Эмодзи';
-
-  @override
-  String get enableReminder => 'Включить напоминание';
 
   @override
   String get endDate => 'Дата окончания';
@@ -1282,40 +1346,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String get weekdaysShortMon => 'Пн';
 
   @override
-  String get fortuneTitle => 'Karar Yumurtaları';
+  String get fortuneTitle => 'Яйца судьбы';
 
   @override
-  String get fortuneQuestionPrompt => 'Aklındaki soruyu yaz';
+  String get fortuneQuestionPrompt => 'Задайте свой вопрос';
 
   @override
-  String get fortuneQuestionHint =>
-      'Örn: Bu hafta yeni bir şey denemeli miyim?';
+  String get fortuneQuestionHint => 'Что вы хотели бы узнать?';
 
   @override
-  String get fortuneEggsSubtitle => 'Aşağıdan bir yumurta seç';
+  String get fortuneEggsSubtitle => 'Выберите яйцо, чтобы узнать свою судьбу';
 
   @override
-  String get fortuneResultTitle => 'Cevabın';
+  String get fortuneResultTitle => 'Ваша судьба';
 
   @override
-  String get fortuneNoQuestion => 'Bir soru yazmadın';
+  String get fortuneNoQuestion => 'Вы еще не задали вопрос';
 
   @override
-  String get fortuneDisclaimer => 'Eğlence amaçlıdır.';
+  String get fortuneDisclaimer =>
+      'Гадание предназначено только для развлечения';
 
   @override
   String fortuneEggSemantic(int index) {
-    return 'Yumurta $index';
+    return 'Яйцо судьбы $index';
   }
 
   @override
-  String get fortunePlay => 'Karar Yumurtaları';
+  String get fortunePlay => 'Играть';
 
   @override
-  String get shuffle => 'Karıştır';
+  String get shuffle => 'Перемешать';
 
   @override
-  String get ok => 'Tamam';
+  String get ok => 'ОК';
 
   @override
   String get weekdaysShortSat => 'Сб';
@@ -1559,272 +1623,272 @@ class AppLocalizationsRu extends AppLocalizations {
   String get taskTitleRequired => 'Требуется название задачи';
 
   @override
-  String get moodFlowTitle => 'Ruh Halin Nasıl?';
+  String get moodFlowTitle => 'Как вы себя чувствуете?';
 
   @override
-  String get moodFlowSubtitle => 'Bugünkü ruh halini seç';
+  String get moodFlowSubtitle => 'Отслеживайте свое эмоциональное состояние';
 
   @override
-  String get moodSelection => 'Ruh Hali Seçimi';
+  String get moodSelection => 'Выбор настроения';
 
   @override
-  String get selectYourCurrentMood => 'Şu anki ruh halini seç';
+  String get selectYourCurrentMood => 'Выберите ваше текущее настроение';
 
   @override
-  String get moodTerribleDesc => 'Çok kötü hissediyorum';
+  String get moodTerribleDesc => 'Чувствую себя очень плохо';
 
   @override
-  String get moodBadDesc => 'Kötü hissediyorum';
+  String get moodBadDesc => 'Переживаю трудное время';
 
   @override
-  String get moodNeutralDesc => 'Normal hissediyorum';
+  String get moodNeutralDesc => 'Чувствую себя нормально';
 
   @override
-  String get moodGoodDesc => 'İyi hissediyorum';
+  String get moodGoodDesc => 'Чувствую себя позитивно';
 
   @override
-  String get moodExcellentDesc => 'Harika hissediyorum';
+  String get moodExcellentDesc => 'Чувствую себя потрясающе';
 
   @override
-  String get feelingMoreSpecific => 'Bu duyguyu daha ayrıntılı tarif edelim';
+  String get feelingMoreSpecific => 'Можете быть более конкретным?';
 
   @override
-  String get selectSubEmotionDesc => 'Hangi alt duygu seni en iyi tanımlıyor?';
+  String get selectSubEmotionDesc => 'Выберите более конкретную эмоцию';
 
   @override
-  String get whatsTheCause => 'Bu durumun sebebi nedir?';
+  String get whatsTheCause => 'Какая причина?';
 
   @override
-  String get selectReasonDesc => 'Günümüzü en çok hangi faktör etkiledi?';
+  String get selectReasonDesc => 'Выберите, что влияет на ваше настроение';
 
   @override
-  String get moodNeutral => 'Normal';
+  String get moodNeutral => 'Нейтральное';
 
   @override
-  String get moodExcellent => 'Mükemmel';
+  String get moodExcellent => 'Отличное';
 
   @override
-  String get howAreYouFeeling => 'Kendini nasıl hissediyorsun?';
+  String get howAreYouFeeling => 'Как вы себя чувствуете?';
 
   @override
-  String get selectYourMood => 'Ruh halini seç';
+  String get selectYourMood => 'Выберите настроение';
 
   @override
-  String get subEmotionSelection => 'Bu duyguyu daha detaylı tarif edelim';
+  String get subEmotionSelection => 'Выбор под-эмоции';
 
   @override
-  String get selectSubEmotion => 'Alt duygu seç';
+  String get selectSubEmotion => 'Выберите под-эмоцию';
 
   @override
-  String get subEmotionExhausted => 'Bitkin';
+  String get subEmotionExhausted => 'Истощённый';
 
   @override
-  String get subEmotionHelpless => 'Çaresiz';
+  String get subEmotionHelpless => 'Беспомощный';
 
   @override
-  String get subEmotionHopeless => 'Umutsuz';
+  String get subEmotionHopeless => 'Безнадёжный';
 
   @override
-  String get subEmotionHurt => 'İncinmiş';
+  String get subEmotionHurt => 'Обиженный';
 
   @override
-  String get subEmotionDrained => 'Boşalmış';
+  String get subEmotionDrained => 'Измотанный';
 
   @override
-  String get subEmotionAngry => 'Kızgın';
+  String get subEmotionAngry => 'Злой';
 
   @override
-  String get subEmotionSad => 'Üzgün';
+  String get subEmotionSad => 'Грустный';
 
   @override
-  String get subEmotionAnxious => 'Endişeli';
+  String get subEmotionAnxious => 'Тревожный';
 
   @override
-  String get subEmotionStressed => 'Stresli';
+  String get subEmotionStressed => 'Напряжённый';
 
   @override
-  String get subEmotionDemoralized => 'Morali Bozuk';
+  String get subEmotionDemoralized => 'Деморализованный';
 
   @override
-  String get subEmotionIndecisive => 'Kararsız';
+  String get subEmotionIndecisive => 'Нерешительный';
 
   @override
-  String get subEmotionTired => 'Yorgun';
+  String get subEmotionTired => 'Уставший';
 
   @override
-  String get subEmotionOrdinary => 'Sıradan';
+  String get subEmotionOrdinary => 'Обычный';
 
   @override
-  String get subEmotionCalm => 'Sakin';
+  String get subEmotionCalm => 'Спокойный';
 
   @override
-  String get subEmotionEmpty => 'Boş';
+  String get subEmotionEmpty => 'Опустошённый';
 
   @override
-  String get subEmotionHappy => 'Mutlu';
+  String get subEmotionHappy => 'Счастливый';
 
   @override
-  String get subEmotionCheerful => 'Neşeli';
+  String get subEmotionCheerful => 'Весёлый';
 
   @override
-  String get subEmotionExcited => 'Heyecanlı';
+  String get subEmotionExcited => 'Взволнованный';
 
   @override
-  String get subEmotionEnthusiastic => 'Coşkulu';
+  String get subEmotionEnthusiastic => 'Энтузиазм';
 
   @override
-  String get subEmotionDetermined => 'Kararlı';
+  String get subEmotionDetermined => 'Решительный';
 
   @override
-  String get subEmotionMotivated => 'Motive';
+  String get subEmotionMotivated => 'Мотивированный';
 
   @override
-  String get subEmotionAmazing => 'Harika';
+  String get subEmotionAmazing => 'Amazing';
 
   @override
-  String get subEmotionEnergetic => 'Enerjik';
+  String get subEmotionEnergetic => 'Energetic';
 
   @override
-  String get subEmotionPeaceful => 'Huzurlu';
+  String get subEmotionPeaceful => 'Peaceful';
 
   @override
-  String get subEmotionGrateful => 'Minnettar';
+  String get subEmotionGrateful => 'Grateful';
 
   @override
-  String get subEmotionLoving => 'Sevgi Dolu';
+  String get subEmotionLoving => 'Loving';
 
   @override
-  String get reasonSelection => 'Bu durumun sebebi nedir?';
+  String get reasonSelection => 'What\'s the reason for this state?';
 
   @override
-  String get selectReason => 'Sebep seç';
+  String get selectReason => 'Select reason';
 
   @override
-  String get reasonAcademic => 'Akademik';
+  String get reasonAcademic => 'Academic';
 
   @override
-  String get reasonWork => 'İş';
+  String get reasonWork => 'Работа';
 
   @override
-  String get reasonRelationship => 'İlişki';
+  String get reasonRelationship => 'Relationship';
 
   @override
-  String get reasonFinance => 'Finans';
+  String get reasonFinance => 'Finance';
 
   @override
-  String get reasonHealth => 'Sağlık';
+  String get reasonHealth => 'Здоровье';
 
   @override
-  String get reasonSocial => 'Sosyal';
+  String get reasonSocial => 'Social';
 
   @override
-  String get reasonPersonalGrowth => 'Kişisel Gelişim';
+  String get reasonPersonalGrowth => 'Personal Growth';
 
   @override
-  String get reasonWeather => 'Hava Durumu';
+  String get reasonWeather => 'Weather';
 
   @override
-  String get reasonOther => 'Diğer';
+  String get reasonOther => 'Другое';
 
   @override
-  String get journalEntry => 'Günlük Girişi';
+  String get journalEntry => 'Journal Entry';
 
   @override
-  String get tellUsMore => 'Biraz daha anlat';
+  String get tellUsMore => 'Tell us more';
 
   @override
-  String get journalEntryDesc => 'Bugün hakkında yazmak istediğin var mı?';
+  String get journalEntryDesc =>
+      'Is there anything you\'d like to write about today?';
 
   @override
-  String get yourMoodToday => 'Bugünkü Ruh Halin';
+  String get yourMoodToday => 'Your Mood Today';
 
   @override
-  String get journalHint => 'Bugün hakkında yazmak istediğin bir şey...';
+  String get journalHint => 'Something you\'d like to write about today...';
 
   @override
-  String get saving => 'Kaydediliyor...';
+  String get saving => 'Saving...';
 
   @override
-  String get saveEntry => 'Girişi Kaydet';
+  String get saveEntry => 'Save Entry';
 
   @override
-  String get entrySaved => 'Giriş başarıyla kaydedildi!';
+  String get entrySaved => 'Entry saved successfully!';
 
   @override
-  String get saveError => 'Kaydederken bir hata oluştu';
+  String get saveError => 'An error occurred while saving';
 
   @override
-  String get moodFlow => 'Ruh Hali';
+  String get moodFlow => 'Mood';
 
   @override
-  String get moodTracker => 'Ruh Hali Takibi';
+  String get moodTracker => 'Mood Tracker';
 
   @override
-  String get continueButton => 'Devam Et';
+  String get continueButton => 'Continue';
 
   @override
-  String get skip => 'Geç';
+  String get skip => 'Пропустить';
 
   @override
-  String get moodAnalytics => 'Mood Analizi';
+  String get moodAnalytics => 'Mood Analytics';
 
   @override
-  String get overview => 'Genel Bakış';
+  String get overview => 'Overview';
 
   @override
-  String get trends => 'Trendler';
+  String get trends => 'Trends';
 
   @override
-  String get history => 'Geçmiş';
+  String get history => 'History';
 
   @override
-  String get noMoodData => 'Henüz mood verisi yok';
+  String get noMoodData => 'No mood data yet';
 
   @override
-  String get startTrackingMood =>
-      'Analitikleri görmek için mood\'unuzu takip etmeye başlayın';
+  String get startTrackingMood => 'Start tracking your mood to see analytics';
 
   @override
-  String get totalEntries => 'Toplam Girişler';
+  String get totalEntries => 'Total Entries';
 
   @override
-  String get averageMood => 'Ortalama Mood';
+  String get averageMood => 'Среднее настроение';
 
   @override
-  String get moodDistribution => 'Mood Dağılımı';
+  String get moodDistribution => 'Mood Distribution';
 
   @override
-  String get topCategories => 'Üst Kategoriler';
+  String get topCategories => 'Top Categories';
 
   @override
-  String get mostCommonMood => 'En Yaygın Mood';
+  String get mostCommonMood => 'Most Common Mood';
 
   @override
-  String get mostCommonEmotion => 'En Yaygın Duygu';
+  String get mostCommonEmotion => 'Most Common Emotion';
 
   @override
-  String get mostCommonReason => 'En Yaygın Sebep';
+  String get mostCommonReason => 'Most Common Reason';
 
   @override
-  String get noTrendData => 'Trend için yeterli veri yok';
+  String get noTrendData => 'Not enough data for trends';
 
   @override
-  String get moodTrend => 'Mood Trendi (Son 30 Gün)';
+  String get moodTrend => 'Mood Trend (Last 30 Days)';
 
   @override
-  String get insights => 'İçgörüler';
+  String get insights => 'Insights';
 
   @override
-  String get moodImproving => 'Mood\'unuz gelişiyor!';
+  String get moodImproving => 'Your mood is improving!';
 
   @override
-  String get moodDeclining => 'Mood\'unuz düşüyor gibi görünüyor';
+  String get moodDeclining => 'Your mood seems to be declining';
 
   @override
-  String get moodStable => 'Mood\'unuz nispeten stabil';
+  String get moodStable => 'Your mood is relatively stable';
 
   @override
-  String get noHistory => 'Mood geçmişi yok';
+  String get noHistory => 'Нет истории';
 
   @override
   String get habitNotFound => 'Привычка не найдена.';
@@ -1843,4 +1907,281 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get typeNotChangeable => 'Тип нельзя изменить';
+
+  @override
+  String get onboardingWelcomeTitle => 'Добро пожаловать в Mira';
+
+  @override
+  String get onboardingWelcomeDesc =>
+      'Ваш персональный трекер привычек, который растёт вместе с вами. Давайте откроем вашу уникальную личность и предложим привычки, созданные специально для вас.';
+
+  @override
+  String get onboardingQuizIntro =>
+      'Ответьте на несколько вопросов, чтобы помочь нам лучше понять вашу личность. Это основано на научно подтверждённых психологических исследованиях.';
+
+  @override
+  String get onboardingQ1 =>
+      'Мне нравится пробовать новый опыт и исследовать незнакомое.';
+
+  @override
+  String get onboardingQ2 =>
+      'Я поддерживаю порядок вокруг себя и предпочитаю структурированный распорядок дня.';
+
+  @override
+  String get onboardingQ3 =>
+      'Я чувствую прилив энергии среди людей и люблю социальные встречи.';
+
+  @override
+  String get onboardingQ4 =>
+      'Я предпочитаю работать с другими и считаю сотрудничество эффективнее конкуренции.';
+
+  @override
+  String get onboardingQ5 =>
+      'Я спокойно справляюсь со стрессовыми ситуациями и редко испытываю тревогу.';
+
+  @override
+  String get onboardingQ6 =>
+      'Мне нравятся творческие занятия, такие как искусство, музыка или письмо.';
+
+  @override
+  String get onboardingQ7 =>
+      'Я ставлю перед собой ясные цели и усердно работаю, чтобы их достичь.';
+
+  @override
+  String get onboardingQ8 =>
+      'Я предпочитаю групповые занятия, а не проводить время в одиночестве.';
+
+  @override
+  String get onboardingQ9 =>
+      'Перед принятием решений я часто учитываю чувства других людей.';
+
+  @override
+  String get onboardingQ10 => 'Я заранее планирую важные события и задачи.';
+
+  @override
+  String get onboardingQ11 =>
+      'Мне нравится пробовать разные подходы, а не придерживаться одного метода.';
+
+  @override
+  String get onboardingQ12 =>
+      'Я сохраняю спокойствие под давлением и быстро восстанавливаюсь после неудач.';
+
+  @override
+  String get likertStronglyDisagree => 'Совершенно не согласен';
+
+  @override
+  String get likertDisagree => 'Не согласен';
+
+  @override
+  String get likertNeutral => 'Нейтрально';
+
+  @override
+  String get likertAgree => 'Согласен';
+
+  @override
+  String get likertStronglyAgree => 'Полностью согласен';
+
+  @override
+  String get characterTypePlanner => 'The Planner';
+
+  @override
+  String get characterDescPlanner =>
+      'You\'re organized, goal-oriented, and thrive on structure. You excel at turning dreams into actionable plans and following through with discipline.';
+
+  @override
+  String get characterTypeExplorer => 'The Explorer';
+
+  @override
+  String get characterDescExplorer =>
+      'You\'re curious, creative, and love variety. You thrive on learning new things and trying different approaches to life\'s challenges.';
+
+  @override
+  String get characterTypeSocialConnector => 'The Social Connector';
+
+  @override
+  String get characterDescSocialConnector =>
+      'You\'re warm, empathetic, and energized by relationships. You find meaning in connecting with others and building strong communities.';
+
+  @override
+  String get characterTypeBalancedMindful => 'The Balanced Mindful';
+
+  @override
+  String get characterDescBalancedMindful =>
+      'You\'re calm, stable, and value inner peace. You excel at maintaining balance and approaching life with mindfulness and composure.';
+
+  @override
+  String get yourCharacterType => 'Your Character Type';
+
+  @override
+  String get recommendedHabits => 'Recommended Habits for You';
+
+  @override
+  String get selectHabitsToAdd =>
+      'Выберите привычки, которые вы хотите добавить в свой ежедневный распорядок:';
+
+  @override
+  String get startJourney => 'Начать путь';
+
+  @override
+  String get skipOnboarding => 'Пропустить';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get habitPlannerMorningRoutine => 'Morning Routine';
+
+  @override
+  String get habitPlannerMorningRoutineDesc =>
+      'Start each day with a structured morning routine to set the tone for productivity.';
+
+  @override
+  String get habitPlannerWeeklyReview => 'Weekly Review';
+
+  @override
+  String get habitPlannerWeeklyReviewDesc =>
+      'Review your week\'s progress and plan for the next week every Sunday.';
+
+  @override
+  String get habitPlannerGoalSetting => 'Monthly Goal Setting';
+
+  @override
+  String get habitPlannerGoalSettingDesc =>
+      'Set specific, measurable goals for the month ahead.';
+
+  @override
+  String get habitPlannerTaskPrioritization => 'Daily Task Prioritization';
+
+  @override
+  String get habitPlannerTaskPrioritizationDesc =>
+      'Identify your top 3 priorities for the day each morning.';
+
+  @override
+  String get habitPlannerTimeBlocking => 'Time Blocking';
+
+  @override
+  String get habitPlannerTimeBlockingDesc =>
+      'Schedule your day in focused time blocks for deep work.';
+
+  @override
+  String get habitExplorerLearnNewSkill => 'Learn Something New';
+
+  @override
+  String get habitExplorerLearnNewSkillDesc =>
+      'Dedicate time each week to learning a new skill or subject.';
+
+  @override
+  String get habitExplorerTryNewActivity => 'Try a New Activity';
+
+  @override
+  String get habitExplorerTryNewActivityDesc =>
+      'Step out of your comfort zone and experience something different.';
+
+  @override
+  String get habitExplorerReadDiverse => 'Read Diverse Content';
+
+  @override
+  String get habitExplorerReadDiverseDesc =>
+      'Read books, articles, or content from different genres and perspectives.';
+
+  @override
+  String get habitExplorerCreativeProject => 'Creative Project Time';
+
+  @override
+  String get habitExplorerCreativeProjectDesc =>
+      'Work on a creative project that sparks your imagination.';
+
+  @override
+  String get habitExplorerExplorePlace => 'Explore a New Place';
+
+  @override
+  String get habitExplorerExplorePlaceDesc =>
+      'Visit a new neighborhood, park, or location in your area.';
+
+  @override
+  String get habitSocialCallFriend => 'Call a Friend';
+
+  @override
+  String get habitSocialCallFriendDesc =>
+      'Reach out to a friend or family member for a meaningful conversation.';
+
+  @override
+  String get habitSocialGroupActivity => 'Join Group Activity';
+
+  @override
+  String get habitSocialGroupActivityDesc =>
+      'Participate in a group activity or social event.';
+
+  @override
+  String get habitSocialVolunteer => 'Volunteer';
+
+  @override
+  String get habitSocialVolunteerDesc =>
+      'Give back to your community through volunteer work.';
+
+  @override
+  String get habitSocialFamilyTime => 'Quality Family Time';
+
+  @override
+  String get habitSocialFamilyTimeDesc =>
+      'Spend dedicated time with family members without distractions.';
+
+  @override
+  String get habitSocialCompliment => 'Give a Genuine Compliment';
+
+  @override
+  String get habitSocialComplimentDesc =>
+      'Brighten someone\'s day with a sincere compliment.';
+
+  @override
+  String get habitMindfulMeditation => 'Meditation';
+
+  @override
+  String get habitMindfulMeditationDesc =>
+      'Practice mindfulness meditation for 10-15 minutes.';
+
+  @override
+  String get habitMindfulGratitude => 'Gratitude Practice';
+
+  @override
+  String get habitMindfulGratitudeDesc =>
+      'Write down three things you\'re grateful for today.';
+
+  @override
+  String get habitMindfulNatureWalk => 'Nature Walk';
+
+  @override
+  String get habitMindfulNatureWalkDesc =>
+      'Take a mindful walk in nature, paying attention to your surroundings.';
+
+  @override
+  String get habitMindfulBreathing => 'Deep Breathing Exercise';
+
+  @override
+  String get habitMindfulBreathingDesc =>
+      'Practice deep breathing techniques to center yourself.';
+
+  @override
+  String get habitMindfulJournaling => 'Reflective Journaling';
+
+  @override
+  String get habitMindfulJournalingDesc =>
+      'Journal your thoughts and reflections for self-awareness.';
+
+  @override
+  String habitAddSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits added',
+      one: '1 habit added',
+      zero: 'No habits added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitAddError(Object error) {
+    return 'Error adding habits: $error';
+  }
 }

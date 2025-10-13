@@ -1093,41 +1093,47 @@ class _FreeformBoardState extends State<_FreeformBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         _size = Size(constraints.maxWidth, constraints.maxHeight);
         // Render in reverse so index 0 is painted last (on top).
-        return Stack(
-          children: [
-            for (final v in widget.visions.reversed)
-              _DraggableVision(
-                key: ValueKey('${v.id}_${v.createdAt.millisecondsSinceEpoch}'),
-                vision: v,
-                size: _size!,
-                onTap: () => widget.onTap(v),
-                onLongPress: () => widget.onMenu(v),
-                onChanged: (x, y, s) => widget.onChanged(v.id, x, y, s),
-                roundCorners: widget.roundCorners,
-                showText: widget.showText,
-                showProgress: widget.showProgress,
-              ),
-            // Render freeform images above visions, below texts
-            for (final im in widget.images.reversed)
-              _DraggableImageSticker(
-                image: im,
-                size: _size!,
-                onLongPress: () => widget.onImageMenu(im),
-                onChanged: (x, y, s) => widget.onImageChanged(im.id, x, y, s),
-              ),
-            // Render text stickers above visions
-            for (final t in widget.texts.reversed)
-              _DraggableTextSticker(
-                text: t,
-                size: _size!,
-                onLongPress: () => widget.onTextMenu(t),
-                onChanged: (x, y, s) => widget.onTextChanged(t.id, x, y, s),
-              ),
-          ],
+        return Container(
+          color: theme.scaffoldBackgroundColor,
+          child: Stack(
+            children: [
+              for (final v in widget.visions.reversed)
+                _DraggableVision(
+                  key: ValueKey(
+                    '${v.id}_${v.createdAt.millisecondsSinceEpoch}',
+                  ),
+                  vision: v,
+                  size: _size!,
+                  onTap: () => widget.onTap(v),
+                  onLongPress: () => widget.onMenu(v),
+                  onChanged: (x, y, s) => widget.onChanged(v.id, x, y, s),
+                  roundCorners: widget.roundCorners,
+                  showText: widget.showText,
+                  showProgress: widget.showProgress,
+                ),
+              // Render freeform images above visions, below texts
+              for (final im in widget.images.reversed)
+                _DraggableImageSticker(
+                  image: im,
+                  size: _size!,
+                  onLongPress: () => widget.onImageMenu(im),
+                  onChanged: (x, y, s) => widget.onImageChanged(im.id, x, y, s),
+                ),
+              // Render text stickers above visions
+              for (final t in widget.texts.reversed)
+                _DraggableTextSticker(
+                  text: t,
+                  size: _size!,
+                  onLongPress: () => widget.onTextMenu(t),
+                  onChanged: (x, y, s) => widget.onTextChanged(t.id, x, y, s),
+                ),
+            ],
+          ),
         );
       },
     );
@@ -1282,6 +1288,11 @@ class _FreeformCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Color(vision.colorValue);
+    // Scale font sizes based on card width to prevent overflow
+    final emojiFontSize = (width * 0.25).clamp(16.0, 40.0);
+    final titleFontSize = (width * 0.1).clamp(10.0, 16.0);
+    final spacing = (width * 0.05).clamp(4.0, 8.0);
+
     // Hide any date-related info on freeform cards
     return SizedBox(
       width: width,
@@ -1311,26 +1322,32 @@ class _FreeformCard extends StatelessWidget {
             // Date badge and expired overlay removed per requirement
             if (showText)
               Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (vision.coverImage == null ||
-                        vision.coverImage!.isEmpty) ...[
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.1),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (vision.coverImage == null ||
+                          vision.coverImage!.isEmpty) ...[
+                        Text(
+                          vision.emoji ?? '🎯',
+                          style: TextStyle(fontSize: emojiFontSize),
+                        ),
+                        SizedBox(height: spacing),
+                      ],
                       Text(
-                        vision.emoji ?? '🎯',
-                        style: const TextStyle(fontSize: 40),
+                        vision.title,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleFontSize,
+                        ),
                       ),
-                      const SizedBox(height: 8),
                     ],
-                    Text(
-                      vision.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             if (!showText &&
@@ -1338,7 +1355,7 @@ class _FreeformCard extends StatelessWidget {
               Center(
                 child: Text(
                   vision.emoji ?? '🎯',
-                  style: const TextStyle(fontSize: 40),
+                  style: TextStyle(fontSize: emojiFontSize),
                 ),
               ),
             if (showProgress)
@@ -1653,95 +1670,103 @@ class _Board extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1,
-      ),
-      itemCount: visions.length,
-      itemBuilder: (_, i) {
-        final v = visions[i];
-        final color = Color(v.colorValue);
-        // Date badge removed: no date/off state computed for cards
-        return GestureDetector(
-          onTap: () => onTap(v),
-          onLongPress: () => onMenu(v),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (v.coverImage != null && v.coverImage!.isNotEmpty)
-                  // In board grid, we want a full-bleed background look (cover)
-                  ColoredBox(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    child:
-                        (v.coverImage!.startsWith('/') ||
-                            v.coverImage!.contains('\\') ||
-                            v.coverImage!.contains(':\\'))
-                        ? Image.file(io.File(v.coverImage!), fit: BoxFit.cover)
-                        : Image.asset(v.coverImage!, fit: BoxFit.cover),
-                  )
-                else
+    final theme = Theme.of(context);
+
+    return Container(
+      color: theme.scaffoldBackgroundColor,
+      child: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+          childAspectRatio: 1,
+        ),
+        itemCount: visions.length,
+        itemBuilder: (_, i) {
+          final v = visions[i];
+          final color = Color(v.colorValue);
+          // Date badge removed: no date/off state computed for cards
+          return GestureDetector(
+            onTap: () => onTap(v),
+            onLongPress: () => onMenu(v),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (v.coverImage != null && v.coverImage!.isNotEmpty)
+                    // In board grid, we want a full-bleed background look (cover)
+                    ColoredBox(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      child:
+                          (v.coverImage!.startsWith('/') ||
+                              v.coverImage!.contains('\\') ||
+                              v.coverImage!.contains(':\\'))
+                          ? Image.file(
+                              io.File(v.coverImage!),
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(v.coverImage!, fit: BoxFit.cover),
+                    )
+                  else
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            color.withValues(alpha: 0.85),
+                            color.withValues(alpha: 0.45),
+                          ],
+                        ),
+                      ),
+                    ),
+                  // Readability overlay (slight dark tint)
                   DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                         colors: [
-                          color.withValues(alpha: 0.85),
-                          color.withValues(alpha: 0.45),
+                          Colors.black.withValues(alpha: 0.12),
+                          Colors.black.withValues(alpha: 0.32),
                         ],
                       ),
                     ),
                   ),
-                // Readability overlay (slight dark tint)
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.12),
-                        Colors.black.withValues(alpha: 0.32),
+                  // Date badge and expired overlay removed per requirement
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (v.coverImage == null || v.coverImage!.isEmpty)
+                          Text(
+                            v.emoji ?? '🎯',
+                            style: const TextStyle(fontSize: 40),
+                          ),
+                        if (v.coverImage == null || v.coverImage!.isEmpty)
+                          const SizedBox(height: 8),
+                        Text(
+                          v.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: _ProgressBar(vision: v, color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
-                ),
-                // Date badge and expired overlay removed per requirement
-                Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (v.coverImage == null || v.coverImage!.isEmpty)
-                        Text(
-                          v.emoji ?? '🎯',
-                          style: const TextStyle(fontSize: 40),
-                        ),
-                      if (v.coverImage == null || v.coverImage!.isEmpty)
-                        const SizedBox(height: 8),
-                      Text(
-                        v.title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: _ProgressBar(vision: v, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

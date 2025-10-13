@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mira/main.dart';
@@ -13,10 +14,13 @@ import 'package:mira/l10n/app_localizations.dart';
 
 void main() {
   testWidgets('Mira app loads correctly', (WidgetTester tester) async {
+    // Ensure onboarding is marked completed for test run
+    SharedPreferences.setMockInitialValues({'onboarding_completed': true});
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MiraApp());
-    // Avoid pumpAndSettle to prevent hanging on ongoing animations/streams.
-    await tester.pump();
+    // Let splash screen (2s) run and settle into the home screen
+    await tester.pump(const Duration(milliseconds: 2100));
+    await tester.pumpAndSettle();
 
     // Verify that the navigation bar is present.
     expect(find.byType(NavigationBar), findsOneWidget);

@@ -60,11 +60,66 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appearance => 'दिखावट';
 
   @override
-  String get notificationSettings => 'Bildirim ayarları';
+  String get notificationSettings => 'सूचना सेटिंग्स';
 
   @override
   String get notificationSettingsSubtitle =>
-      'Bildirim tercihlerini yapılandırın';
+      'अपनी सूचना प्राथमिकताएं कॉन्फ़िगर करें';
+
+  @override
+  String get enableNotifications => 'सूचनाएं सक्षम करें';
+
+  @override
+  String get notificationsMasterSubtitle => 'सभी ऐप सूचनाओं को नियंत्रित करें';
+
+  @override
+  String get notificationTypes => 'सूचना प्रकार';
+
+  @override
+  String get habitReminders => 'आदत अनुस्मारक';
+
+  @override
+  String get habitRemindersSubtitle => 'आपकी आदतों के लिए दैनिक अनुस्मारक';
+
+  @override
+  String get notificationBehavior => 'सूचना व्यवहार';
+
+  @override
+  String get sound => 'ध्वनि';
+
+  @override
+  String get soundSubtitle => 'सूचनाओं के साथ ध्वनि बजाएं';
+
+  @override
+  String get vibration => 'कंपन';
+
+  @override
+  String get vibrationSubtitle => 'सूचनाओं के साथ कंपन करें';
+
+  @override
+  String get systemInfo => 'सिस्टम जानकारी';
+
+  @override
+  String get timezone => 'समय क्षेत्र';
+
+  @override
+  String get notificationPermission => 'सूचना अनुमति';
+
+  @override
+  String get exactAlarmPermission => 'सटीक अलार्म अनुमति (एंड्रॉइड 12+)';
+
+  @override
+  String get granted => 'प्रदान किया गया';
+
+  @override
+  String get notGranted => 'प्रदान नहीं किया गया';
+
+  @override
+  String get importantNotice => 'महत्वपूर्ण सूचना';
+
+  @override
+  String get notificationTroubleshooting =>
+      'सूचनाओं को ठीक से काम करने के लिए:\n\n• बैटरी अनुकूलन बंद करें\n• पृष्ठभूमि गतिविधि की अनुमति दें\n• सुनिश्चित करें कि सूचना अनुमतियाँ चालू हैं\n• \'परेशान न करें\' मोड जांचें';
 
   @override
   String approxVisionDurationDays(Object days) {
@@ -307,6 +362,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get customEmojiOptional => 'कस्टम इमोजी (वैकल्पिक)';
 
   @override
+  String get reminder => 'अनुस्मारक';
+
+  @override
+  String get enableReminder => 'अनुस्मारक सक्षम करें';
+
+  @override
+  String get selectTime => 'समय चुनें';
+
+  @override
   String get customFrequency => 'कस्टम';
 
   @override
@@ -414,9 +478,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get emojiLabel => 'इमोजी';
-
-  @override
-  String get enableReminder => 'अनुस्मारक सक्षम करें';
 
   @override
   String get endDate => 'अंतिम तिथि';
@@ -1271,40 +1332,41 @@ class AppLocalizationsHi extends AppLocalizations {
   String get weekdaysShortMon => 'सोम';
 
   @override
-  String get fortuneTitle => 'Karar Yumurtaları';
+  String get fortuneTitle => 'भाग्य अंडे';
 
   @override
-  String get fortuneQuestionPrompt => 'Aklındaki soruyu yaz';
+  String get fortuneQuestionPrompt => 'अपना सवाल पूछें';
 
   @override
-  String get fortuneQuestionHint =>
-      'Örn: Bu hafta yeni bir şey denemeli miyim?';
+  String get fortuneQuestionHint => 'आप क्या जानना चाहेंगे?';
 
   @override
-  String get fortuneEggsSubtitle => 'Aşağıdan bir yumurta seç';
+  String get fortuneEggsSubtitle =>
+      'अपना भाग्य प्रकट करने के लिए एक अंडा चुनें';
 
   @override
-  String get fortuneResultTitle => 'Cevabın';
+  String get fortuneResultTitle => 'आपका भाग्य';
 
   @override
-  String get fortuneNoQuestion => 'Bir soru yazmadın';
+  String get fortuneNoQuestion => 'आपने अभी तक कोई सवाल नहीं पूछा है';
 
   @override
-  String get fortuneDisclaimer => 'Eğlence amaçlıdır.';
+  String get fortuneDisclaimer =>
+      'भाग्य बताना केवल मनोरंजन उद्देश्यों के लिए है';
 
   @override
   String fortuneEggSemantic(int index) {
-    return 'Yumurta $index';
+    return 'भाग्य अंडा $index';
   }
 
   @override
-  String get fortunePlay => 'Karar Yumurtaları';
+  String get fortunePlay => 'खेलें';
 
   @override
-  String get shuffle => 'Karıştır';
+  String get shuffle => 'फेरबदल';
 
   @override
-  String get ok => 'Tamam';
+  String get ok => 'ठीक है';
 
   @override
   String get weekdaysShortSat => 'शनि';
@@ -1547,272 +1609,272 @@ class AppLocalizationsHi extends AppLocalizations {
   String get taskTitleRequired => 'कार्य शीर्षक आवश्यक है';
 
   @override
-  String get moodFlowTitle => 'Ruh Halin Nasıl?';
+  String get moodFlowTitle => 'आप कैसा महसूस कर रहे हैं?';
 
   @override
-  String get moodFlowSubtitle => 'Bugünkü ruh halini seç';
+  String get moodFlowSubtitle => 'अपनी भावनात्मक भलाई को ट्रैक करें';
 
   @override
-  String get moodSelection => 'Ruh Hali Seçimi';
+  String get moodSelection => 'मूड चयन';
 
   @override
-  String get selectYourCurrentMood => 'Şu anki ruh halini seç';
+  String get selectYourCurrentMood => 'अपना वर्तमान मूड चुनें';
 
   @override
-  String get moodTerribleDesc => 'Çok kötü hissediyorum';
+  String get moodTerribleDesc => 'बहुत खराब महसूस कर रहा हूँ';
 
   @override
-  String get moodBadDesc => 'Kötü hissediyorum';
+  String get moodBadDesc => 'कठिन समय से गुजर रहा हूँ';
 
   @override
-  String get moodNeutralDesc => 'Normal hissediyorum';
+  String get moodNeutralDesc => 'ठीक महसूस कर रहा हूँ';
 
   @override
-  String get moodGoodDesc => 'İyi hissediyorum';
+  String get moodGoodDesc => 'सकारात्मक महसूस कर रहा हूँ';
 
   @override
-  String get moodExcellentDesc => 'Harika hissediyorum';
+  String get moodExcellentDesc => 'अद्भुत महसूस कर रहा हूँ';
 
   @override
-  String get feelingMoreSpecific => 'Bu duyguyu daha ayrıntılı tarif edelim';
+  String get feelingMoreSpecific => 'क्या आप अधिक विशिष्ट हो सकते हैं?';
 
   @override
-  String get selectSubEmotionDesc => 'Hangi alt duygu seni en iyi tanımlıyor?';
+  String get selectSubEmotionDesc => 'अधिक विशिष्ट भावना चुनें';
 
   @override
-  String get whatsTheCause => 'Bu durumun sebebi nedir?';
+  String get whatsTheCause => 'कारण क्या है?';
 
   @override
-  String get selectReasonDesc => 'Günümüzü en çok hangi faktör etkiledi?';
+  String get selectReasonDesc => 'चुनें कि आपके मूड को क्या प्रभावित कर रहा है';
 
   @override
-  String get moodNeutral => 'Normal';
+  String get moodNeutral => 'तटस्थ';
 
   @override
-  String get moodExcellent => 'Mükemmel';
+  String get moodExcellent => 'उत्कृष्ट';
 
   @override
-  String get howAreYouFeeling => 'Kendini nasıl hissediyorsun?';
+  String get howAreYouFeeling => 'आप कैसा महसूस कर रहे हैं?';
 
   @override
-  String get selectYourMood => 'Ruh halini seç';
+  String get selectYourMood => 'अपना मूड चुनें';
 
   @override
-  String get subEmotionSelection => 'Bu duyguyu daha detaylı tarif edelim';
+  String get subEmotionSelection => 'उप-भावना चयन';
 
   @override
-  String get selectSubEmotion => 'Alt duygu seç';
+  String get selectSubEmotion => 'उप-भावना चुनें';
 
   @override
-  String get subEmotionExhausted => 'Bitkin';
+  String get subEmotionExhausted => 'थका हुआ';
 
   @override
-  String get subEmotionHelpless => 'Çaresiz';
+  String get subEmotionHelpless => 'असहाय';
 
   @override
-  String get subEmotionHopeless => 'Umutsuz';
+  String get subEmotionHopeless => 'निराश';
 
   @override
-  String get subEmotionHurt => 'İncinmiş';
+  String get subEmotionHurt => 'आहत';
 
   @override
-  String get subEmotionDrained => 'Boşalmış';
+  String get subEmotionDrained => 'खाली';
 
   @override
-  String get subEmotionAngry => 'Kızgın';
+  String get subEmotionAngry => 'क्रोधित';
 
   @override
-  String get subEmotionSad => 'Üzgün';
+  String get subEmotionSad => 'उदास';
 
   @override
-  String get subEmotionAnxious => 'Endişeli';
+  String get subEmotionAnxious => 'चिंतित';
 
   @override
-  String get subEmotionStressed => 'Stresli';
+  String get subEmotionStressed => 'तनावग्रस्त';
 
   @override
-  String get subEmotionDemoralized => 'Morali Bozuk';
+  String get subEmotionDemoralized => 'हतोत्साहित';
 
   @override
-  String get subEmotionIndecisive => 'Kararsız';
+  String get subEmotionIndecisive => 'अनिर्णीत';
 
   @override
-  String get subEmotionTired => 'Yorgun';
+  String get subEmotionTired => 'थका हुआ';
 
   @override
-  String get subEmotionOrdinary => 'Sıradan';
+  String get subEmotionOrdinary => 'साधारण';
 
   @override
-  String get subEmotionCalm => 'Sakin';
+  String get subEmotionCalm => 'शांत';
 
   @override
-  String get subEmotionEmpty => 'Boş';
+  String get subEmotionEmpty => 'खाली';
 
   @override
-  String get subEmotionHappy => 'Mutlu';
+  String get subEmotionHappy => 'खुश';
 
   @override
-  String get subEmotionCheerful => 'Neşeli';
+  String get subEmotionCheerful => 'प्रसन्न';
 
   @override
-  String get subEmotionExcited => 'Heyecanlı';
+  String get subEmotionExcited => 'उत्साहित';
 
   @override
-  String get subEmotionEnthusiastic => 'Coşkulu';
+  String get subEmotionEnthusiastic => 'उत्साही';
 
   @override
-  String get subEmotionDetermined => 'Kararlı';
+  String get subEmotionDetermined => 'दृढ़निश्चयी';
 
   @override
-  String get subEmotionMotivated => 'Motive';
+  String get subEmotionMotivated => 'प्रेरित';
 
   @override
-  String get subEmotionAmazing => 'Harika';
+  String get subEmotionAmazing => 'Amazing';
 
   @override
-  String get subEmotionEnergetic => 'Enerjik';
+  String get subEmotionEnergetic => 'Energetic';
 
   @override
-  String get subEmotionPeaceful => 'Huzurlu';
+  String get subEmotionPeaceful => 'Peaceful';
 
   @override
-  String get subEmotionGrateful => 'Minnettar';
+  String get subEmotionGrateful => 'Grateful';
 
   @override
-  String get subEmotionLoving => 'Sevgi Dolu';
+  String get subEmotionLoving => 'Loving';
 
   @override
-  String get reasonSelection => 'Bu durumun sebebi nedir?';
+  String get reasonSelection => 'What\'s the reason for this state?';
 
   @override
-  String get selectReason => 'Sebep seç';
+  String get selectReason => 'Select reason';
 
   @override
-  String get reasonAcademic => 'Akademik';
+  String get reasonAcademic => 'Academic';
 
   @override
-  String get reasonWork => 'İş';
+  String get reasonWork => 'काम';
 
   @override
-  String get reasonRelationship => 'İlişki';
+  String get reasonRelationship => 'Relationship';
 
   @override
-  String get reasonFinance => 'Finans';
+  String get reasonFinance => 'Finance';
 
   @override
-  String get reasonHealth => 'Sağlık';
+  String get reasonHealth => 'स्वास्थ्य';
 
   @override
-  String get reasonSocial => 'Sosyal';
+  String get reasonSocial => 'Social';
 
   @override
-  String get reasonPersonalGrowth => 'Kişisel Gelişim';
+  String get reasonPersonalGrowth => 'Personal Growth';
 
   @override
-  String get reasonWeather => 'Hava Durumu';
+  String get reasonWeather => 'Weather';
 
   @override
-  String get reasonOther => 'Diğer';
+  String get reasonOther => 'अन्य';
 
   @override
-  String get journalEntry => 'Günlük Girişi';
+  String get journalEntry => 'Journal Entry';
 
   @override
-  String get tellUsMore => 'Biraz daha anlat';
+  String get tellUsMore => 'Tell us more';
 
   @override
-  String get journalEntryDesc => 'Bugün hakkında yazmak istediğin var mı?';
+  String get journalEntryDesc =>
+      'Is there anything you\'d like to write about today?';
 
   @override
-  String get yourMoodToday => 'Bugünkü Ruh Halin';
+  String get yourMoodToday => 'Your Mood Today';
 
   @override
-  String get journalHint => 'Bugün hakkında yazmak istediğin bir şey...';
+  String get journalHint => 'Something you\'d like to write about today...';
 
   @override
-  String get saving => 'Kaydediliyor...';
+  String get saving => 'Saving...';
 
   @override
-  String get saveEntry => 'Girişi Kaydet';
+  String get saveEntry => 'Save Entry';
 
   @override
-  String get entrySaved => 'Giriş başarıyla kaydedildi!';
+  String get entrySaved => 'Entry saved successfully!';
 
   @override
-  String get saveError => 'Kaydederken bir hata oluştu';
+  String get saveError => 'An error occurred while saving';
 
   @override
-  String get moodFlow => 'Ruh Hali';
+  String get moodFlow => 'Mood';
 
   @override
-  String get moodTracker => 'Ruh Hali Takibi';
+  String get moodTracker => 'Mood Tracker';
 
   @override
-  String get continueButton => 'Devam Et';
+  String get continueButton => 'Continue';
 
   @override
-  String get skip => 'Geç';
+  String get skip => 'छोड़ें';
 
   @override
-  String get moodAnalytics => 'Mood Analizi';
+  String get moodAnalytics => 'Mood Analytics';
 
   @override
-  String get overview => 'Genel Bakış';
+  String get overview => 'Overview';
 
   @override
-  String get trends => 'Trendler';
+  String get trends => 'Trends';
 
   @override
-  String get history => 'Geçmiş';
+  String get history => 'History';
 
   @override
-  String get noMoodData => 'Henüz mood verisi yok';
+  String get noMoodData => 'No mood data yet';
 
   @override
-  String get startTrackingMood =>
-      'Analitikleri görmek için mood\'unuzu takip etmeye başlayın';
+  String get startTrackingMood => 'Start tracking your mood to see analytics';
 
   @override
-  String get totalEntries => 'Toplam Girişler';
+  String get totalEntries => 'Total Entries';
 
   @override
-  String get averageMood => 'Ortalama Mood';
+  String get averageMood => 'औसत मूड';
 
   @override
-  String get moodDistribution => 'Mood Dağılımı';
+  String get moodDistribution => 'Mood Distribution';
 
   @override
-  String get topCategories => 'Üst Kategoriler';
+  String get topCategories => 'Top Categories';
 
   @override
-  String get mostCommonMood => 'En Yaygın Mood';
+  String get mostCommonMood => 'Most Common Mood';
 
   @override
-  String get mostCommonEmotion => 'En Yaygın Duygu';
+  String get mostCommonEmotion => 'Most Common Emotion';
 
   @override
-  String get mostCommonReason => 'En Yaygın Sebep';
+  String get mostCommonReason => 'Most Common Reason';
 
   @override
-  String get noTrendData => 'Trend için yeterli veri yok';
+  String get noTrendData => 'Not enough data for trends';
 
   @override
-  String get moodTrend => 'Mood Trendi (Son 30 Gün)';
+  String get moodTrend => 'Mood Trend (Last 30 Days)';
 
   @override
-  String get insights => 'İçgörüler';
+  String get insights => 'Insights';
 
   @override
-  String get moodImproving => 'Mood\'unuz gelişiyor!';
+  String get moodImproving => 'Your mood is improving!';
 
   @override
-  String get moodDeclining => 'Mood\'unuz düşüyor gibi görünüyor';
+  String get moodDeclining => 'Your mood seems to be declining';
 
   @override
-  String get moodStable => 'Mood\'unuz nispeten stabil';
+  String get moodStable => 'Your mood is relatively stable';
 
   @override
-  String get noHistory => 'Mood geçmişi yok';
+  String get noHistory => 'कोई इतिहास नहीं';
 
   @override
   String get habitNotFound => 'आदत नहीं मिली।';
@@ -1831,4 +1893,282 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get typeNotChangeable => 'प्रकार नहीं बदला जा सकता';
+
+  @override
+  String get onboardingWelcomeTitle => 'Mira में आपका स्वागत है';
+
+  @override
+  String get onboardingWelcomeDesc =>
+      'आपका व्यक्तिगत आदत ट्रैकर जो आपके साथ बढ़ता है। आइए आपकी अनोखी व्यक्तित्व को खोजें और आपके लिए अनुकूलित आदतें सुझाएँ।';
+
+  @override
+  String get onboardingQuizIntro =>
+      'अपनी व्यक्तित्व को बेहतर समझने में हमारी मदद करने के लिए कुछ प्रश्नों का उत्तर दें। यह वैज्ञानिक रूप से सत्यापित मनोवैज्ञानिक अनुसंधान पर आधारित है।';
+
+  @override
+  String get onboardingQ1 =>
+      'मुझे नए अनुभव आज़माना और अनजानी चीज़ों का पता लगाना अच्छा लगता है।';
+
+  @override
+  String get onboardingQ2 =>
+      'मैं अपने स्थान को व्यवस्थित रखता/रखती हूँ और एक सुव्यवस्थित दैनिक दिनचर्या पसंद करता/करती हूँ।';
+
+  @override
+  String get onboardingQ3 =>
+      'लोगों के बीच रहने पर मैं ऊर्जावान महसूस करता/करती हूँ और सामाजिक मेलजोल का आनंद लेता/लेती हूँ।';
+
+  @override
+  String get onboardingQ4 =>
+      'मैं दूसरों के साथ काम करना पसंद करता/करती हूँ और सहयोग को प्रतिस्पर्धा से अधिक प्रभावी मानता/मानती हूँ।';
+
+  @override
+  String get onboardingQ5 =>
+      'तनावपूर्ण स्थितियों में मैं शांत रहता/रहती हूँ और शायद ही कभी चिंतित महसूस करता/करती हूँ।';
+
+  @override
+  String get onboardingQ6 =>
+      'मुझे कला, संगीत या लेखन जैसी रचनात्मक गतिविधियाँ पसंद हैं।';
+
+  @override
+  String get onboardingQ7 =>
+      'मैं अपने लिए स्पष्ट लक्ष्य तय करता/करती हूँ और उन्हें हासिल करने के लिए मेहनत करता/करती हूँ।';
+
+  @override
+  String get onboardingQ8 =>
+      'अकेले समय बिताने की बजाय मैं समूह गतिविधियों को प्राथमिकता देता/देती हूँ।';
+
+  @override
+  String get onboardingQ9 =>
+      'निर्णय लेने से पहले मैं अक्सर दूसरों की भावनाओं पर विचार करता/करती हूँ।';
+
+  @override
+  String get onboardingQ10 =>
+      'मैं महत्वपूर्ण आयोजनों और कार्यों की पहले से योजना बनाता/बनाती हूँ।';
+
+  @override
+  String get onboardingQ11 =>
+      'एक ही तरीके पर टिके रहने के बजाय मुझे अलग-अलग तरीकों को आज़माना पसंद है।';
+
+  @override
+  String get onboardingQ12 =>
+      'दबाव में भी मैं शांत रहता/रहती हूँ और असफलता से जल्दी उबर जाता/जाती हूँ।';
+
+  @override
+  String get likertStronglyDisagree => 'बिल्कुल असहमत';
+
+  @override
+  String get likertDisagree => 'असहमत';
+
+  @override
+  String get likertNeutral => 'तटस्थ';
+
+  @override
+  String get likertAgree => 'सहमत';
+
+  @override
+  String get likertStronglyAgree => 'पूरी तरह सहमत';
+
+  @override
+  String get characterTypePlanner => 'The Planner';
+
+  @override
+  String get characterDescPlanner =>
+      'You\'re organized, goal-oriented, and thrive on structure. You excel at turning dreams into actionable plans and following through with discipline.';
+
+  @override
+  String get characterTypeExplorer => 'The Explorer';
+
+  @override
+  String get characterDescExplorer =>
+      'You\'re curious, creative, and love variety. You thrive on learning new things and trying different approaches to life\'s challenges.';
+
+  @override
+  String get characterTypeSocialConnector => 'The Social Connector';
+
+  @override
+  String get characterDescSocialConnector =>
+      'You\'re warm, empathetic, and energized by relationships. You find meaning in connecting with others and building strong communities.';
+
+  @override
+  String get characterTypeBalancedMindful => 'The Balanced Mindful';
+
+  @override
+  String get characterDescBalancedMindful =>
+      'You\'re calm, stable, and value inner peace. You excel at maintaining balance and approaching life with mindfulness and composure.';
+
+  @override
+  String get yourCharacterType => 'Your Character Type';
+
+  @override
+  String get recommendedHabits => 'Recommended Habits for You';
+
+  @override
+  String get selectHabitsToAdd =>
+      'उन आदतों का चयन करें जिन्हें आप अपनी दैनिक दिनचर्या में जोड़ना चाहते हैं:';
+
+  @override
+  String get startJourney => 'अपनी यात्रा शुरू करें';
+
+  @override
+  String get skipOnboarding => 'छोड़ें';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get habitPlannerMorningRoutine => 'Morning Routine';
+
+  @override
+  String get habitPlannerMorningRoutineDesc =>
+      'Start each day with a structured morning routine to set the tone for productivity.';
+
+  @override
+  String get habitPlannerWeeklyReview => 'Weekly Review';
+
+  @override
+  String get habitPlannerWeeklyReviewDesc =>
+      'Review your week\'s progress and plan for the next week every Sunday.';
+
+  @override
+  String get habitPlannerGoalSetting => 'Monthly Goal Setting';
+
+  @override
+  String get habitPlannerGoalSettingDesc =>
+      'Set specific, measurable goals for the month ahead.';
+
+  @override
+  String get habitPlannerTaskPrioritization => 'Daily Task Prioritization';
+
+  @override
+  String get habitPlannerTaskPrioritizationDesc =>
+      'Identify your top 3 priorities for the day each morning.';
+
+  @override
+  String get habitPlannerTimeBlocking => 'Time Blocking';
+
+  @override
+  String get habitPlannerTimeBlockingDesc =>
+      'Schedule your day in focused time blocks for deep work.';
+
+  @override
+  String get habitExplorerLearnNewSkill => 'Learn Something New';
+
+  @override
+  String get habitExplorerLearnNewSkillDesc =>
+      'Dedicate time each week to learning a new skill or subject.';
+
+  @override
+  String get habitExplorerTryNewActivity => 'Try a New Activity';
+
+  @override
+  String get habitExplorerTryNewActivityDesc =>
+      'Step out of your comfort zone and experience something different.';
+
+  @override
+  String get habitExplorerReadDiverse => 'Read Diverse Content';
+
+  @override
+  String get habitExplorerReadDiverseDesc =>
+      'Read books, articles, or content from different genres and perspectives.';
+
+  @override
+  String get habitExplorerCreativeProject => 'Creative Project Time';
+
+  @override
+  String get habitExplorerCreativeProjectDesc =>
+      'Work on a creative project that sparks your imagination.';
+
+  @override
+  String get habitExplorerExplorePlace => 'Explore a New Place';
+
+  @override
+  String get habitExplorerExplorePlaceDesc =>
+      'Visit a new neighborhood, park, or location in your area.';
+
+  @override
+  String get habitSocialCallFriend => 'Call a Friend';
+
+  @override
+  String get habitSocialCallFriendDesc =>
+      'Reach out to a friend or family member for a meaningful conversation.';
+
+  @override
+  String get habitSocialGroupActivity => 'Join Group Activity';
+
+  @override
+  String get habitSocialGroupActivityDesc =>
+      'Participate in a group activity or social event.';
+
+  @override
+  String get habitSocialVolunteer => 'Volunteer';
+
+  @override
+  String get habitSocialVolunteerDesc =>
+      'Give back to your community through volunteer work.';
+
+  @override
+  String get habitSocialFamilyTime => 'Quality Family Time';
+
+  @override
+  String get habitSocialFamilyTimeDesc =>
+      'Spend dedicated time with family members without distractions.';
+
+  @override
+  String get habitSocialCompliment => 'Give a Genuine Compliment';
+
+  @override
+  String get habitSocialComplimentDesc =>
+      'Brighten someone\'s day with a sincere compliment.';
+
+  @override
+  String get habitMindfulMeditation => 'Meditation';
+
+  @override
+  String get habitMindfulMeditationDesc =>
+      'Practice mindfulness meditation for 10-15 minutes.';
+
+  @override
+  String get habitMindfulGratitude => 'Gratitude Practice';
+
+  @override
+  String get habitMindfulGratitudeDesc =>
+      'Write down three things you\'re grateful for today.';
+
+  @override
+  String get habitMindfulNatureWalk => 'Nature Walk';
+
+  @override
+  String get habitMindfulNatureWalkDesc =>
+      'Take a mindful walk in nature, paying attention to your surroundings.';
+
+  @override
+  String get habitMindfulBreathing => 'Deep Breathing Exercise';
+
+  @override
+  String get habitMindfulBreathingDesc =>
+      'Practice deep breathing techniques to center yourself.';
+
+  @override
+  String get habitMindfulJournaling => 'Reflective Journaling';
+
+  @override
+  String get habitMindfulJournalingDesc =>
+      'Journal your thoughts and reflections for self-awareness.';
+
+  @override
+  String habitAddSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits added',
+      one: '1 habit added',
+      zero: 'No habits added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitAddError(Object error) {
+    return 'Error adding habits: $error';
+  }
 }

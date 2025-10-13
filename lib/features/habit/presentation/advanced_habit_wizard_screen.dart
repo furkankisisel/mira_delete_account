@@ -145,6 +145,10 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
   // the start/end range. New vision scheduling model simplifies this to Start Day + Duration.
   // Manual per-day selection & _activeOffsets set removed.
 
+  // Reminder settings
+  bool _reminderEnabled = false;
+  TimeOfDay? _reminderTime;
+
   @override
   void initState() {
     super.initState();
@@ -292,6 +296,23 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       _selectedHabitType = habit['habitType'];
     }
 
+    // Load color and emoji (before category matching)
+    try {
+      // Load color
+      final col = habit['color'];
+      if (col is Color) {
+        _selectedColor = col;
+      } else if (col is int) {
+        _selectedColor = Color(col);
+      }
+
+      // Load emoji
+      final em = habit['emoji']?.toString();
+      if (em != null && em.trim().isNotEmpty) {
+        _selectedEmoji = em.trim();
+      }
+    } catch (_) {}
+
     // Kategori: düzenlemede mevcut görsel kimliği koru; mümkünse otomatik eşleştir
     _selectedCategoryId = null;
     try {
@@ -435,6 +456,22 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
       final pd = habit['periodicDays'];
       if (pd is num && pd.toInt() > 0) _periodicDays = pd.toInt();
     } catch (_) {}
+
+    // Load reminder settings
+    try {
+      _reminderEnabled = habit['reminderEnabled'] as bool? ?? false;
+      final rt = habit['reminderTime'];
+      if (rt is Map) {
+        final hour = rt['hour'] as int?;
+        final minute = rt['minute'] as int?;
+        if (hour != null && minute != null) {
+          _reminderTime = TimeOfDay(hour: hour, minute: minute);
+        }
+      }
+      print(
+        '[AdvancedHabitWizard] Loaded reminder: enabled=$_reminderEnabled, time=$_reminderTime',
+      );
+    } catch (_) {}
   }
 
   void _finishHabitCreation() {
@@ -517,6 +554,13 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
           };
         }
       })(),
+      // Reminder settings
+      'reminderEnabled': _reminderEnabled,
+      if (_reminderTime != null)
+        'reminderTime': {
+          'hour': _reminderTime!.hour,
+          'minute': _reminderTime!.minute,
+        },
       // Reminder/notification fields removed from returned map
       'createdAt': DateTime.now().toIso8601String(),
       'isAdvanced': true,
@@ -2208,9 +2252,72 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                 ),
               ),
           ],
+          const SizedBox(height: 32),
+          // Reminder Section
+          Card(
+            elevation: 0,
+            color: colorScheme.surfaceVariant.withOpacity(0.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.notifications_outlined,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.reminder,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.enableReminder),
+                    value: _reminderEnabled,
+                    onChanged: (v) => setState(() => _reminderEnabled = v),
+                  ),
+                  if (_reminderEnabled) ...[
+                    const SizedBox(height: 8),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.access_time),
+                      title: Text(
+                        _reminderTime != null
+                            ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
+                            : l10n.selectTime,
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: _selectReminderTime,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _selectReminderTime() async {
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime ?? TimeOfDay.now(),
+    );
+    if (time != null) {
+      setState(() => _reminderTime = time);
+    }
   }
 
   void _showCreateCategoryDialog() async {

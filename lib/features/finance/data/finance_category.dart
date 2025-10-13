@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'transaction_model.dart';
+import '../../../core/icons/icon_mapping.dart';
 
 class FinanceCategory {
   final String id;
@@ -18,7 +19,7 @@ class FinanceCategory {
     required this.colorValue,
   });
 
-  IconData get icon => IconData(iconCodePoint, fontFamily: 'MaterialIcons');
+  IconData get icon => materialIconFromCodePoint(iconCodePoint);
   bool get hasEmoji => (emoji != null && emoji!.isNotEmpty);
 
   Map<String, dynamic> toJson() => {

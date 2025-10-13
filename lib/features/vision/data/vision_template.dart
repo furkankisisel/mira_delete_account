@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class VisionHabitTemplate {
   final String title;
   final String? description;
@@ -23,6 +25,9 @@ class VisionHabitTemplate {
   // Explicit schedule: absolute day-offsets that should be active within [startDay..endDay]
   // Example: startDay=9, endDay=15, activeOffsets=[9,11,13,15]
   final List<int>? activeOffsets;
+  // Reminder settings
+  final bool? reminderEnabled;
+  final TimeOfDay? reminderTime;
 
   const VisionHabitTemplate({
     required this.title,
@@ -43,6 +48,8 @@ class VisionHabitTemplate {
     this.selectedYearDays,
     this.periodicDays,
     this.activeOffsets,
+    this.reminderEnabled,
+    this.reminderTime,
   });
 
   Map<String, dynamic> toJson() => {
@@ -64,6 +71,12 @@ class VisionHabitTemplate {
     if (selectedYearDays != null) 'selectedYearDays': selectedYearDays,
     if (periodicDays != null) 'periodicDays': periodicDays,
     if (activeOffsets != null) 'activeOffsets': activeOffsets,
+    if (reminderEnabled != null) 'reminderEnabled': reminderEnabled,
+    if (reminderTime != null)
+      'reminderTime': {
+        'hour': reminderTime!.hour,
+        'minute': reminderTime!.minute,
+      },
   };
 
   static VisionHabitTemplate fromJson(Map<String, dynamic> m) =>
@@ -94,6 +107,18 @@ class VisionHabitTemplate {
         activeOffsets: (m['activeOffsets'] as List?)
             ?.map((e) => (e as num).toInt())
             .toList(),
+        reminderEnabled: m['reminderEnabled'] as bool?,
+        reminderTime: (() {
+          final rt = m['reminderTime'];
+          if (rt is Map) {
+            final hour = rt['hour'] as int?;
+            final minute = rt['minute'] as int?;
+            if (hour != null && minute != null) {
+              return TimeOfDay(hour: hour, minute: minute);
+            }
+          }
+          return null;
+        })(),
       );
 }
 

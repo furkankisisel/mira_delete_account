@@ -6,8 +6,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Exact alarm permissions for Android 12+ -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- Removed: this app does not provide calendar/alarm core functionality; exact alarm permission not required. -->
+    <!-- Explicitly remove any injected exact-alarm permissions from libraries/plugins -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:node="remove" />
     <!-- Foreground service permission for Android 9+ -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- For Android 14+ (API 34+) we need specific foreground service type -->
@@ -17,7 +19,8 @@
         android:label="mira"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:usesCleartextTraffic="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -63,9 +66,26 @@
             android:name=".TimerActionReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.mira.TIMER_PAUSE" />
-                <action android:name="com.example.mira.TIMER_RESUME" />
-                <action android:name="com.example.mira.TIMER_STOP" />
+                <action android:name="com.koralabs.mira.TIMER_PAUSE" />
+                <action android:name="com.koralabs.mira.TIMER_RESUME" />
+                <action android:name="com.koralabs.mira.TIMER_STOP" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Scheduled Notification Receiver -->
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+
+        <!-- Boot Completed Receiver - to reschedule notifications after reboot -->
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
     </application>

@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
@@ -21,11 +22,18 @@ import 'features/profile/profile_screen.dart';
 import 'features/gamification/gamification_repository.dart';
 import 'features/notifications/data/notification_settings_repository.dart';
 import 'features/notifications/services/notification_service.dart';
+import 'features/habit/domain/habit_repository.dart';
 // Removed unused imports related to text/image sticker creation relocated to Vision FAB
 import 'core/settings/settings_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'core/design_system/widgets/app_logo.dart';
+import 'core/presentation/splash_screen.dart';
+import 'features/onboarding/presentation/onboarding_screen.dart';
+import 'features/onboarding/data/onboarding_repository.dart';
+import 'ui/subscription_page.dart';
+import 'services/trial_manager.dart';
+import 'services/iap_service.dart';
+import 'core/privacy/privacy_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +63,14 @@ class _MiraAppState extends State<MiraApp> {
     // ignore: discarded_futures
     SettingsRepository.instance.initialize();
     unawaited(_initializeNotifications());
+    // IAP & Trial init (non-blocking)
+    // ignore: discarded_futures
+    TrialManager.instance.initialize();
+    // ignore: discarded_futures
+    IAPService.instance.initialize();
+    // Privacy service (consent toggles)
+    // ignore: discarded_futures
+    PrivacyService.instance.initialize();
   }
 
   static const _prefThemeMode = 'pref_theme_mode_v1';
@@ -92,8 +108,41 @@ class _MiraAppState extends State<MiraApp> {
       await NotificationService.instance.applySettings(
         NotificationSettingsRepository.instance,
       );
-    } catch (_) {
+
+      // Initialize habit reminders
+      await _initializeHabitReminders();
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Error initializing notifications: $e');
       // ignore failures so they do not block app launch
+    }
+  }
+
+  Future<void> _initializeHabitReminders() async {
+    try {
+      if (kDebugMode) debugPrint('🔍 Initializing habit reminders...');
+      final repo = HabitRepository.instance;
+      await repo.initialize();
+      final habits = repo.habits;
+      if (kDebugMode) debugPrint('   Found ${habits.length} habits');
+
+      int reminderCount = 0;
+      for (final habit in habits) {
+        if (kDebugMode) debugPrint('   Checking habit: ${habit.title}');
+        if (kDebugMode)
+          debugPrint('     - reminderEnabled: ${habit.reminderEnabled}');
+        if (kDebugMode)
+          debugPrint('     - reminderTime: ${habit.reminderTime}');
+
+        if (habit.reminderEnabled && habit.reminderTime != null) {
+          reminderCount++;
+          await NotificationService.instance.scheduleHabitReminder(habit);
+        }
+      }
+      if (kDebugMode)
+        debugPrint('✅ Initialized $reminderCount habit reminders');
+    } catch (e) {
+      if (kDebugMode) debugPrint('❌ Error initializing habit reminders: $e');
+      // ignore failures
     }
   }
 
@@ -144,7 +193,7 @@ class _MiraAppState extends State<MiraApp> {
     theme: AppTheme.light(_variant),
     darkTheme: AppTheme.dark(_variant),
     themeMode: _mode,
-    home: PrototypeHomePage(
+    home: OnboardingCheckWrapper(
       onToggleTheme: _toggleTheme,
       themeMode: _mode,
       currentVariant: _variant,
@@ -152,6 +201,80 @@ class _MiraAppState extends State<MiraApp> {
       languageManager: _languageManager,
     ),
   );
+}
+
+/// Wrapper widget that checks onboarding status and shows appropriate screen
+class OnboardingCheckWrapper extends StatefulWidget {
+  final VoidCallback onToggleTheme;
+  final ThemeMode themeMode;
+  final ThemeVariant currentVariant;
+  final ValueChanged<ThemeVariant> onVariantChanged;
+  final LanguageManager languageManager;
+
+  const OnboardingCheckWrapper({
+    super.key,
+    required this.onToggleTheme,
+    required this.themeMode,
+    required this.currentVariant,
+    required this.onVariantChanged,
+    required this.languageManager,
+  });
+
+  @override
+  State<OnboardingCheckWrapper> createState() => _OnboardingCheckWrapperState();
+}
+
+class _OnboardingCheckWrapperState extends State<OnboardingCheckWrapper> {
+  bool _showSplash = true;
+  bool? _isOnboardingCompleted;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    // Start checking onboarding status immediately, in parallel with splash
+    final isCompleted = await OnboardingRepository().isOnboardingCompleted();
+    setState(() {
+      _isOnboardingCompleted = isCompleted;
+    });
+  }
+
+  void _onSplashComplete() {
+    setState(() {
+      _showSplash = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Show splash screen first
+    if (_showSplash) {
+      return SplashScreen(onInitializationComplete: _onSplashComplete);
+    }
+
+    // If onboarding check is still loading after splash, show splash again
+    // (this should rarely happen as splash gives enough time)
+    if (_isOnboardingCompleted == null) {
+      return SplashScreen(onInitializationComplete: _onSplashComplete);
+    }
+
+    // Show onboarding if not completed
+    if (!_isOnboardingCompleted!) {
+      return const OnboardingScreen();
+    }
+
+    // Show main home page if completed
+    return PrototypeHomePage(
+      onToggleTheme: widget.onToggleTheme,
+      themeMode: widget.themeMode,
+      currentVariant: widget.currentVariant,
+      onVariantChanged: widget.onVariantChanged,
+      languageManager: widget.languageManager,
+    );
+  }
 }
 
 class PrototypeHomePage extends StatefulWidget {
@@ -286,6 +409,13 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
                 );
               },
             ),
+          IconButton(
+            tooltip: 'Premium',
+            icon: const Icon(Icons.workspace_premium),
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const SubscriptionPage())),
+          ),
         ],
       ),
       body: _buildBody(),

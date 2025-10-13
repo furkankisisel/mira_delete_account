@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/icons/icon_mapping.dart' as icmap;
 
 enum HabitType { simple, numerical, timer }
 
@@ -40,7 +41,7 @@ class HabitCategory {
   static HabitCategory fromJson(Map<String, dynamic> json) => HabitCategory(
     json['id'] as String,
     json['name'] as String,
-    IconData((json['icon'] as num).toInt(), fontFamily: 'MaterialIcons'),
+    icmap.materialIconFromCodePoint((json['icon'] as num).toInt()),
     Color((json['color'] as num).toInt()),
     emoji: json['emoji'] as String?,
   );

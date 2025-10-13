@@ -47,7 +47,7 @@ class TimerController extends ChangeNotifier {
   final FlutterBackgroundService _backgroundService =
       FlutterBackgroundService();
   static const MethodChannel _methodChannel = MethodChannel(
-    'com.example.mira/timer_actions',
+    'com.koralabs.mira/timer_actions',
   );
 
   void _setupMethodChannel() {

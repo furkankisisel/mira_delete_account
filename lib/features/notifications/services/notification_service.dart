@@ -1,5 +1,9 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 import '../data/notification_settings_repository.dart';
+import '../../habit/domain/habit_model.dart';
 
 class NotificationService {
   NotificationService._();
@@ -8,6 +12,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
   bool _initialized = false;
+  NotificationSettingsRepository? _settingsRepo;
 
   static const String _timerChannelId = 'mira_timer_channel';
   static const String _timerChannelName = 'Timer Notifications';
@@ -16,13 +21,15 @@ class NotificationService {
   static const int _timerNotificationId = 9999;
 
   Future<void> initialize() async {
+    await _configureLocalTimeZone();
+
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
     const iosSettings = DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
     );
     const initSettings = InitializationSettings(
       android: androidSettings,
@@ -45,13 +52,54 @@ class NotificationService {
       showBadge: false,
     );
 
-    await _plugin
+    const habitReminderChannel = AndroidNotificationChannel(
+      'habit_reminders',
+      'Habit Reminders',
+      description: 'Daily reminders for your habits',
+      importance: Importance.high,
+      playSound: true,
+      enableVibration: true,
+      showBadge: true,
+    );
+
+    final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(androidChannel);
+        >();
+
+    await androidPlugin?.createNotificationChannel(androidChannel);
+    await androidPlugin?.createNotificationChannel(habitReminderChannel);
+
+    // Request notification permissions
+    final notificationPermission = await androidPlugin
+        ?.requestNotificationsPermission();
+    print('🔔 Notification permission: $notificationPermission');
+
+    // Request exact alarm permission for Android 12+
+    final exactAlarmPermission = await androidPlugin
+        ?.requestExactAlarmsPermission();
+    print('⏰ Exact alarm permission: $exactAlarmPermission');
 
     _initialized = true;
+    print('✅ NotificationService initialized successfully');
+  }
+
+  Future<void> _configureLocalTimeZone() async {
+    // Initialize timezone database and set the device's local timezone.
+    tz.initializeTimeZones();
+    try {
+      final timeZone = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZone.identifier));
+      final localized = timeZone.localizedName;
+      final displayName = localized != null
+          ? '${localized.name} (${localized.locale})'
+          : timeZone.identifier;
+      print('🕒 Local timezone set to $displayName');
+    } catch (e) {
+      print(
+        '⚠️ Failed to set local timezone from device. Using default. Error: $e',
+      );
+    }
   }
 
   void _onNotificationTap(NotificationResponse response) {
@@ -146,6 +194,148 @@ class NotificationService {
 
   Future<void> applySettings(NotificationSettingsRepository repo) async {
     if (!_initialized) return;
-    // Placeholder: enable/disable scheduling based on repo.enabled
+    _settingsRepo = repo;
+
+    // Register callback for settings changes
+    repo.setOnSettingsChangedCallback(() {
+      print('⚙️ Notification settings changed, reapplying...');
+      _onSettingsChanged();
+    });
+
+    print('✅ Notification settings applied');
+    print('   Master enabled: ${repo.enabled}');
+    print('   Habit reminders: ${repo.habitReminders}');
+    print('   Sound: ${repo.sound}');
+    print('   Vibration: ${repo.vibration}');
+  }
+
+  void _onSettingsChanged() {
+    // When settings change, we could reschedule all notifications
+    // For now, just log the change
+    print('🔄 Settings changed - new notifications will use updated settings');
+  }
+
+  bool _shouldShowNotification() {
+    return _settingsRepo?.enabled ?? true;
+  }
+
+  bool _shouldShowHabitReminder() {
+    return (_settingsRepo?.enabled ?? true) &&
+        (_settingsRepo?.habitReminders ?? true);
+  }
+
+  bool _shouldPlaySound() {
+    return (_settingsRepo?.enabled ?? true) && (_settingsRepo?.sound ?? true);
+  }
+
+  bool _shouldVibrate() {
+    return (_settingsRepo?.enabled ?? true) &&
+        (_settingsRepo?.vibration ?? true);
+  }
+
+  // Habit Reminder Notifications
+  Future<void> scheduleHabitReminder(Habit habit) async {
+    if (!_initialized || !habit.reminderEnabled || habit.reminderTime == null) {
+      print(
+        '⚠️ Cannot schedule reminder: initialized=$_initialized, enabled=${habit.reminderEnabled}, time=${habit.reminderTime}',
+      );
+      return;
+    }
+
+    // Check if habit reminders are enabled in settings
+    if (!_shouldShowHabitReminder()) {
+      print('⚠️ Habit reminders disabled in settings, skipping schedule');
+      return;
+    }
+
+    final time = habit.reminderTime!;
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
+
+    // If the time has already passed today, schedule for tomorrow in local TZ
+    if (!scheduledDate.isAfter(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    print('📅 Scheduling reminder for ${habit.title}:');
+    print('   Time: ${time.hour}:${time.minute}');
+    print('   Scheduled for: $scheduledDate');
+    print('   Scheduled for (UTC): ${scheduledDate.toUtc()}');
+    print('   Current time: $now');
+    print('   Current time (UTC): ${now.toUtc()}');
+    print('   TZ Local Location: ${tz.local.name}');
+    print('   Time until notification: ${scheduledDate.difference(now)}');
+
+    // Use habit ID hash as notification ID to ensure uniqueness
+    final notificationId = habit.id.hashCode.abs() % 2147483647;
+    print('   Notification ID: $notificationId');
+
+    // Apply sound and vibration settings
+    final playSound = _shouldPlaySound();
+    final vibrate = _shouldVibrate();
+    print('   Sound: $playSound, Vibration: $vibrate');
+
+    final androidDetails = AndroidNotificationDetails(
+      'habit_reminders',
+      'Habit Reminders',
+      channelDescription: 'Daily reminders for your habits',
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: playSound,
+      enableVibration: vibrate,
+    );
+
+    final iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: playSound,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    final emoji = habit.emoji ?? '✅';
+    final title = '$emoji ${habit.title}';
+    final body = 'Alışkanlığını tamamlama zamanı!';
+
+    try {
+      await _plugin.zonedSchedule(
+        notificationId,
+        title,
+        body,
+        scheduledDate,
+        details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents:
+            DateTimeComponents.time, // Repeat daily at this time
+        payload: 'habit:${habit.id}',
+      );
+      print('✅ Reminder scheduled successfully!');
+    } catch (e) {
+      print('❌ Error scheduling reminder: $e');
+    }
+  }
+
+  Future<void> cancelHabitReminder(Habit habit) async {
+    if (!_initialized) return;
+    final notificationId = habit.id.hashCode.abs() % 2147483647;
+    await _plugin.cancel(notificationId);
+  }
+
+  Future<void> cancelAllHabitReminders() async {
+    if (!_initialized) return;
+    // This will cancel all scheduled notifications
+    await _plugin.cancelAll();
   }
 }

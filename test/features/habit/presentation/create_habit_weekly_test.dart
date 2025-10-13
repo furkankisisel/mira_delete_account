@@ -63,10 +63,15 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Uygula'));
     await tester.pumpAndSettle();
 
-    // Submit
-    // There is a single primary FilledButton on the page for create (the other is Outlined)
-    final submitButton = find.byType(FilledButton).first;
-    await tester.tap(submitButton);
+    // Submit: scroll until the localized 'Oluştur' button is visible and tap
+    final submitButton = find.widgetWithText(FilledButton, 'Oluştur');
+    await tester.scrollUntilVisible(
+      submitButton,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(submitButton, warnIfMissed: false);
     await tester.pumpAndSettle();
 
     // Validate result captured from Navigator.pop

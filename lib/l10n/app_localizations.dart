@@ -236,6 +236,114 @@ abstract class AppLocalizations {
   /// **'Bildirim tercihlerini yapılandırın'**
   String get notificationSettingsSubtitle;
 
+  /// No description provided for @enableNotifications.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimleri Etkinleştir'**
+  String get enableNotifications;
+
+  /// No description provided for @notificationsMasterSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm uygulama bildirimlerini kontrol et'**
+  String get notificationsMasterSubtitle;
+
+  /// No description provided for @notificationTypes.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirim Türleri'**
+  String get notificationTypes;
+
+  /// No description provided for @habitReminders.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlık Hatırlatıcıları'**
+  String get habitReminders;
+
+  /// No description provided for @habitRemindersSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlıklarınız için günlük hatırlatıcılar'**
+  String get habitRemindersSubtitle;
+
+  /// No description provided for @notificationBehavior.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirim Davranışı'**
+  String get notificationBehavior;
+
+  /// No description provided for @sound.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ses'**
+  String get sound;
+
+  /// No description provided for @soundSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimlerle birlikte ses çal'**
+  String get soundSubtitle;
+
+  /// No description provided for @vibration.
+  ///
+  /// In tr, this message translates to:
+  /// **'Titreşim'**
+  String get vibration;
+
+  /// No description provided for @vibrationSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimlerle birlikte titreşim'**
+  String get vibrationSubtitle;
+
+  /// No description provided for @systemInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sistem Bilgisi'**
+  String get systemInfo;
+
+  /// No description provided for @timezone.
+  ///
+  /// In tr, this message translates to:
+  /// **'Zaman Dilimi'**
+  String get timezone;
+
+  /// No description provided for @notificationPermission.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirim İzni'**
+  String get notificationPermission;
+
+  /// No description provided for @exactAlarmPermission.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kesin Alarm İzni (Android 12+)'**
+  String get exactAlarmPermission;
+
+  /// No description provided for @granted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Verildi'**
+  String get granted;
+
+  /// No description provided for @notGranted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Verilmedi'**
+  String get notGranted;
+
+  /// No description provided for @importantNotice.
+  ///
+  /// In tr, this message translates to:
+  /// **'Önemli Uyarı'**
+  String get importantNotice;
+
+  /// No description provided for @notificationTroubleshooting.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimlerin düzgün çalışması için:\n\n• Pil optimizasyonunu KAPATIN (Ayarlar → Uygulamalar → Mira → Pil → Sınırsız)\n• Arka planda çalışmaya İZİN VERİN\n• Bildirim izinlerinin AÇIK olduğundan emin olun\n• \'Rahatsız etmeyin\' modunu kontrol edin'**
+  String get notificationTroubleshooting;
+
   /// No description provided for @approxVisionDurationDays.
   ///
   /// In tr, this message translates to:
@@ -710,6 +818,24 @@ abstract class AppLocalizations {
   /// **'Özel emoji (isteğe bağlı)'**
   String get customEmojiOptional;
 
+  /// No description provided for @reminder.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hatırlatıcı'**
+  String get reminder;
+
+  /// No description provided for @enableReminder.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hatırlatıcıyı Etkinleştir'**
+  String get enableReminder;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In tr, this message translates to:
+  /// **'Zaman Seç'**
+  String get selectTime;
+
   /// No description provided for @customFrequency.
   ///
   /// In tr, this message translates to:
@@ -907,12 +1033,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Emoji'**
   String get emojiLabel;
-
-  /// No description provided for @enableReminder.
-  ///
-  /// In tr, this message translates to:
-  /// **'Hatırlatıcıyı Etkinleştir'**
-  String get enableReminder;
 
   /// No description provided for @endDate.
   ///
@@ -3589,6 +3709,462 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Tür değiştirilemez'**
   String get typeNotChangeable;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mira\'ya Hoş Geldin'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seninle birlikte büyüyen kişisel alışkanlık takipçin. Benzersiz kişiliğini keşfedelim ve sana özel alışkanlıklar önerelim.'**
+  String get onboardingWelcomeDesc;
+
+  /// No description provided for @onboardingQuizIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kişiliğini daha iyi anlayabilmemiz için birkaç soruyu cevaplayın. Bu, bilimsel olarak doğrulanmış psikolojik araştırmalara dayanmaktadır.'**
+  String get onboardingQuizIntro;
+
+  /// No description provided for @onboardingQ1.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni deneyimler yaşamaktan ve tanımadığım şeyleri keşfetmekten hoşlanırım.'**
+  String get onboardingQ1;
+
+  /// No description provided for @onboardingQ2.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alanımı düzenli tutarım ve yapılandırılmış bir günlük rutine sahip olmayı tercih ederim.'**
+  String get onboardingQ2;
+
+  /// No description provided for @onboardingQ3.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnsanların yanında olduğumda enerjilenirim ve sosyal etkinliklerden keyif alırım.'**
+  String get onboardingQ3;
+
+  /// No description provided for @onboardingQ4.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başkalarıyla çalışmayı tercih ederim ve işbirliğinin rekabetten daha etkili olduğuna inanırım.'**
+  String get onboardingQ4;
+
+  /// No description provided for @onboardingQ5.
+  ///
+  /// In tr, this message translates to:
+  /// **'Stresli durumlarla sakin bir şekilde başa çıkarım ve nadiren endişelenirim.'**
+  String get onboardingQ5;
+
+  /// No description provided for @onboardingQ6.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sanat, müzik veya yazma gibi yaratıcı aktivitelerden hoşlanırım.'**
+  String get onboardingQ6;
+
+  /// No description provided for @onboardingQ7.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kendime net hedefler koyarım ve bunları gerçekleştirmek için gayretle çalışırım.'**
+  String get onboardingQ7;
+
+  /// No description provided for @onboardingQ8.
+  ///
+  /// In tr, this message translates to:
+  /// **'Grup aktivitelerini yalnız vakit geçirmeye tercih ederim.'**
+  String get onboardingQ8;
+
+  /// No description provided for @onboardingQ9.
+  ///
+  /// In tr, this message translates to:
+  /// **'Karar vermeden önce genellikle başkalarının duygularını dikkate alırım.'**
+  String get onboardingQ9;
+
+  /// No description provided for @onboardingQ10.
+  ///
+  /// In tr, this message translates to:
+  /// **'Önemli etkinlikler ve görevler için önceden plan yaparım.'**
+  String get onboardingQ10;
+
+  /// No description provided for @onboardingQ11.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tek bir yönteme bağlı kalmaktansa farklı yaklaşımlar denemeyi severim.'**
+  String get onboardingQ11;
+
+  /// No description provided for @onboardingQ12.
+  ///
+  /// In tr, this message translates to:
+  /// **'Baskı altında sakin kalırım ve aksiliklerden çabuk toparlanırım.'**
+  String get onboardingQ12;
+
+  /// No description provided for @likertStronglyDisagree.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kesinlikle Katılmıyorum'**
+  String get likertStronglyDisagree;
+
+  /// No description provided for @likertDisagree.
+  ///
+  /// In tr, this message translates to:
+  /// **'Katılmıyorum'**
+  String get likertDisagree;
+
+  /// No description provided for @likertNeutral.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kararsızım'**
+  String get likertNeutral;
+
+  /// No description provided for @likertAgree.
+  ///
+  /// In tr, this message translates to:
+  /// **'Katılıyorum'**
+  String get likertAgree;
+
+  /// No description provided for @likertStronglyAgree.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kesinlikle Katılıyorum'**
+  String get likertStronglyAgree;
+
+  /// No description provided for @characterTypePlanner.
+  ///
+  /// In tr, this message translates to:
+  /// **'Planlayıcı'**
+  String get characterTypePlanner;
+
+  /// No description provided for @characterDescPlanner.
+  ///
+  /// In tr, this message translates to:
+  /// **'Düzenli, hedef odaklı ve yapıdan beslenen birisin. Hayalleri eyleme dönüştürmekte ve disiplinle takip etmekte başarılısın.'**
+  String get characterDescPlanner;
+
+  /// No description provided for @characterTypeExplorer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaşif'**
+  String get characterTypeExplorer;
+
+  /// No description provided for @characterDescExplorer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Meraklı, yaratıcı ve çeşitliliği seven birisin. Yeni şeyler öğrenmekten ve hayatın zorluklarına farklı yaklaşımlar denemekten keyif alırsın.'**
+  String get characterDescExplorer;
+
+  /// No description provided for @characterTypeSocialConnector.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sosyal Bağlayıcı'**
+  String get characterTypeSocialConnector;
+
+  /// No description provided for @characterDescSocialConnector.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıcakkanlı, empatik ve ilişkilerden enerji alan birisin. Başkalarıyla bağlantı kurmakta ve güçlü topluluklar oluşturmakta anlam bulursun.'**
+  String get characterDescSocialConnector;
+
+  /// No description provided for @characterTypeBalancedMindful.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dengeli Bilinçli'**
+  String get characterTypeBalancedMindful;
+
+  /// No description provided for @characterDescBalancedMindful.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sakin, istikrarlı ve iç huzura değer veren birisin. Denge sağlamakta ve hayata bilinçlilik ve soğukkanlılıkla yaklaşmakta başarılısın.'**
+  String get characterDescBalancedMindful;
+
+  /// No description provided for @yourCharacterType.
+  ///
+  /// In tr, this message translates to:
+  /// **'Senin Karakter Tipin'**
+  String get yourCharacterType;
+
+  /// No description provided for @recommendedHabits.
+  ///
+  /// In tr, this message translates to:
+  /// **'Senin İçin Önerilen Alışkanlıklar'**
+  String get recommendedHabits;
+
+  /// No description provided for @selectHabitsToAdd.
+  ///
+  /// In tr, this message translates to:
+  /// **'Günlük rutinine eklemek istediğin alışkanlıkları seç:'**
+  String get selectHabitsToAdd;
+
+  /// No description provided for @startJourney.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yolculuğuna Başla'**
+  String get startJourney;
+
+  /// No description provided for @skipOnboarding.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geç'**
+  String get skipOnboarding;
+
+  /// No description provided for @back.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri'**
+  String get back;
+
+  /// No description provided for @habitPlannerMorningRoutine.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sabah Rutini'**
+  String get habitPlannerMorningRoutine;
+
+  /// No description provided for @habitPlannerMorningRoutineDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her günü verimliliğe uygun bir sabah rutiyle başlatın.'**
+  String get habitPlannerMorningRoutineDesc;
+
+  /// No description provided for @habitPlannerWeeklyReview.
+  ///
+  /// In tr, this message translates to:
+  /// **'Haftalık İnceleme'**
+  String get habitPlannerWeeklyReview;
+
+  /// No description provided for @habitPlannerWeeklyReviewDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her Pazar haftanın ilerlemenizi inceleyin ve gelecek haftayı planlayın.'**
+  String get habitPlannerWeeklyReviewDesc;
+
+  /// No description provided for @habitPlannerGoalSetting.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aylık Hedef Belirleme'**
+  String get habitPlannerGoalSetting;
+
+  /// No description provided for @habitPlannerGoalSettingDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gelecek ay için spesifik, ölçülebilir hedefler belirleyin.'**
+  String get habitPlannerGoalSettingDesc;
+
+  /// No description provided for @habitPlannerTaskPrioritization.
+  ///
+  /// In tr, this message translates to:
+  /// **'Günlük Görev Önceliklendirme'**
+  String get habitPlannerTaskPrioritization;
+
+  /// No description provided for @habitPlannerTaskPrioritizationDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her sabah gün içindeki en öncelikli 3 görevinizi belirleyin.'**
+  String get habitPlannerTaskPrioritizationDesc;
+
+  /// No description provided for @habitPlannerTimeBlocking.
+  ///
+  /// In tr, this message translates to:
+  /// **'Zaman Blokları'**
+  String get habitPlannerTimeBlocking;
+
+  /// No description provided for @habitPlannerTimeBlockingDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Derin çalışma için gününüzü odaklı zaman bloklarına ayırın.'**
+  String get habitPlannerTimeBlockingDesc;
+
+  /// No description provided for @habitExplorerLearnNewSkill.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni Bir Şey Öğren'**
+  String get habitExplorerLearnNewSkill;
+
+  /// No description provided for @habitExplorerLearnNewSkillDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her hafta yeni bir beceri veya konuya vakit ayırın.'**
+  String get habitExplorerLearnNewSkillDesc;
+
+  /// No description provided for @habitExplorerTryNewActivity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni Bir Aktivite Dene'**
+  String get habitExplorerTryNewActivity;
+
+  /// No description provided for @habitExplorerTryNewActivityDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Konfor alanınızın dışına çıkın ve farklı bir deneyim yaşayın.'**
+  String get habitExplorerTryNewActivityDesc;
+
+  /// No description provided for @habitExplorerReadDiverse.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çeşitli İçerik Oku'**
+  String get habitExplorerReadDiverse;
+
+  /// No description provided for @habitExplorerReadDiverseDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Farklı türlerde ve bakış açılarında kitaplar, makaleler veya içerik okuyun.'**
+  String get habitExplorerReadDiverseDesc;
+
+  /// No description provided for @habitExplorerCreativeProject.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yaratıcı Proje Zamanı'**
+  String get habitExplorerCreativeProject;
+
+  /// No description provided for @habitExplorerCreativeProjectDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hayal gücünüzü ateşleyen bir yaratıcı proje üzerinde çalışın.'**
+  String get habitExplorerCreativeProjectDesc;
+
+  /// No description provided for @habitExplorerExplorePlace.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni Bir Yer Keşfet'**
+  String get habitExplorerExplorePlace;
+
+  /// No description provided for @habitExplorerExplorePlaceDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bölgenizdeki yeni bir mahalle, park veya yeri ziyaret edin.'**
+  String get habitExplorerExplorePlaceDesc;
+
+  /// No description provided for @habitSocialCallFriend.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir Arkadaşı Ara'**
+  String get habitSocialCallFriend;
+
+  /// No description provided for @habitSocialCallFriendDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Anlamlı bir sohbet için bir arkadaşınızla veya aile üyenizle iletişime geçin.'**
+  String get habitSocialCallFriendDesc;
+
+  /// No description provided for @habitSocialGroupActivity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Grup Aktivitesine Katıl'**
+  String get habitSocialGroupActivity;
+
+  /// No description provided for @habitSocialGroupActivityDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir grup aktivitesine veya sosyal etkinliğe katılın.'**
+  String get habitSocialGroupActivityDesc;
+
+  /// No description provided for @habitSocialVolunteer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönüllü Ol'**
+  String get habitSocialVolunteer;
+
+  /// No description provided for @habitSocialVolunteerDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönüllü çalışma yoluyla topluluğunuza katkıda bulunun.'**
+  String get habitSocialVolunteerDesc;
+
+  /// No description provided for @habitSocialFamilyTime.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaliteli Aile Zamanı'**
+  String get habitSocialFamilyTime;
+
+  /// No description provided for @habitSocialFamilyTimeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aile üyeleriyle dikkat dağıtıcı şeyler olmadan özel vakit geçirin.'**
+  String get habitSocialFamilyTimeDesc;
+
+  /// No description provided for @habitSocialCompliment.
+  ///
+  /// In tr, this message translates to:
+  /// **'Samimi Bir İltifat Yap'**
+  String get habitSocialCompliment;
+
+  /// No description provided for @habitSocialComplimentDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'İçten bir iltifatla birinin gününü aydınlatın.'**
+  String get habitSocialComplimentDesc;
+
+  /// No description provided for @habitMindfulMeditation.
+  ///
+  /// In tr, this message translates to:
+  /// **'Meditasyon'**
+  String get habitMindfulMeditation;
+
+  /// No description provided for @habitMindfulMeditationDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'10-15 dakika bilinçli meditasyon yapın.'**
+  String get habitMindfulMeditationDesc;
+
+  /// No description provided for @habitMindfulGratitude.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şükür Pratiği'**
+  String get habitMindfulGratitude;
+
+  /// No description provided for @habitMindfulGratitudeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün minnettar olduğunuz üç şeyi yazın.'**
+  String get habitMindfulGratitudeDesc;
+
+  /// No description provided for @habitMindfulNatureWalk.
+  ///
+  /// In tr, this message translates to:
+  /// **'Doğa Yürüyüşü'**
+  String get habitMindfulNatureWalk;
+
+  /// No description provided for @habitMindfulNatureWalkDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çevrenize dikkat ederek doğada bilinçli bir yürüyüş yapın.'**
+  String get habitMindfulNatureWalkDesc;
+
+  /// No description provided for @habitMindfulBreathing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Derin Nefes Egzersizi'**
+  String get habitMindfulBreathing;
+
+  /// No description provided for @habitMindfulBreathingDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kendinizi merkezlemek için derin nefes alma teknikleri uygulayın.'**
+  String get habitMindfulBreathingDesc;
+
+  /// No description provided for @habitMindfulJournaling.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yansıtıcı Günlük Tutma'**
+  String get habitMindfulJournaling;
+
+  /// No description provided for @habitMindfulJournalingDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öz farkındalık için düşüncelerinizi ve yansımalarınızı günlüğe yazın.'**
+  String get habitMindfulJournalingDesc;
+
+  /// No description provided for @habitAddSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count, plural, =0{Hiç alışkanlık eklenmedi} =1{1 alışkanlık eklendi} other{{count} alışkanlık eklendi}}'**
+  String habitAddSuccess(int count);
+
+  /// No description provided for @habitAddError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlıklar eklenirken hata: {error}'**
+  String habitAddError(Object error);
 }
 
 class _AppLocalizationsDelegate

@@ -31,12 +31,9 @@ class VisionRepository {
       final list = (json.decode(raw) as List).cast<Map<String, dynamic>>();
       _items = list.map(Vision.fromJson).toList();
     } else {
-      final seeded = prefs.getBool(_seedKey) ?? false;
-      if (!seeded) {
-        await _seedDefaults(prefs);
-      } else {
-        _items = const [];
-      }
+      // Start clean with no default visions; mark as seeded to avoid any future seeding.
+      _items = const [];
+      await prefs.setBool(_seedKey, true);
       await _persist();
     }
     _emit();
@@ -194,6 +191,18 @@ class VisionRepository {
             scheduledDates: schedule,
             numericalTargetType: numType,
             timerTargetType: timType,
+            reminderEnabled: (h['reminderEnabled'] as bool?) ?? false,
+            reminderTime: (() {
+              final rt = h['reminderTime'];
+              if (rt is Map) {
+                final hour = rt['hour'] as int?;
+                final minute = rt['minute'] as int?;
+                if (hour != null && minute != null) {
+                  return TimeOfDay(hour: hour, minute: minute);
+                }
+              }
+              return null;
+            })(),
           );
           await habitRepo.addHabit(habit);
           linkedIds.add(habitId);
@@ -362,6 +371,18 @@ class VisionRepository {
           scheduledDates: schedule,
           numericalTargetType: numType,
           timerTargetType: timType,
+          reminderEnabled: (h['reminderEnabled'] as bool?) ?? false,
+          reminderTime: (() {
+            final rt = h['reminderTime'];
+            if (rt is Map) {
+              final hour = rt['hour'] as int?;
+              final minute = rt['minute'] as int?;
+              if (hour != null && minute != null) {
+                return TimeOfDay(hour: hour, minute: minute);
+              }
+            }
+            return null;
+          })(),
         );
         await habitRepo.addHabit(habit);
         linked.add(id);
@@ -385,6 +406,19 @@ class VisionRepository {
         startDate: base,
       );
       await add(v);
+
+      // Link habits back to vision
+      for (final habitId in linked) {
+        final habit = habitRepo.habits.cast<Habit?>().firstWhere(
+          (h) => h?.id == habitId,
+          orElse: () => null,
+        );
+        if (habit != null) {
+          habit.linkedVisionId = v.id;
+          await habitRepo.updateHabit(habit);
+        }
+      }
+
       return v;
     } catch (_) {
       return null;
@@ -536,6 +570,18 @@ class VisionRepository {
           scheduledDates: schedule,
           numericalTargetType: numType,
           timerTargetType: timType,
+          reminderEnabled: (h['reminderEnabled'] as bool?) ?? false,
+          reminderTime: (() {
+            final rt = h['reminderTime'];
+            if (rt is Map) {
+              final hour = rt['hour'] as int?;
+              final minute = rt['minute'] as int?;
+              if (hour != null && minute != null) {
+                return TimeOfDay(hour: hour, minute: minute);
+              }
+            }
+            return null;
+          })(),
         );
         await habitRepo.addHabit(habit);
         linked.add(id);
@@ -557,6 +603,19 @@ class VisionRepository {
         startDate: base,
       );
       await add(v);
+
+      // Link habits back to vision
+      for (final habitId in linked) {
+        final habit = habitRepo.habits.cast<Habit?>().firstWhere(
+          (h) => h?.id == habitId,
+          orElse: () => null,
+        );
+        if (habit != null) {
+          habit.linkedVisionId = v.id;
+          await habitRepo.updateHabit(habit);
+        }
+      }
+
       return v;
     } catch (_) {
       return null;

@@ -1341,6 +1341,13 @@ class _ManualTabState extends State<_ManualTab> {
       if (scheduledDates != null) 'scheduledDates': scheduledDates,
       'emoji': h.emoji,
       'color': h.color.value,
+      // Reminder settings
+      'reminderEnabled': h.reminderEnabled,
+      if (h.reminderTime != null)
+        'reminderTime': {
+          'hour': h.reminderTime!.hour,
+          'minute': h.reminderTime!.minute,
+        },
       // Target policy types for preselecting segmented controls
       if (h.habitType == HabitType.numerical)
         'numericalTargetType': h.numericalTargetType.toString(),
@@ -1509,6 +1516,24 @@ class _ManualTabState extends State<_ManualTab> {
             // Preserve/apply target-type policy selections
             numericalTargetType: h.numericalTargetType,
             timerTargetType: h.timerTargetType,
+            // Reminder settings
+            reminderEnabled: m.containsKey('reminderEnabled')
+                ? (m['reminderEnabled'] as bool? ?? false)
+                : h.reminderEnabled,
+            reminderTime: (() {
+              if (m.containsKey('reminderTime')) {
+                final rt = m['reminderTime'];
+                if (rt is Map) {
+                  final hour = rt['hour'] as int?;
+                  final minute = rt['minute'] as int?;
+                  if (hour != null && minute != null) {
+                    return TimeOfDay(hour: hour, minute: minute);
+                  }
+                }
+                return null;
+              }
+              return h.reminderTime;
+            })(),
           )
           ..isAdvanced = true
           ..frequencyType = freqType
@@ -1657,6 +1682,18 @@ class _ManualTabState extends State<_ManualTab> {
     final colorValue = (m['color'] as int?) ?? _color.value;
     final emoji = (m['emoji'] as String?) ?? _emoji;
 
+    // Reminder settings
+    final reminderEnabled = m['reminderEnabled'] as bool? ?? false;
+    TimeOfDay? reminderTime;
+    final rt = m['reminderTime'];
+    if (rt is Map) {
+      final hour = rt['hour'] as int?;
+      final minute = rt['minute'] as int?;
+      if (hour != null && minute != null) {
+        reminderTime = TimeOfDay(hour: hour, minute: minute);
+      }
+    }
+
     return VisionHabitTemplate(
       title: (m['name'] as String?)?.trim().isNotEmpty == true
           ? m['name']
@@ -1682,6 +1719,8 @@ class _ManualTabState extends State<_ManualTab> {
       activeOffsets: (activeOffsets == null || activeOffsets.isEmpty)
           ? null
           : activeOffsets,
+      reminderEnabled: reminderEnabled,
+      reminderTime: reminderTime,
     );
   }
 
@@ -1733,6 +1772,13 @@ class _ManualTabState extends State<_ManualTab> {
         'activeOffsets': List<int>.from(h.activeOffsets!),
       'emoji': h.emoji,
       'color': h.colorValue,
+      // Reminder settings
+      'reminderEnabled': h.reminderEnabled ?? false,
+      if (h.reminderTime != null)
+        'reminderTime': {
+          'hour': h.reminderTime!.hour,
+          'minute': h.reminderTime!.minute,
+        },
     };
   }
 
@@ -1982,6 +2028,108 @@ class _ManualTabState extends State<_ManualTab> {
       await VisionRepository.instance.add(vision);
       if (mounted) Navigator.pop(context, vision);
     } else {
+      // Edit mode: Create new habits if any and add to vision
+      final newHabitIds = <String>[];
+
+      // Create new habits from _newHabits list
+      if (_newHabits.isNotEmpty) {
+        final repo = HabitRepository.instance;
+        final today = DateTime.now();
+        final visionStart = _startDate ?? widget.initial!.startDate ?? today;
+
+        for (final template in _newHabits) {
+          final habitId = UniqueKey().toString();
+
+          // Calculate scheduled dates based on vision context
+          final List<String> schedule = [];
+          if (template.activeOffsets != null &&
+              template.activeOffsets!.isNotEmpty) {
+            for (final offset in template.activeOffsets!) {
+              final date = visionStart.add(Duration(days: offset));
+              schedule.add(
+                '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
+              );
+            }
+          }
+
+          // Determine start and end dates
+          final startDay = template.startDay ?? 1;
+          final endDay = template.endDay;
+          final startDate = visionStart.add(Duration(days: startDay - 1));
+          final endDate = endDay != null
+              ? visionStart.add(Duration(days: endDay - 1))
+              : null;
+
+          final startKey =
+              '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+          final endKey = endDate != null
+              ? '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}'
+              : null;
+
+          // Parse HabitType from string
+          final HabitType habitType = switch (template.type) {
+            'numerical' => HabitType.numerical,
+            'timer' => HabitType.timer,
+            _ => HabitType.simple,
+          };
+
+          // Parse target policy types
+          NumericalTargetType numType = NumericalTargetType.minimum;
+          if (template.numericalTargetType != null) {
+            if (template.numericalTargetType!.contains('exact')) {
+              numType = NumericalTargetType.exact;
+            } else if (template.numericalTargetType!.contains('maximum')) {
+              numType = NumericalTargetType.maximum;
+            }
+          }
+
+          TimerTargetType timType = TimerTargetType.minimum;
+          if (template.timerTargetType != null) {
+            if (template.timerTargetType!.contains('exact')) {
+              timType = TimerTargetType.exact;
+            } else if (template.timerTargetType!.contains('maximum')) {
+              timType = TimerTargetType.maximum;
+            }
+          }
+
+          // Use a const material icon directly to preserve tree-shaking
+          const IconData habitIcon = Icons.check_circle;
+
+          // Create habit
+          final habit = Habit(
+            id: habitId,
+            title: template.title,
+            description: template.description ?? '',
+            icon: habitIcon,
+            emoji: template.emoji,
+            color: Color(template.colorValue),
+            targetCount:
+                template.target ??
+                (habitType == HabitType.simple
+                    ? 1
+                    : (habitType == HabitType.timer ? 10 : 0)),
+            habitType: habitType,
+            unit: habitType == HabitType.simple ? null : template.unit,
+            currentStreak: 0,
+            isCompleted: false,
+            progressDate:
+                '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}',
+            startDate: startKey,
+            endDate: endKey,
+            scheduledDates: schedule.isEmpty ? null : schedule,
+            numericalTargetType: numType,
+            timerTargetType: timType,
+            reminderEnabled: template.reminderEnabled ?? false,
+            reminderTime: template.reminderTime,
+            linkedVisionId: widget.initial!.id, // Link to this vision
+          );
+
+          await repo.addHabit(habit);
+          newHabitIds.add(habitId);
+        }
+      }
+
+      // Calculate auto end date
       // Edit: endDate otomatik hesaplanır (yeni alışkanlıklara göre),
       DateTime? autoEnd;
       // 1) Yeni eklenen taslak alışkanlıklardan hesapla
@@ -2037,8 +2185,8 @@ class _ManualTabState extends State<_ManualTab> {
         emoji: _imagePath == null ? _emoji : null,
         coverImage: _imagePath,
         colorValue: _color.toARGB32(),
-        // Düzenlemede mevcut bağlı alışkanlıkları koru
-        linkedHabitIds: widget.initial!.linkedHabitIds,
+        // Include both existing and newly created habits
+        linkedHabitIds: [...widget.initial!.linkedHabitIds, ...newHabitIds],
         endDate: autoEnd ?? widget.initial!.endDate,
         startDate: _startDate ?? widget.initial!.startDate,
       );

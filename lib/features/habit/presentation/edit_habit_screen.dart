@@ -25,6 +25,8 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
   int _target = 1;
   Color _color = Colors.teal;
   String? _emoji;
+  bool _reminderEnabled = false;
+  TimeOfDay? _reminderTime;
 
   @override
   void initState() {
@@ -33,12 +35,20 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     final h = repo.findById(widget.habitId);
     _habit = h;
     if (h != null) {
+      print('[EditHabitScreen] Loading habit: ${h.emoji} ${h.title}');
+      print('[EditHabitScreen] reminderEnabled: ${h.reminderEnabled}');
+      print('[EditHabitScreen] reminderTime: ${h.reminderTime}');
       _titleCtrl.text = h.title;
       _descCtrl.text = h.description;
       _unitCtrl.text = h.unit ?? '';
       _target = h.targetCount;
       _color = h.color;
       _emoji = h.emoji;
+      _reminderEnabled = h.reminderEnabled;
+      _reminderTime = h.reminderTime;
+      print(
+        '[EditHabitScreen] State after loading: _reminderEnabled=$_reminderEnabled, _reminderTime=$_reminderTime',
+      );
     }
   }
 
@@ -231,6 +241,57 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                 },
               ),
               const SizedBox(height: 24),
+              // Reminder section
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.notifications_outlined,
+                            color: colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppLocalizations.of(context).reminder ??
+                                'Hatırlatıcı',
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          AppLocalizations.of(context).enableReminder ??
+                              'Hatırlatıcıyı Etkinleştir',
+                        ),
+                        value: _reminderEnabled,
+                        onChanged: (v) => setState(() => _reminderEnabled = v),
+                      ),
+                      if (_reminderEnabled) ...[
+                        const SizedBox(height: 8),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.access_time),
+                          title: Text(
+                            _reminderTime != null
+                                ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
+                                : (AppLocalizations.of(context).selectTime ??
+                                      'Zaman Seç'),
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: _selectReminderTime,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
@@ -246,9 +307,31 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
     );
   }
 
+  Future<void> _selectReminderTime() async {
+    print(
+      '[EditHabitScreen] Opening time picker, current _reminderTime: $_reminderTime',
+    );
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime ?? TimeOfDay.now(),
+    );
+    print('[EditHabitScreen] Time picker result: $time');
+    if (time != null) {
+      setState(() {
+        _reminderTime = time;
+        print('[EditHabitScreen] Updated _reminderTime to: $_reminderTime');
+      });
+    } else {
+      print('[EditHabitScreen] Time picker was cancelled');
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final h = _habit!;
+    print('[EditHabitScreen] Saving habit: ${h.title}');
+    print('[EditHabitScreen] _reminderEnabled: $_reminderEnabled');
+    print('[EditHabitScreen] _reminderTime: $_reminderTime');
     final target = (h.habitType == HabitType.simple) ? 1 : _target;
     final updated = Habit(
       id: h.id,
@@ -273,6 +356,8 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
       scheduledDates: h.scheduledDates == null
           ? null
           : List<String>.from(h.scheduledDates!),
+      reminderEnabled: _reminderEnabled,
+      reminderTime: _reminderTime,
     )..isAdvanced = h.isAdvanced;
 
     await HabitRepository.instance.updateHabit(updated);

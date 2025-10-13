@@ -4,7 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'habit_model.dart';
 import 'habit_types.dart';
+import '../../../core/icons/icon_mapping.dart';
 import '../../gamification/gamification_repository.dart';
+import '../../notifications/services/notification_service.dart';
 
 class HabitRepository extends ChangeNotifier {
   HabitRepository._();
@@ -32,13 +34,14 @@ class HabitRepository extends ChangeNotifier {
     if (rawV2 != null) {
       _loadFromJson(rawV2);
     } else {
-      // Eski v1 verisi varsa dene, yoksa seed et
+      // Eski v1 verisi varsa dene, yoksa boş başla
       final rawV1 = prefs.getString(_storageKeyV1);
       if (rawV1 != null) {
         _tryMigrateV1(rawV1);
         await _persist();
       } else {
-        _seedDefaults();
+        // No defaults, clean start
+        _habits.clear();
         await _persist();
       }
     }
@@ -62,6 +65,21 @@ class HabitRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Clears all habit data from memory and SharedPreferences.
+  Future<void> wipeAllStoredData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_storageKeyV2);
+      await prefs.remove(_storageKeyV1);
+      await prefs.remove(_kPerHabitStreakKey);
+    } catch (_) {
+      // ignore
+    }
+    _habits.clear();
+    _perHabitStreakVisibility.clear();
+    notifyListeners();
+  }
+
   bool getShowStreakIndicatorFor(String habitId) {
     return _perHabitStreakVisibility[habitId] ?? true;
   }
@@ -82,15 +100,27 @@ class HabitRepository extends ChangeNotifier {
 
   void _loadFromJson(String raw) {
     try {
+      print('[HabitRepository] Loading habits from JSON...');
       final list = jsonDecode(raw) as List<dynamic>;
+      print('[HabitRepository] Found ${list.length} habits in storage');
       for (final e in list) {
         if (e is Map<String, dynamic>) {
-          _habits.add(Habit.fromJson(e));
+          final habit = Habit.fromJson(e);
+          print(
+            '[HabitRepository] Loaded habit: ${habit.emoji} ${habit.title}, reminderEnabled=${habit.reminderEnabled}, reminderTime=${habit.reminderTime}',
+          );
+          _habits.add(habit);
         } else if (e is Map) {
-          _habits.add(Habit.fromJson(e.cast<String, dynamic>()));
+          final habit = Habit.fromJson(e.cast<String, dynamic>());
+          print(
+            '[HabitRepository] Loaded habit: ${habit.emoji} ${habit.title}, reminderEnabled=${habit.reminderEnabled}, reminderTime=${habit.reminderTime}',
+          );
+          _habits.add(habit);
         }
       }
-    } catch (_) {
+      print('[HabitRepository] Total habits loaded: ${_habits.length}');
+    } catch (e) {
+      print('[HabitRepository] Error loading habits: $e');
       _habits.clear();
       _seedDefaults();
     }
@@ -111,9 +141,8 @@ class HabitRepository extends ChangeNotifier {
                 description: m['description']?.toString() ?? '',
                 icon: (m['icon'] is IconData)
                     ? m['icon'] as IconData
-                    : IconData(
+                    : materialIconFromCodePoint(
                         (m['iconCodePoint'] as int?) ?? Icons.circle.codePoint,
-                        fontFamily: 'MaterialIcons',
                       ),
                 color: (m['color'] is Color)
                     ? m['color'] as Color
@@ -146,87 +175,15 @@ class HabitRepository extends ChangeNotifier {
           }
         }
       }
-      if (_habits.isEmpty) _seedDefaults();
+      // if still empty, keep it empty (no defaults)
     } catch (_) {
-      _seedDefaults();
+      // On error, keep it empty
+      _habits.clear();
     }
   }
 
   void _seedDefaults() {
-    final today = _dateStr(DateTime.now());
-    _habits.clear();
-    _habits.addAll([
-      Habit(
-        id: 'h1',
-        title: 'Su İçmek',
-        description: 'Günde 8 bardak su içmek',
-        icon: Icons.water_drop,
-        color: Colors.blue,
-        targetCount: 8,
-        habitType: HabitType.numerical,
-        unit: 'bardak',
-        currentStreak: 0,
-        isCompleted: false,
-        progressDate: today,
-        startDate: today,
-      ),
-      Habit(
-        id: 'h2',
-        title: 'Egzersiz',
-        description: '30 dakika yürüyüş veya koşu',
-        icon: Icons.fitness_center,
-        color: Colors.orange,
-        targetCount: 30,
-        habitType: HabitType.timer,
-        unit: 'dakika',
-        currentStreak: 0,
-        isCompleted: false,
-        progressDate: today,
-        startDate: today,
-      ),
-      Habit(
-        id: 'h3',
-        title: 'Kitap Okuma',
-        description: 'Günde 20 sayfa kitap okumak',
-        icon: Icons.menu_book,
-        color: Colors.green,
-        targetCount: 20,
-        habitType: HabitType.numerical,
-        unit: 'sayfa',
-        currentStreak: 0,
-        isCompleted: false,
-        progressDate: today,
-        startDate: today,
-      ),
-      Habit(
-        id: 'h4',
-        title: 'Meditasyon',
-        description: '10 dakika nefes egzersizi',
-        icon: Icons.self_improvement,
-        color: Colors.purple,
-        targetCount: 10,
-        habitType: HabitType.timer,
-        unit: 'dakika',
-        currentStreak: 0,
-        isCompleted: false,
-        progressDate: today,
-        startDate: today,
-      ),
-      Habit(
-        id: 'h5',
-        title: 'Vitamin',
-        description: 'Günlük vitamin takviyesi almak',
-        icon: Icons.medical_services,
-        color: Colors.red,
-        targetCount: 1,
-        habitType: HabitType.simple,
-        unit: null,
-        currentStreak: 0,
-        isCompleted: false,
-        progressDate: today,
-        startDate: today,
-      ),
-    ]);
+    /* removed: start empty by default */
   }
 
   Habit? findById(String id) {
@@ -243,10 +200,16 @@ class HabitRepository extends ChangeNotifier {
   }
 
   Future<void> updateHabit(Habit habit) async {
+    print('💾 updateHabit called for: ${habit.title}');
+    print('   - reminderEnabled: ${habit.reminderEnabled}');
+    print('   - reminderTime: ${habit.reminderTime}');
+
     final idx = _habits.indexWhere((h) => h.id == habit.id);
     if (idx != -1) {
       _habits[idx] = habit;
       await _persistAndNotify();
+      // Update reminder if changed
+      await _updateHabitReminder(habit);
     }
   }
 
@@ -257,7 +220,43 @@ class HabitRepository extends ChangeNotifier {
     await _persistAndNotify();
   }
 
+  // Reminder Management
+  Future<void> _updateHabitReminder(Habit habit) async {
+    print('🔔 _updateHabitReminder called for: ${habit.title}');
+    print('   - reminderEnabled: ${habit.reminderEnabled}');
+    print('   - reminderTime: ${habit.reminderTime}');
+
+    if (habit.reminderEnabled && habit.reminderTime != null) {
+      await NotificationService.instance.scheduleHabitReminder(habit);
+    } else {
+      await NotificationService.instance.cancelHabitReminder(habit);
+    }
+  }
+
+  Future<void> toggleHabitReminder(String habitId, bool enabled) async {
+    final habit = findById(habitId);
+    if (habit == null) return;
+    habit.reminderEnabled = enabled;
+    await _persistAndNotify();
+    await _updateHabitReminder(habit);
+  }
+
+  Future<void> setHabitReminderTime(String habitId, TimeOfDay time) async {
+    final habit = findById(habitId);
+    if (habit == null) return;
+    habit.reminderTime = time;
+    await _persistAndNotify();
+    if (habit.reminderEnabled) {
+      await _updateHabitReminder(habit);
+    }
+  }
+
   Future<void> removeHabit(String id) async {
+    final habit = findById(id);
+    if (habit != null) {
+      // Cancel reminder before removing
+      await NotificationService.instance.cancelHabitReminder(habit);
+    }
     _habits.removeWhere((h) => h.id == id);
     await _persistAndNotify();
   }
@@ -450,9 +449,17 @@ class HabitRepository extends ChangeNotifier {
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   Future<void> _persist() async {
+    print('[HabitRepository] Persisting ${_habits.length} habits...');
     final prefs = await SharedPreferences.getInstance();
     final jsonList = _habits.map((h) => h.toJson()).toList();
+    print('[HabitRepository] JSON to save:');
+    for (final json in jsonList) {
+      print(
+        '  - ${json['emoji']} ${json['title']}: reminderEnabled=${json['reminderEnabled']}, reminderTime=${json['reminderTime']}',
+      );
+    }
     await prefs.setString(_storageKeyV2, jsonEncode(jsonList));
+    print('[HabitRepository] Persisted successfully');
   }
 
   Future<void> _persistAndNotify() async {

@@ -96,8 +96,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final currencySymbol = currencyFmt.currencySymbol;
     final dateLabel = DateFormat.yMMMd(localeName).format(_selectedDate);
     final isWorld = widget.variant == ThemeVariant.world;
+
+    // Theme-based background color
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor = isDark ? Colors.black : Colors.white;
+
     final scaffold = Scaffold(
-      backgroundColor: isWorld ? Colors.white : null,
+      backgroundColor: backgroundColor,
       appBar: AppBar(title: Text(title)),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -263,56 +269,76 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     ),
                     if (_isRecurring) ...[
                       const SizedBox(height: 8),
-                      InkWell(
-                        borderRadius: BorderRadius.circular(10),
-                        onTap: () async {
-                          final res = await _pickDuration(
-                            context,
-                            _recurringForever,
-                            _recurringMonths,
-                          );
-                          if (res != null) {
-                            setState(() {
-                              _recurringForever = res['forever'] as bool;
-                              _recurringMonths = (res['months'] as int).clamp(
-                                1,
-                                360,
-                              );
-                            });
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 8,
+                      // Inline duration controls
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.duration,
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
-                          child: Row(
-                            children: [
-                              Text(
-                                l10n.duration,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              const Spacer(),
-                              Text(
-                                durationSummary,
-                                style: Theme.of(context).textTheme.labelLarge
-                                    ?.copyWith(color: scheme.onSurfaceVariant),
-                              ),
-                              const SizedBox(width: 8),
-                              Icon(
-                                Icons.chevron_right,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ],
+                          const SizedBox(height: 8),
+                          Center(
+                            child: SegmentedButton<bool>(
+                              showSelectedIcon: false,
+                              segments: [
+                                ButtonSegment<bool>(
+                                  value: true,
+                                  icon: const Icon(Icons.all_inclusive),
+                                  label: Text(l10n.forever),
+                                ),
+                                ButtonSegment<bool>(
+                                  value: false,
+                                  icon: const Icon(Icons.calendar_month),
+                                  label: Text(l10n.fixedDuration),
+                                ),
+                              ],
+                              selected: {_recurringForever},
+                              onSelectionChanged: (s) => setState(() {
+                                _recurringForever = s.first;
+                              }),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${l10n.nextLabel}: $preview',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
+                          if (!_recurringForever) ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      labelText: l10n.monthCount,
+                                      hintText: l10n.monthCountHint,
+                                      suffixText: l10n.monthSuffixShort,
+                                      helperText: l10n.between1And360,
+                                    ),
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          signed: false,
+                                          decimal: false,
+                                        ),
+                                    controller: TextEditingController(
+                                      text: '$_recurringMonths',
+                                    ),
+                                    onChanged: (v) {
+                                      final p =
+                                          int.tryParse(v) ?? _recurringMonths;
+                                      setState(
+                                        () =>
+                                            _recurringMonths = p.clamp(1, 360),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          const SizedBox(height: 8),
+                          Text(
+                            '${l10n.nextLabel}: $preview',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(color: scheme.onSurfaceVariant),
+                          ),
+                        ],
                       ),
                     ],
                   ],

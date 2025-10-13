@@ -34,6 +34,10 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
   String _selectedEmoji = '✅';
   // Notifications removed
 
+  // Reminder settings
+  bool _reminderEnabled = false;
+  TimeOfDay? _reminderTime;
+
   final List<Color> _colors = [
     // Expanded Material palette
     Colors.red,
@@ -275,28 +279,55 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
       if (h.periodicDays != null && h.periodicDays! > 0) {
         _periodicDays = h.periodicDays!;
       }
+      // Load reminder settings
+      _reminderEnabled = h.reminderEnabled;
+      _reminderTime = h.reminderTime;
+      print(
+        '[CreateHabitScreen] Loaded reminder settings: enabled=$_reminderEnabled, time=$_reminderTime',
+      );
     }
   }
 
   String _frequencySummary() {
+    final l10n = AppLocalizations.of(context);
     switch (_selectedFrequency) {
       case 'weekly':
-        if (_weeklyDays.isEmpty) return 'Haftalık';
-        const labels = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+        if (_weeklyDays.isEmpty) return l10n.weekly;
+        String shortLabelFor(int d) {
+          switch (d) {
+            case 1:
+              return l10n.weekdaysShortMon;
+            case 2:
+              return l10n.weekdaysShortTue;
+            case 3:
+              return l10n.weekdaysShortWed;
+            case 4:
+              return l10n.weekdaysShortThu;
+            case 5:
+              return l10n.weekdaysShortFri;
+            case 6:
+              return l10n.weekdaysShortSat;
+            case 7:
+              return l10n.weekdaysShortSun;
+            default:
+              return d.toString();
+          }
+        }
         final days = _weeklyDays.toList()..sort();
-        return 'Haftalık: ' + days.map((d) => labels[d - 1]).join(', ');
+        return '${l10n.weekly}: ' + days.map(shortLabelFor).join(', ');
       case 'monthly':
-        if (_monthDays.isEmpty) return 'Aylık';
+        if (_monthDays.isEmpty) return l10n.monthly;
         final days = _monthDays.toList()..sort();
-        return 'Aylık: ' + days.join(', ');
+        return '${l10n.monthly}: ' + days.join(', ');
       case 'yearly':
-        if (_yearDays.isEmpty) return 'Yıllık';
+        if (_yearDays.isEmpty) return l10n.yearly;
         final list = [..._yearDays]..sort();
-        return 'Yıllık: ' + list.join(', ');
+        return '${l10n.yearly}: ' + list.join(', ');
       case 'periodic':
-        return 'Periyodik: ${_periodicDays} günde bir';
+        // Example: "Periodic: 5 days"
+        return '${l10n.periodic}: ' + l10n.nDaysLabel(_periodicDays);
       default:
-        return 'Günlük';
+        return l10n.daily;
     }
   }
 
@@ -508,7 +539,29 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
     return dates;
   }
 
+  Future<void> _selectReminderTime() async {
+    print(
+      '[CreateHabitScreen] Opening time picker, current _reminderTime: $_reminderTime',
+    );
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _reminderTime ?? TimeOfDay.now(),
+    );
+    print('[CreateHabitScreen] Time picker result: $time');
+    if (time != null) {
+      setState(() {
+        _reminderTime = time;
+        print('[CreateHabitScreen] Updated _reminderTime to: $_reminderTime');
+      });
+    } else {
+      print('[CreateHabitScreen] Time picker was cancelled');
+    }
+  }
+
   void _createHabit() {
+    print('[CreateHabitScreen] _createHabit called');
+    print('[CreateHabitScreen] _reminderEnabled: $_reminderEnabled');
+    print('[CreateHabitScreen] _reminderTime: $_reminderTime');
     if (_formKey.currentState!.validate()) {
       final today = DateTime.now();
       final startDateStr = _dateKey(today);
@@ -553,6 +606,12 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
         'startDate': startDateStr,
         'scheduledDates': scheduled,
         'frequencyType': frequencyType,
+        'reminderEnabled': _reminderEnabled,
+        if (_reminderTime != null)
+          'reminderTime': {
+            'hour': _reminderTime!.hour,
+            'minute': _reminderTime!.minute,
+          },
         if (selectedWeekdays != null) 'selectedWeekdays': selectedWeekdays,
         if (selectedMonthDays != null) 'selectedMonthDays': selectedMonthDays,
         if (selectedYearDays != null) 'selectedYearDays': selectedYearDays,
@@ -665,7 +724,60 @@ class _CreateHabitScreenState extends State<CreateHabitScreen> {
                 ],
               ),
               const SizedBox(height: 32),
-              // Notifications section removed
+              // Reminder section
+              Card(
+                elevation: 0,
+                color: colorScheme.surfaceVariant.withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.notifications_outlined,
+                            color: colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.reminder ?? 'Hatırlatıcı',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          l10n.enableReminder ?? 'Hatırlatıcıyı Etkinleştir',
+                        ),
+                        value: _reminderEnabled,
+                        onChanged: (v) => setState(() => _reminderEnabled = v),
+                      ),
+                      if (_reminderEnabled) ...[
+                        const SizedBox(height: 8),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.access_time),
+                          title: Text(
+                            _reminderTime != null
+                                ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
+                                : (l10n.selectTime ?? 'Zaman Seç'),
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: _selectReminderTime,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,

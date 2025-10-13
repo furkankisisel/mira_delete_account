@@ -67,6 +67,63 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bildirim tercihlerini yapılandırın';
 
   @override
+  String get enableNotifications => 'Bildirimleri Etkinleştir';
+
+  @override
+  String get notificationsMasterSubtitle =>
+      'Tüm uygulama bildirimlerini kontrol et';
+
+  @override
+  String get notificationTypes => 'Bildirim Türleri';
+
+  @override
+  String get habitReminders => 'Alışkanlık Hatırlatıcıları';
+
+  @override
+  String get habitRemindersSubtitle =>
+      'Alışkanlıklarınız için günlük hatırlatıcılar';
+
+  @override
+  String get notificationBehavior => 'Bildirim Davranışı';
+
+  @override
+  String get sound => 'Ses';
+
+  @override
+  String get soundSubtitle => 'Bildirimlerle birlikte ses çal';
+
+  @override
+  String get vibration => 'Titreşim';
+
+  @override
+  String get vibrationSubtitle => 'Bildirimlerle birlikte titreşim';
+
+  @override
+  String get systemInfo => 'Sistem Bilgisi';
+
+  @override
+  String get timezone => 'Zaman Dilimi';
+
+  @override
+  String get notificationPermission => 'Bildirim İzni';
+
+  @override
+  String get exactAlarmPermission => 'Kesin Alarm İzni (Android 12+)';
+
+  @override
+  String get granted => 'Verildi';
+
+  @override
+  String get notGranted => 'Verilmedi';
+
+  @override
+  String get importantNotice => 'Önemli Uyarı';
+
+  @override
+  String get notificationTroubleshooting =>
+      'Bildirimlerin düzgün çalışması için:\n\n• Pil optimizasyonunu KAPATIN (Ayarlar → Uygulamalar → Mira → Pil → Sınırsız)\n• Arka planda çalışmaya İZİN VERİN\n• Bildirim izinlerinin AÇIK olduğundan emin olun\n• \'Rahatsız etmeyin\' modunu kontrol edin';
+
+  @override
   String approxVisionDurationDays(Object days) {
     return 'Bu vizyon yaklaşık $days gün sürer';
   }
@@ -308,6 +365,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String get customEmojiOptional => 'Özel emoji (isteğe bağlı)';
 
   @override
+  String get reminder => 'Hatırlatıcı';
+
+  @override
+  String get enableReminder => 'Hatırlatıcıyı Etkinleştir';
+
+  @override
+  String get selectTime => 'Zaman Seç';
+
+  @override
   String get customFrequency => 'Özel';
 
   @override
@@ -415,9 +481,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get emojiLabel => 'Emoji';
-
-  @override
-  String get enableReminder => 'Hatırlatıcıyı Etkinleştir';
 
   @override
   String get endDate => 'Bitiş Tarihi';
@@ -1837,4 +1900,282 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get typeNotChangeable => 'Tür değiştirilemez';
+
+  @override
+  String get onboardingWelcomeTitle => 'Mira\'ya Hoş Geldin';
+
+  @override
+  String get onboardingWelcomeDesc =>
+      'Seninle birlikte büyüyen kişisel alışkanlık takipçin. Benzersiz kişiliğini keşfedelim ve sana özel alışkanlıklar önerelim.';
+
+  @override
+  String get onboardingQuizIntro =>
+      'Kişiliğini daha iyi anlayabilmemiz için birkaç soruyu cevaplayın. Bu, bilimsel olarak doğrulanmış psikolojik araştırmalara dayanmaktadır.';
+
+  @override
+  String get onboardingQ1 =>
+      'Yeni deneyimler yaşamaktan ve tanımadığım şeyleri keşfetmekten hoşlanırım.';
+
+  @override
+  String get onboardingQ2 =>
+      'Alanımı düzenli tutarım ve yapılandırılmış bir günlük rutine sahip olmayı tercih ederim.';
+
+  @override
+  String get onboardingQ3 =>
+      'İnsanların yanında olduğumda enerjilenirim ve sosyal etkinliklerden keyif alırım.';
+
+  @override
+  String get onboardingQ4 =>
+      'Başkalarıyla çalışmayı tercih ederim ve işbirliğinin rekabetten daha etkili olduğuna inanırım.';
+
+  @override
+  String get onboardingQ5 =>
+      'Stresli durumlarla sakin bir şekilde başa çıkarım ve nadiren endişelenirim.';
+
+  @override
+  String get onboardingQ6 =>
+      'Sanat, müzik veya yazma gibi yaratıcı aktivitelerden hoşlanırım.';
+
+  @override
+  String get onboardingQ7 =>
+      'Kendime net hedefler koyarım ve bunları gerçekleştirmek için gayretle çalışırım.';
+
+  @override
+  String get onboardingQ8 =>
+      'Grup aktivitelerini yalnız vakit geçirmeye tercih ederim.';
+
+  @override
+  String get onboardingQ9 =>
+      'Karar vermeden önce genellikle başkalarının duygularını dikkate alırım.';
+
+  @override
+  String get onboardingQ10 =>
+      'Önemli etkinlikler ve görevler için önceden plan yaparım.';
+
+  @override
+  String get onboardingQ11 =>
+      'Tek bir yönteme bağlı kalmaktansa farklı yaklaşımlar denemeyi severim.';
+
+  @override
+  String get onboardingQ12 =>
+      'Baskı altında sakin kalırım ve aksiliklerden çabuk toparlanırım.';
+
+  @override
+  String get likertStronglyDisagree => 'Kesinlikle Katılmıyorum';
+
+  @override
+  String get likertDisagree => 'Katılmıyorum';
+
+  @override
+  String get likertNeutral => 'Kararsızım';
+
+  @override
+  String get likertAgree => 'Katılıyorum';
+
+  @override
+  String get likertStronglyAgree => 'Kesinlikle Katılıyorum';
+
+  @override
+  String get characterTypePlanner => 'Planlayıcı';
+
+  @override
+  String get characterDescPlanner =>
+      'Düzenli, hedef odaklı ve yapıdan beslenen birisin. Hayalleri eyleme dönüştürmekte ve disiplinle takip etmekte başarılısın.';
+
+  @override
+  String get characterTypeExplorer => 'Kaşif';
+
+  @override
+  String get characterDescExplorer =>
+      'Meraklı, yaratıcı ve çeşitliliği seven birisin. Yeni şeyler öğrenmekten ve hayatın zorluklarına farklı yaklaşımlar denemekten keyif alırsın.';
+
+  @override
+  String get characterTypeSocialConnector => 'Sosyal Bağlayıcı';
+
+  @override
+  String get characterDescSocialConnector =>
+      'Sıcakkanlı, empatik ve ilişkilerden enerji alan birisin. Başkalarıyla bağlantı kurmakta ve güçlü topluluklar oluşturmakta anlam bulursun.';
+
+  @override
+  String get characterTypeBalancedMindful => 'Dengeli Bilinçli';
+
+  @override
+  String get characterDescBalancedMindful =>
+      'Sakin, istikrarlı ve iç huzura değer veren birisin. Denge sağlamakta ve hayata bilinçlilik ve soğukkanlılıkla yaklaşmakta başarılısın.';
+
+  @override
+  String get yourCharacterType => 'Senin Karakter Tipin';
+
+  @override
+  String get recommendedHabits => 'Senin İçin Önerilen Alışkanlıklar';
+
+  @override
+  String get selectHabitsToAdd =>
+      'Günlük rutinine eklemek istediğin alışkanlıkları seç:';
+
+  @override
+  String get startJourney => 'Yolculuğuna Başla';
+
+  @override
+  String get skipOnboarding => 'Geç';
+
+  @override
+  String get back => 'Geri';
+
+  @override
+  String get habitPlannerMorningRoutine => 'Sabah Rutini';
+
+  @override
+  String get habitPlannerMorningRoutineDesc =>
+      'Her günü verimliliğe uygun bir sabah rutiyle başlatın.';
+
+  @override
+  String get habitPlannerWeeklyReview => 'Haftalık İnceleme';
+
+  @override
+  String get habitPlannerWeeklyReviewDesc =>
+      'Her Pazar haftanın ilerlemenizi inceleyin ve gelecek haftayı planlayın.';
+
+  @override
+  String get habitPlannerGoalSetting => 'Aylık Hedef Belirleme';
+
+  @override
+  String get habitPlannerGoalSettingDesc =>
+      'Gelecek ay için spesifik, ölçülebilir hedefler belirleyin.';
+
+  @override
+  String get habitPlannerTaskPrioritization => 'Günlük Görev Önceliklendirme';
+
+  @override
+  String get habitPlannerTaskPrioritizationDesc =>
+      'Her sabah gün içindeki en öncelikli 3 görevinizi belirleyin.';
+
+  @override
+  String get habitPlannerTimeBlocking => 'Zaman Blokları';
+
+  @override
+  String get habitPlannerTimeBlockingDesc =>
+      'Derin çalışma için gününüzü odaklı zaman bloklarına ayırın.';
+
+  @override
+  String get habitExplorerLearnNewSkill => 'Yeni Bir Şey Öğren';
+
+  @override
+  String get habitExplorerLearnNewSkillDesc =>
+      'Her hafta yeni bir beceri veya konuya vakit ayırın.';
+
+  @override
+  String get habitExplorerTryNewActivity => 'Yeni Bir Aktivite Dene';
+
+  @override
+  String get habitExplorerTryNewActivityDesc =>
+      'Konfor alanınızın dışına çıkın ve farklı bir deneyim yaşayın.';
+
+  @override
+  String get habitExplorerReadDiverse => 'Çeşitli İçerik Oku';
+
+  @override
+  String get habitExplorerReadDiverseDesc =>
+      'Farklı türlerde ve bakış açılarında kitaplar, makaleler veya içerik okuyun.';
+
+  @override
+  String get habitExplorerCreativeProject => 'Yaratıcı Proje Zamanı';
+
+  @override
+  String get habitExplorerCreativeProjectDesc =>
+      'Hayal gücünüzü ateşleyen bir yaratıcı proje üzerinde çalışın.';
+
+  @override
+  String get habitExplorerExplorePlace => 'Yeni Bir Yer Keşfet';
+
+  @override
+  String get habitExplorerExplorePlaceDesc =>
+      'Bölgenizdeki yeni bir mahalle, park veya yeri ziyaret edin.';
+
+  @override
+  String get habitSocialCallFriend => 'Bir Arkadaşı Ara';
+
+  @override
+  String get habitSocialCallFriendDesc =>
+      'Anlamlı bir sohbet için bir arkadaşınızla veya aile üyenizle iletişime geçin.';
+
+  @override
+  String get habitSocialGroupActivity => 'Grup Aktivitesine Katıl';
+
+  @override
+  String get habitSocialGroupActivityDesc =>
+      'Bir grup aktivitesine veya sosyal etkinliğe katılın.';
+
+  @override
+  String get habitSocialVolunteer => 'Gönüllü Ol';
+
+  @override
+  String get habitSocialVolunteerDesc =>
+      'Gönüllü çalışma yoluyla topluluğunuza katkıda bulunun.';
+
+  @override
+  String get habitSocialFamilyTime => 'Kaliteli Aile Zamanı';
+
+  @override
+  String get habitSocialFamilyTimeDesc =>
+      'Aile üyeleriyle dikkat dağıtıcı şeyler olmadan özel vakit geçirin.';
+
+  @override
+  String get habitSocialCompliment => 'Samimi Bir İltifat Yap';
+
+  @override
+  String get habitSocialComplimentDesc =>
+      'İçten bir iltifatla birinin gününü aydınlatın.';
+
+  @override
+  String get habitMindfulMeditation => 'Meditasyon';
+
+  @override
+  String get habitMindfulMeditationDesc =>
+      '10-15 dakika bilinçli meditasyon yapın.';
+
+  @override
+  String get habitMindfulGratitude => 'Şükür Pratiği';
+
+  @override
+  String get habitMindfulGratitudeDesc =>
+      'Bugün minnettar olduğunuz üç şeyi yazın.';
+
+  @override
+  String get habitMindfulNatureWalk => 'Doğa Yürüyüşü';
+
+  @override
+  String get habitMindfulNatureWalkDesc =>
+      'Çevrenize dikkat ederek doğada bilinçli bir yürüyüş yapın.';
+
+  @override
+  String get habitMindfulBreathing => 'Derin Nefes Egzersizi';
+
+  @override
+  String get habitMindfulBreathingDesc =>
+      'Kendinizi merkezlemek için derin nefes alma teknikleri uygulayın.';
+
+  @override
+  String get habitMindfulJournaling => 'Yansıtıcı Günlük Tutma';
+
+  @override
+  String get habitMindfulJournalingDesc =>
+      'Öz farkındalık için düşüncelerinizi ve yansımalarınızı günlüğe yazın.';
+
+  @override
+  String habitAddSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count alışkanlık eklendi',
+      one: '1 alışkanlık eklendi',
+      zero: 'Hiç alışkanlık eklenmedi',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitAddError(Object error) {
+    return 'Alışkanlıklar eklenirken hata: $error';
+  }
 }

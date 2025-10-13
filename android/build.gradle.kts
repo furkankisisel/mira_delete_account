@@ -16,14 +16,19 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
-// Ensure all Java/Kotlin compile tasks use Java 11 to avoid warnings about -source 8
+// Ensure all Java/Kotlin compile tasks use Java 17 to avoid warnings about -source 8
 // coming from third-party plugins or libraries that don't declare newer compatibility.
-
-// Workaround: some third-party plugins may lack a namespace in their Android
-// library module build file when using newer AGP versions. Configure it here.
-
-// Workaround: some third-party plugins may lack a namespace in their Android
-// library module build file when using newer AGP versions. Configure it here.
+// This config forces JavaCompile and KotlinCompile tasks across subprojects to
+// use Java 17 source/target and sets Kotlin jvmTarget to 17 where applicable.
+subprojects {
+    // Configure Java compile tasks across all subprojects
+    tasks.withType(org.gradle.api.tasks.compile.JavaCompile::class.java).configureEach {
+        sourceCompatibility = JavaVersion.VERSION_17.toString()
+        targetCompatibility = JavaVersion.VERSION_17.toString()
+    }
+    // Note: Kotlin jvmTarget is set in the app module. If needed later,
+    // we can add a plugin-aware configuration here without reflection.
+}
 
 
 tasks.register<Delete>("clean") {

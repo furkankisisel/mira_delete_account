@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/icons/icon_mapping.dart';
 import 'widgets/fab_menu.dart';
 import 'widgets/daily_task_dialog.dart';
 import 'widgets/list_creation_dialog.dart';
@@ -15,6 +16,9 @@ import '../domain/list_repository.dart';
 import '../domain/list_model.dart';
 import '../domain/daily_task_repository.dart';
 import '../domain/daily_task_model.dart';
+import '../../vision/data/vision_repository.dart';
+import '../../vision/data/vision_model.dart';
+// removed unused imports
 
 class HabitScreen extends StatefulWidget {
   const HabitScreen({super.key});
@@ -1107,7 +1111,7 @@ class HabitScreenState extends State<HabitScreen> {
         title: (result['title'] ?? result['name'] ?? '') as String,
         description: (result['description'] ?? '') as String,
         icon: result['icon'] is int
-            ? IconData(result['icon'] as int, fontFamily: 'MaterialIcons')
+            ? materialIconFromCodePoint(result['icon'] as int)
             : (result['icon'] is IconData
                   ? result['icon'] as IconData
                   : Icons.check_circle),
@@ -1165,6 +1169,19 @@ class HabitScreenState extends State<HabitScreen> {
             .toList(),
         // optional user-visible category name (from advanced wizard/custom)
         categoryName: resolvedCategoryName,
+        // Reminder settings
+        reminderEnabled: (result['reminderEnabled'] as bool?) ?? false,
+        reminderTime: (() {
+          final rt = result['reminderTime'];
+          if (rt is Map) {
+            final hour = rt['hour'] as int?;
+            final minute = rt['minute'] as int?;
+            if (hour != null && minute != null) {
+              return TimeOfDay(hour: hour, minute: minute);
+            }
+          }
+          return null;
+        })(),
       );
       // Mark advanced if coming from advanced wizard
       habit.isAdvanced = (result['isAdvanced'] == true);
@@ -1594,6 +1611,242 @@ class HabitScreenState extends State<HabitScreen> {
                                 );
                               },
                               onEdit: () async {
+                                print(
+                                  '🎯 [HabitScreen] onEdit called for: ${habit.title}',
+                                );
+                                print('   habitType: ${habit.habitType}');
+                                print('   isAdvanced: ${habit.isAdvanced}');
+                                print(
+                                  '   linkedVisionId: ${habit.linkedVisionId}',
+                                );
+
+                                // Vision habits: edit with AdvancedHabitWizardScreen (vision context)
+                                if (habit.linkedVisionId != null) {
+                                  print(
+                                    '🔍 [HabitScreen] Editing vision habit: ${habit.title}',
+                                  );
+                                  print(
+                                    '   linkedVisionId: ${habit.linkedVisionId}',
+                                  );
+
+                                  final visionRepo = VisionRepository.instance;
+                                  // Ensure repository is initialized
+                                  await visionRepo.initialize();
+
+                                  // Find vision from stream
+                                  final visions = await visionRepo.stream.first;
+                                  print(
+                                    '   Available visions: ${visions.length}',
+                                  );
+                                  for (final v in visions) {
+                                    print('     - ${v.title} (${v.id})');
+                                  }
+
+                                  final vision = visions
+                                      .cast<Vision?>()
+                                      .firstWhere(
+                                        (v) => v?.id == habit.linkedVisionId,
+                                        orElse: () => null,
+                                      );
+
+                                  if (vision != null) {
+                                    print('   ✅ Vision found: ${vision.title}');
+                                    // Prepare editing map for AdvancedHabitWizardScreen
+                                    final result = await Navigator.of(context)
+                                        .push<Map<String, dynamic>>(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AdvancedHabitWizardScreen(
+                                                  isEditing: true,
+                                                  useVisionDayOffsets: true,
+                                                  editingHabit: {
+                                                    'id': habit.id,
+                                                    'title': habit.title,
+                                                    'description':
+                                                        habit.description,
+                                                    'icon': habit.icon,
+                                                    'color': habit.color,
+                                                    'targetCount':
+                                                        habit.targetCount,
+                                                    'habitType':
+                                                        habit.habitType,
+                                                    'unit': habit.unit,
+                                                    'currentStreak':
+                                                        habit.currentStreak,
+                                                    'isCompleted':
+                                                        habit.isCompleted,
+                                                    'startDate':
+                                                        habit.startDate,
+                                                    'endDate': habit.endDate,
+                                                    if (habit.scheduledDates !=
+                                                        null)
+                                                      'scheduledDates':
+                                                          habit.scheduledDates,
+                                                    'numericalTargetType': habit
+                                                        .numericalTargetType,
+                                                    'timerTargetType':
+                                                        habit.timerTargetType,
+                                                    if (habit.emoji != null)
+                                                      'emoji': habit.emoji,
+                                                    if (habit.frequency != null)
+                                                      'frequency':
+                                                          habit.frequency,
+                                                    if (habit.frequencyType !=
+                                                        null)
+                                                      'frequencyType':
+                                                          habit.frequencyType,
+                                                    if (habit
+                                                            .selectedWeekdays !=
+                                                        null)
+                                                      'selectedWeekdays': habit
+                                                          .selectedWeekdays,
+                                                    if (habit
+                                                            .selectedMonthDays !=
+                                                        null)
+                                                      'selectedMonthDays': habit
+                                                          .selectedMonthDays,
+                                                    if (habit
+                                                            .selectedYearDays !=
+                                                        null)
+                                                      'selectedYearDays': habit
+                                                          .selectedYearDays,
+                                                    if (habit.periodicDays !=
+                                                        null)
+                                                      'periodicDays':
+                                                          habit.periodicDays,
+                                                    'reminderEnabled':
+                                                        habit.reminderEnabled,
+                                                    if (habit.reminderTime !=
+                                                        null)
+                                                      'reminderTime': {
+                                                        'hour': habit
+                                                            .reminderTime!
+                                                            .hour,
+                                                        'minute': habit
+                                                            .reminderTime!
+                                                            .minute,
+                                                      },
+                                                    // Vision-specific context
+                                                    'visionId': vision.id,
+                                                    'visionStartDate':
+                                                        vision.startDate,
+                                                    'visionEndDate':
+                                                        vision.endDate,
+                                                  },
+                                                ),
+                                          ),
+                                        );
+
+                                    if (result != null) {
+                                      // Apply updates to habit
+                                      habit.title =
+                                          (result['title'] ?? habit.title)
+                                              as String;
+                                      habit.description =
+                                          (result['description'] ??
+                                                  habit.description)
+                                              as String;
+                                      if (result['color'] is int) {
+                                        habit.color = Color(
+                                          result['color'] as int,
+                                        );
+                                      } else if (result['color'] is Color) {
+                                        habit.color = result['color'] as Color;
+                                      }
+                                      if (result['emoji'] is String &&
+                                          (result['emoji'] as String)
+                                              .trim()
+                                              .isNotEmpty) {
+                                        habit.emoji =
+                                            (result['emoji'] as String).trim();
+                                      }
+                                      if (result['frequency'] is String) {
+                                        final f =
+                                            (result['frequency'] as String)
+                                                .trim();
+                                        habit.frequency = f.isEmpty ? null : f;
+                                      }
+                                      if (result['frequencyType'] != null) {
+                                        habit.frequencyType =
+                                            result['frequencyType']?.toString();
+                                      }
+                                      if (result['selectedWeekdays'] is List) {
+                                        habit.selectedWeekdays =
+                                            (result['selectedWeekdays'] as List)
+                                                .whereType<num>()
+                                                .map((e) => e.toInt())
+                                                .toList();
+                                      }
+                                      if (result['selectedMonthDays'] is List) {
+                                        habit.selectedMonthDays =
+                                            (result['selectedMonthDays']
+                                                    as List)
+                                                .whereType<num>()
+                                                .map((e) => e.toInt())
+                                                .toList();
+                                      }
+                                      if (result['selectedYearDays'] is List) {
+                                        habit.selectedYearDays =
+                                            (result['selectedYearDays'] as List)
+                                                .map(
+                                                  (e) => e
+                                                      .toString()
+                                                      .split('T')
+                                                      .first,
+                                                )
+                                                .toList();
+                                      }
+                                      if (result['periodicDays'] != null) {
+                                        habit.periodicDays =
+                                            (result['periodicDays'] as num?)
+                                                ?.toInt();
+                                      }
+                                      if (result['scheduledDates'] is List) {
+                                        habit.scheduledDates =
+                                            (result['scheduledDates'] as List)
+                                                .map(
+                                                  (e) => e
+                                                      .toString()
+                                                      .split('T')
+                                                      .first,
+                                                )
+                                                .toList();
+                                      }
+                                      // Update reminder settings
+                                      if (result.containsKey(
+                                        'reminderEnabled',
+                                      )) {
+                                        habit.reminderEnabled =
+                                            (result['reminderEnabled']
+                                                as bool?) ??
+                                            false;
+                                      }
+                                      if (result['reminderTime'] is Map) {
+                                        final rt =
+                                            result['reminderTime'] as Map;
+                                        final hour = rt['hour'] as int?;
+                                        final minute = rt['minute'] as int?;
+                                        if (hour != null && minute != null) {
+                                          habit.reminderTime = TimeOfDay(
+                                            hour: hour,
+                                            minute: minute,
+                                          );
+                                        }
+                                      } else if (result['reminderTime'] ==
+                                          null) {
+                                        habit.reminderTime = null;
+                                      }
+                                      await _repo.updateHabit(habit);
+                                    }
+                                    return;
+                                  } else {
+                                    print(
+                                      '   ❌ Vision not found for ID: ${habit.linkedVisionId}',
+                                    );
+                                    // Vision bulunamadı, normal düzenlemeye geç
+                                  }
+                                }
+
                                 // If it's a simple non-advanced habit, edit in basic screen
                                 if (habit.habitType == HabitType.simple &&
                                     !habit.isAdvanced) {
@@ -1681,6 +1934,26 @@ class HabitScreenState extends State<HabitScreen> {
                                               )
                                               .toList();
                                     }
+                                    // Update reminder settings
+                                    if (result.containsKey('reminderEnabled')) {
+                                      habit.reminderEnabled =
+                                          (result['reminderEnabled']
+                                              as bool?) ??
+                                          false;
+                                    }
+                                    if (result['reminderTime'] is Map) {
+                                      final rt = result['reminderTime'] as Map;
+                                      final hour = rt['hour'] as int?;
+                                      final minute = rt['minute'] as int?;
+                                      if (hour != null && minute != null) {
+                                        habit.reminderTime = TimeOfDay(
+                                          hour: hour,
+                                          minute: minute,
+                                        );
+                                      }
+                                    } else if (result['reminderTime'] == null) {
+                                      habit.reminderTime = null;
+                                    }
                                     await _repo.updateHabit(habit);
                                   }
                                   return;
@@ -1715,6 +1988,16 @@ class HabitScreenState extends State<HabitScreen> {
                                                 habit.timerTargetType,
                                             if (habit.emoji != null)
                                               'emoji': habit.emoji,
+                                            // Reminder settings
+                                            'reminderEnabled':
+                                                habit.reminderEnabled,
+                                            if (habit.reminderTime != null)
+                                              'reminderTime': {
+                                                'hour':
+                                                    habit.reminderTime!.hour,
+                                                'minute':
+                                                    habit.reminderTime!.minute,
+                                              },
                                             // Frequency details are not stored on Habit model; avoid dynamic access
                                             // Prefill will default to daily unless provided explicitly from other flows
                                           },
@@ -1735,10 +2018,10 @@ class HabitScreenState extends State<HabitScreen> {
                                           habit.icon =
                                               result['icon'] as IconData;
                                         } else if (result['icon'] is int) {
-                                          habit.icon = IconData(
-                                            result['icon'] as int,
-                                            fontFamily: 'MaterialIcons',
-                                          );
+                                          habit.icon =
+                                              materialIconFromCodePoint(
+                                                result['icon'] as int,
+                                              );
                                         }
                                         if (result['color'] is Color) {
                                           habit.color =
@@ -1840,6 +2123,30 @@ class HabitScreenState extends State<HabitScreen> {
                                         if (result['isAdvanced'] is bool) {
                                           habit.isAdvanced =
                                               result['isAdvanced'] as bool;
+                                        }
+                                        // Update reminder settings
+                                        if (result.containsKey(
+                                          'reminderEnabled',
+                                        )) {
+                                          habit.reminderEnabled =
+                                              (result['reminderEnabled']
+                                                  as bool?) ??
+                                              false;
+                                        }
+                                        if (result['reminderTime'] is Map) {
+                                          final rt =
+                                              result['reminderTime'] as Map;
+                                          final hour = rt['hour'] as int?;
+                                          final minute = rt['minute'] as int?;
+                                          if (hour != null && minute != null) {
+                                            habit.reminderTime = TimeOfDay(
+                                              hour: hour,
+                                              minute: minute,
+                                            );
+                                          }
+                                        } else if (result['reminderTime'] ==
+                                            null) {
+                                          habit.reminderTime = null;
                                         }
                                         await _repo.updateHabit(habit);
                                       }

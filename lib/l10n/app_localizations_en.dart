@@ -67,6 +67,61 @@ class AppLocalizationsEn extends AppLocalizations {
       'Configure your notification preferences';
 
   @override
+  String get enableNotifications => 'Enable Notifications';
+
+  @override
+  String get notificationsMasterSubtitle => 'Control all app notifications';
+
+  @override
+  String get notificationTypes => 'Notification Types';
+
+  @override
+  String get habitReminders => 'Habit Reminders';
+
+  @override
+  String get habitRemindersSubtitle => 'Daily reminders for your habits';
+
+  @override
+  String get notificationBehavior => 'Notification Behavior';
+
+  @override
+  String get sound => 'Sound';
+
+  @override
+  String get soundSubtitle => 'Play sound with notifications';
+
+  @override
+  String get vibration => 'Vibration';
+
+  @override
+  String get vibrationSubtitle => 'Vibrate with notifications';
+
+  @override
+  String get systemInfo => 'System Information';
+
+  @override
+  String get timezone => 'Time Zone';
+
+  @override
+  String get notificationPermission => 'Notification Permission';
+
+  @override
+  String get exactAlarmPermission => 'Exact Alarm Permission (Android 12+)';
+
+  @override
+  String get granted => 'Granted';
+
+  @override
+  String get notGranted => 'Not Granted';
+
+  @override
+  String get importantNotice => 'Important Notice';
+
+  @override
+  String get notificationTroubleshooting =>
+      'For notifications to work properly:\n\n• Turn OFF battery optimization (Settings → Apps → Mira → Battery → Unrestricted)\n• ALLOW background activity\n• Ensure notification permissions are ON\n• Check \'Do Not Disturb\' mode';
+
+  @override
   String approxVisionDurationDays(Object days) {
     return 'This vision lasts about $days days';
   }
@@ -307,6 +362,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customEmojiOptional => 'Custom emoji (optional)';
 
   @override
+  String get reminder => 'Reminder';
+
+  @override
+  String get enableReminder => 'Enable Reminder';
+
+  @override
+  String get selectTime => 'Select Time';
+
+  @override
   String get customFrequency => 'Custom';
 
   @override
@@ -414,9 +478,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emojiLabel => 'Emoji';
-
-  @override
-  String get enableReminder => 'Enable Reminder';
 
   @override
   String get endDate => 'End Date';
@@ -1365,90 +1426,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analysis => 'Analysis';
 
   @override
-  String get apply => 'Uygula';
+  String get apply => 'Apply';
 
   @override
-  String get clearFilters => 'Filtreleri temizle';
+  String get clearFilters => 'Clear Filters';
 
   @override
-  String get simpleTypeShort => 'Basit';
+  String get simpleTypeShort => 'Simple';
 
   @override
-  String get completedSelectedDay => 'Tamamlandı (seçilen gün)';
+  String get completedSelectedDay => 'Completed on selected day';
 
   @override
-  String get incompleteSelectedDay => 'Tamamlanmadı (seçilen gün)';
+  String get incompleteSelectedDay => 'Incomplete on selected day';
 
   @override
-  String get manageListsSubtitle =>
-      'Yeni listeler ekleyin, adlarını değiştirin veya silin.';
+  String get manageListsSubtitle => 'Organize your habits and tasks';
 
   @override
-  String get editListTitle => 'Listeyi Düzenle';
+  String get editListTitle => 'Edit List';
 
   @override
-  String get listNameLabel => 'Liste Adı';
+  String get listNameLabel => 'List Name';
 
   @override
-  String get deleteListTitle => 'Listeyi Sil';
+  String get deleteListTitle => 'Delete List';
 
   @override
-  String get deleteListMessage =>
-      'Bu liste silinecek. Bağlı öğeler için işlemi seçin:';
+  String get deleteListMessage => 'Are you sure you want to delete this list?';
 
   @override
-  String get unassignLinkedHabits => 'Bağlı alışkanlıkların atamasını kaldır';
+  String get unassignLinkedHabits => 'Unassign linked habits';
 
   @override
-  String get unassignLinkedDailyTasks =>
-      'Bağlı günlük görevlerin atamasını kaldır';
+  String get unassignLinkedDailyTasks => 'Unassign linked daily tasks';
 
   @override
   String listCreatedMessage(Object title) {
-    return 'Liste oluşturuldu: $title';
+    return 'List created successfully';
   }
 
   @override
-  String get removeFromList => 'Listeden kaldır';
+  String get removeFromList => 'Remove from list';
 
   @override
-  String get createNewList => 'Yeni liste oluştur';
+  String get createNewList => 'Create New List';
 
   @override
-  String get dailyTasksSection => 'Günlük Görevler';
+  String get dailyTasksSection => 'Daily Tasks';
 
   @override
   String get addToList => 'Add to list';
 
   @override
-  String get deleteTaskConfirmTitle => 'Görev silinsin mi?';
+  String get deleteTaskConfirmTitle => 'Delete Task';
 
   @override
   String get deleteTaskConfirmMessage =>
-      'Bu günlük görev silinsin mi? Bu işlem geri alınabilir.';
+      'Are you sure you want to delete this task?';
 
   @override
-  String get undo => 'Geri al';
+  String get undo => 'Undo';
 
   @override
-  String get habitsSection => 'Alışkanlıklar';
+  String get habitsSection => 'Habits';
 
   @override
-  String get noItemsMatchFilters => 'Seçilen filtrelerle eşleşen öğe yok';
+  String get noItemsMatchFilters => 'No items match the current filters';
 
   @override
   String dailyTaskCreatedMessage(Object title) {
-    return 'Günlük görev oluşturuldu: $title';
+    return 'Daily task created successfully';
   }
 
   @override
   String habitDeletedMessage(Object title) {
-    return 'Alışkanlık silindi: $title';
+    return 'Habit deleted';
   }
 
   @override
   String habitCreatedMessage(Object title) {
-    return 'Alışkanlık oluşturuldu: $title';
+    return 'Habit created successfully';
   }
 
   @override
@@ -1521,33 +1579,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get badges => 'Badges';
 
   @override
-  String get yearly => 'Yıllık';
+  String get yearly => 'Yearly';
 
   @override
-  String get newList => 'Yeni Liste';
+  String get newList => 'New List';
 
   @override
   String taskDeletedMessage(Object title) {
-    return 'Görev silindi: $title';
+    return 'Task deleted';
   }
 
   @override
-  String get clear => 'Temizle';
+  String get clear => 'Clear';
 
   @override
-  String get periodic => 'Periyodik';
+  String get periodic => 'Periodic';
 
   @override
-  String get createHabitTitle => 'Alışkanlık Oluştur';
+  String get createHabitTitle => 'Create Habit';
 
   @override
-  String get addDate => 'Tarih ekle';
+  String get addDate => 'Add Date';
 
   @override
-  String get listNameHint => 'Örn: Sağlık';
+  String get listNameHint => 'Enter list name';
 
   @override
-  String get taskTitleRequired => 'Görev başlığı zorunlu';
+  String get taskTitleRequired => 'Task title is required';
 
   @override
   String get moodFlowTitle => 'How Are You Feeling?';
@@ -1836,4 +1894,281 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typeNotChangeable => 'Type cannot be changed';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to Mira';
+
+  @override
+  String get onboardingWelcomeDesc =>
+      'Your personal habit tracker that grows with you. Let\'s discover your unique personality and suggest habits tailored just for you.';
+
+  @override
+  String get onboardingQuizIntro =>
+      'Answer a few questions to help us understand your personality better. This is based on scientifically validated psychological research.';
+
+  @override
+  String get onboardingQ1 =>
+      'I enjoy trying new experiences and exploring unfamiliar things.';
+
+  @override
+  String get onboardingQ2 =>
+      'I keep my space organized and prefer having a structured daily routine.';
+
+  @override
+  String get onboardingQ3 =>
+      'I feel energized when I\'m around other people and enjoy social gatherings.';
+
+  @override
+  String get onboardingQ4 =>
+      'I prefer working with others and find cooperation more effective than competition.';
+
+  @override
+  String get onboardingQ5 =>
+      'I handle stressful situations calmly and rarely feel anxious.';
+
+  @override
+  String get onboardingQ6 =>
+      'I enjoy creative activities like art, music, or writing.';
+
+  @override
+  String get onboardingQ7 =>
+      'I set clear goals for myself and work diligently to achieve them.';
+
+  @override
+  String get onboardingQ8 =>
+      'I prefer group activities over spending time alone.';
+
+  @override
+  String get onboardingQ9 =>
+      'I often consider other people\'s feelings before making decisions.';
+
+  @override
+  String get onboardingQ10 => 'I plan ahead for important events and tasks.';
+
+  @override
+  String get onboardingQ11 =>
+      'I like trying different approaches rather than sticking to one method.';
+
+  @override
+  String get onboardingQ12 =>
+      'I stay calm under pressure and bounce back quickly from setbacks.';
+
+  @override
+  String get likertStronglyDisagree => 'Strongly Disagree';
+
+  @override
+  String get likertDisagree => 'Disagree';
+
+  @override
+  String get likertNeutral => 'Neutral';
+
+  @override
+  String get likertAgree => 'Agree';
+
+  @override
+  String get likertStronglyAgree => 'Strongly Agree';
+
+  @override
+  String get characterTypePlanner => 'The Planner';
+
+  @override
+  String get characterDescPlanner =>
+      'You\'re organized, goal-oriented, and thrive on structure. You excel at turning dreams into actionable plans and following through with discipline.';
+
+  @override
+  String get characterTypeExplorer => 'The Explorer';
+
+  @override
+  String get characterDescExplorer =>
+      'You\'re curious, creative, and love variety. You thrive on learning new things and trying different approaches to life\'s challenges.';
+
+  @override
+  String get characterTypeSocialConnector => 'The Social Connector';
+
+  @override
+  String get characterDescSocialConnector =>
+      'You\'re warm, empathetic, and energized by relationships. You find meaning in connecting with others and building strong communities.';
+
+  @override
+  String get characterTypeBalancedMindful => 'The Balanced Mindful';
+
+  @override
+  String get characterDescBalancedMindful =>
+      'You\'re calm, stable, and value inner peace. You excel at maintaining balance and approaching life with mindfulness and composure.';
+
+  @override
+  String get yourCharacterType => 'Your Character Type';
+
+  @override
+  String get recommendedHabits => 'Recommended Habits for You';
+
+  @override
+  String get selectHabitsToAdd =>
+      'Select habits you\'d like to add to your daily routine:';
+
+  @override
+  String get startJourney => 'Start Your Journey';
+
+  @override
+  String get skipOnboarding => 'Skip';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get habitPlannerMorningRoutine => 'Morning Routine';
+
+  @override
+  String get habitPlannerMorningRoutineDesc =>
+      'Start each day with a structured morning routine to set the tone for productivity.';
+
+  @override
+  String get habitPlannerWeeklyReview => 'Weekly Review';
+
+  @override
+  String get habitPlannerWeeklyReviewDesc =>
+      'Review your week\'s progress and plan for the next week every Sunday.';
+
+  @override
+  String get habitPlannerGoalSetting => 'Monthly Goal Setting';
+
+  @override
+  String get habitPlannerGoalSettingDesc =>
+      'Set specific, measurable goals for the month ahead.';
+
+  @override
+  String get habitPlannerTaskPrioritization => 'Daily Task Prioritization';
+
+  @override
+  String get habitPlannerTaskPrioritizationDesc =>
+      'Identify your top 3 priorities for the day each morning.';
+
+  @override
+  String get habitPlannerTimeBlocking => 'Time Blocking';
+
+  @override
+  String get habitPlannerTimeBlockingDesc =>
+      'Schedule your day in focused time blocks for deep work.';
+
+  @override
+  String get habitExplorerLearnNewSkill => 'Learn Something New';
+
+  @override
+  String get habitExplorerLearnNewSkillDesc =>
+      'Dedicate time each week to learning a new skill or subject.';
+
+  @override
+  String get habitExplorerTryNewActivity => 'Try a New Activity';
+
+  @override
+  String get habitExplorerTryNewActivityDesc =>
+      'Step out of your comfort zone and experience something different.';
+
+  @override
+  String get habitExplorerReadDiverse => 'Read Diverse Content';
+
+  @override
+  String get habitExplorerReadDiverseDesc =>
+      'Read books, articles, or content from different genres and perspectives.';
+
+  @override
+  String get habitExplorerCreativeProject => 'Creative Project Time';
+
+  @override
+  String get habitExplorerCreativeProjectDesc =>
+      'Work on a creative project that sparks your imagination.';
+
+  @override
+  String get habitExplorerExplorePlace => 'Explore a New Place';
+
+  @override
+  String get habitExplorerExplorePlaceDesc =>
+      'Visit a new neighborhood, park, or location in your area.';
+
+  @override
+  String get habitSocialCallFriend => 'Call a Friend';
+
+  @override
+  String get habitSocialCallFriendDesc =>
+      'Reach out to a friend or family member for a meaningful conversation.';
+
+  @override
+  String get habitSocialGroupActivity => 'Join Group Activity';
+
+  @override
+  String get habitSocialGroupActivityDesc =>
+      'Participate in a group activity or social event.';
+
+  @override
+  String get habitSocialVolunteer => 'Volunteer';
+
+  @override
+  String get habitSocialVolunteerDesc =>
+      'Give back to your community through volunteer work.';
+
+  @override
+  String get habitSocialFamilyTime => 'Quality Family Time';
+
+  @override
+  String get habitSocialFamilyTimeDesc =>
+      'Spend dedicated time with family members without distractions.';
+
+  @override
+  String get habitSocialCompliment => 'Give a Genuine Compliment';
+
+  @override
+  String get habitSocialComplimentDesc =>
+      'Brighten someone\'s day with a sincere compliment.';
+
+  @override
+  String get habitMindfulMeditation => 'Meditation';
+
+  @override
+  String get habitMindfulMeditationDesc =>
+      'Practice mindfulness meditation for 10-15 minutes.';
+
+  @override
+  String get habitMindfulGratitude => 'Gratitude Practice';
+
+  @override
+  String get habitMindfulGratitudeDesc =>
+      'Write down three things you\'re grateful for today.';
+
+  @override
+  String get habitMindfulNatureWalk => 'Nature Walk';
+
+  @override
+  String get habitMindfulNatureWalkDesc =>
+      'Take a mindful walk in nature, paying attention to your surroundings.';
+
+  @override
+  String get habitMindfulBreathing => 'Deep Breathing Exercise';
+
+  @override
+  String get habitMindfulBreathingDesc =>
+      'Practice deep breathing techniques to center yourself.';
+
+  @override
+  String get habitMindfulJournaling => 'Reflective Journaling';
+
+  @override
+  String get habitMindfulJournalingDesc =>
+      'Journal your thoughts and reflections for self-awareness.';
+
+  @override
+  String habitAddSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits added',
+      one: '1 habit added',
+      zero: 'No habits added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String habitAddError(Object error) {
+    return 'Error adding habits: $error';
+  }
 }

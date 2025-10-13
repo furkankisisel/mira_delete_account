@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'habit_types.dart';
+import '../../../core/icons/icon_mapping.dart';
 
 class Habit {
   Habit({
@@ -30,6 +31,9 @@ class Habit {
     List<String>? scheduledDates,
     this.numericalTargetType = NumericalTargetType.minimum,
     this.timerTargetType = TimerTargetType.minimum,
+    this.reminderEnabled = false,
+    this.reminderTime,
+    this.linkedVisionId,
   }) : dailyLog = dailyLog ?? <String, int>{};
 
   final String id;
@@ -66,6 +70,11 @@ class Habit {
   // Target evaluation policy
   NumericalTargetType numericalTargetType;
   TimerTargetType timerTargetType;
+  // Reminder settings
+  bool reminderEnabled; // Hatırlatıcı aktif mi?
+  TimeOfDay? reminderTime; // Hatırlatıcı saati (null = devre dışı)
+  // Vision integration
+  String? linkedVisionId; // Bu alışkanlık bir vision'a bağlıysa Vision ID'si
 
   void applyDailyReset(DateTime now) {
     final today = _dateStr(now);
@@ -124,6 +133,13 @@ class Habit {
     'numericalTargetType': numericalTargetType.toString(),
     'timerTargetType': timerTargetType.toString(),
     if (scheduledDates != null) 'scheduledDates': scheduledDates,
+    'reminderEnabled': reminderEnabled,
+    if (reminderTime != null)
+      'reminderTime': {
+        'hour': reminderTime!.hour,
+        'minute': reminderTime!.minute,
+      },
+    if (linkedVisionId != null) 'linkedVisionId': linkedVisionId,
   };
 
   static Habit fromJson(Map<String, dynamic> json) {
@@ -163,11 +179,15 @@ class Habit {
         timType = TimerTargetType.minimum;
     }
 
+    print(
+      '[Habit.fromJson] Parsing habit: ${json['emoji']} ${json['title']}, reminderEnabled=${json['reminderEnabled']}, reminderTime=${json['reminderTime']}',
+    );
+
     return Habit(
       id: json['id'] as String,
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      icon: IconData(json['iconCodePoint'] as int, fontFamily: 'MaterialIcons'),
+      icon: materialIconFromCodePoint(json['iconCodePoint'] as int),
       emoji: json['emoji'] as String?,
       color: Color(json['colorValue'] as int),
       targetCount: target,
@@ -207,6 +227,14 @@ class Habit {
           .toList(),
       numericalTargetType: numType,
       timerTargetType: timType,
+      reminderEnabled: json['reminderEnabled'] as bool? ?? false,
+      reminderTime: json['reminderTime'] != null
+          ? TimeOfDay(
+              hour: json['reminderTime']['hour'] as int,
+              minute: json['reminderTime']['minute'] as int,
+            )
+          : null,
+      linkedVisionId: json['linkedVisionId'] as String?,
     )..isAdvanced = (json['isAdvanced'] as bool?) ?? false;
   }
 

@@ -13,6 +13,9 @@ import '../../core/settings/settings_repository.dart';
 import 'auth_repository.dart';
 import 'backup_repository.dart';
 import 'dart:convert';
+import '../onboarding/data/onboarding_repository.dart';
+import '../onboarding/presentation/onboarding_screen.dart';
+import 'privacy_security_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -438,7 +441,6 @@ class _SettingsTab extends StatefulWidget {
 
 class _SettingsTabState extends State<_SettingsTab> {
   final _nameCtrl = TextEditingController();
-  final _bioCtrl = TextEditingController();
   final _picker = ImagePicker();
 
   @override
@@ -455,7 +457,6 @@ class _SettingsTabState extends State<_SettingsTab> {
     ProfileRepository.instance.removeListener(_onProfileChange);
     AuthRepository.instance.removeListener(_onAuthChange);
     _nameCtrl.dispose();
-    _bioCtrl.dispose();
     super.dispose();
   }
 
@@ -466,7 +467,6 @@ class _SettingsTabState extends State<_SettingsTab> {
   void _onProfileChange() {
     final repo = ProfileRepository.instance;
     if (_nameCtrl.text != repo.name) _nameCtrl.text = repo.name;
-    if (_bioCtrl.text != repo.bio) _bioCtrl.text = repo.bio;
     if (mounted) setState(() {});
   }
 
@@ -544,7 +544,6 @@ class _SettingsTabState extends State<_SettingsTab> {
     final profile = ProfileRepository.instance;
     // prime controllers with latest values
     _nameCtrl.text = profile.name;
-    _bioCtrl.text = profile.bio;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -621,14 +620,7 @@ class _SettingsTabState extends State<_SettingsTab> {
                           textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: 8),
-                        TextField(
-                          controller: _bioCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.bio,
-                            hintText: l10n.bioHint,
-                          ),
-                          maxLines: 3,
-                        ),
+                        // Bio field removed per design change
                       ],
                     ),
                   ),
@@ -644,7 +636,6 @@ class _SettingsTabState extends State<_SettingsTab> {
                     final navigator = Navigator.of(ctx);
                     final messenger = ScaffoldMessenger.of(context);
                     await profile.setName(_nameCtrl.text.trim());
-                    await profile.setBio(_bioCtrl.text.trim());
                     if (navigator.mounted) navigator.pop();
                     messenger.showSnackBar(
                       SnackBar(content: Text(l10n.profileUpdated)),
@@ -669,9 +660,7 @@ class _SettingsTabState extends State<_SettingsTab> {
     if (_nameCtrl.text.isEmpty && profile.name.isNotEmpty) {
       _nameCtrl.text = profile.name;
     }
-    if (_bioCtrl.text.isEmpty && profile.bio.isNotEmpty) {
-      _bioCtrl.text = profile.bio;
-    }
+    // bio field removed; no initialization needed
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       children: [
@@ -767,7 +756,30 @@ class _SettingsTabState extends State<_SettingsTab> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => const NotificationSettingsScreen(),
+                    builder: (_) => NotificationSettingsScreen(
+                      variant: widget.currentVariant,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        _SettingsSection(
+          title: l10n.privacySecurity,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.privacy_tip_outlined),
+              title: Text(l10n.privacySecurity),
+              subtitle: const Text(
+                'Ayarları ve veri silme seçeneklerini yönetin',
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const PrivacySecurityScreen(),
                   ),
                 );
               },
@@ -889,9 +901,7 @@ class _SettingsTabState extends State<_SettingsTab> {
                             await ProfileRepository.instance.setName(
                               obj['name'] ?? '',
                             );
-                            await ProfileRepository.instance.setBio(
-                              obj['bio'] ?? '',
-                            );
+                            // bio restore intentionally omitted (UI no longer supports editing bio)
                             await ProfileRepository.instance.setAvatarPath(
                               obj['avatarPath'],
                             );
@@ -932,6 +942,47 @@ class _SettingsTabState extends State<_SettingsTab> {
         _SettingsSection(
           title: l10n.other,
           children: [
+            ListTile(
+              leading: const Icon(Icons.psychology_outlined),
+              title: const Text('Reset Onboarding'),
+              subtitle: const Text('Retake personality test'),
+              onTap: () async {
+                // Show confirmation dialog
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Reset Onboarding?'),
+                    content: const Text(
+                      'This will clear your current personality results and let you retake the quiz.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(l10n.cancel),
+                      ),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Reset'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed == true && context.mounted) {
+                  // Clear onboarding data
+                  await OnboardingRepository().clearOnboardingData();
+
+                  // Navigate to onboarding screen
+                  if (context.mounted) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const OnboardingScreen(),
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.info_outline),
               title: Text(l10n.about),
