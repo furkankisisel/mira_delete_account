@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hesabımı Kalıcı Olarak Sil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="color-scheme" content="light dark" />
+</head>
+
+<body class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <main class="container mx-auto px-4 py-10">
+        <div
+            class="max-w-xl mx-auto bg-white dark:bg-gray-900 shadow-sm ring-1 ring-gray-200 dark:ring-gray-800 rounded-2xl p-6 sm:p-8">
+            <header class="mb-6">
+                <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">Hesabımı Kalıcı Olarak Sil</h1>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Lütfen aşağıdaki uyarıları dikkatle okuyun.</p>
+            </header>
+
+            <section class="mb-6 space-y-3 text-sm">
+                <div class="flex items-start gap-3">
+                    <span
+                        class="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300">!</span>
+                    <p><strong>Geri alınamaz:</strong> Hesap silme işlemi kalıcıdır ve geri alınamaz.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span
+                        class="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300">!</span>
+                    <p><strong>Veriler silinir:</strong> Uygulamadaki tüm verileriniz kalıcı olarak silinecektir.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span
+                        class="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300">ℹ</span>
+                    <p>
+                        <strong>Abonelik uyarısı:</strong> Bir aboneliğiniz varsa, lütfen öncelikle Google Play Store
+                        üzerinden iptal edin.
+                        <a class="text-blue-600 hover:underline dark:text-blue-400"
+                            href="https://play.google.com/store/account/subscriptions" target="_blank"
+                            rel="noopener noreferrer">Abonelikleri yönet</a>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Prominent Play Billing warning placed immediately above the form -->
+            <div
+                class="mb-6 rounded-2xl border border-amber-400 bg-amber-50 text-amber-900 dark:bg-amber-900/30 dark:text-amber-100 p-4 sm:p-5 shadow-sm">
+                <div class="flex items-start gap-3">
+                    <span
+                        class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-100">⚠</span>
+                    <div>
+                        <p class="font-semibold">ÖNEMLİ UYARI</p>
+                        <p class="mt-1 text-sm">
+                            Hesabınızın silinmesi, aktif Play Store aboneliğinizi otomatik olarak iptal etmez. Yeniden
+                            faturalandırılmamak için
+                            lütfen önce Google Play Store üzerinden aboneliğinizi iptal edin.
+                            <a class="underline font-medium text-blue-700 dark:text-blue-400"
+                                href="https://play.google.com/store/account/subscriptions" target="_blank"
+                                rel="noopener noreferrer">Abonelikleri yönet</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form id="delete-form" class="space-y-5" novalidate>
+                <div>
+                    <label for="email" class="block text-sm font-medium mb-1">E-posta adresiniz</label>
+                    <input id="email" name="email" type="email" required placeholder="ornek@eposta.com"
+                        class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-3 text-base shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 outline-none" />
+                    <p id="email-error" class="mt-1 text-sm text-rose-600 hidden">Geçerli bir e-posta adresi girin.</p>
+                </div>
+
+                <button type="submit" id="delete-btn"
+                    class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 text-white font-semibold py-3.5 shadow-sm hover:bg-rose-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 disabled:opacity-60 disabled:cursor-not-allowed">
+                    Hesabımı Kalıcı Olarak Sil
+                </button>
+
+                <div id="status" class="hidden"></div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Confirm Modal -->
+    <div id="modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50" aria-hidden="true"></div>
+        <div class="absolute inset-0 flex items-end sm:items-center justify-center p-4">
+            <div
+                class="w-full sm:max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-lg ring-1 ring-gray-200 dark:ring-gray-800 p-6">
+                <h2 class="text-lg font-semibold">Silme işlemini onayla</h2>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Bu işlem geri alınamaz. <span class="font-medium" id="confirm-email"></span> e‑postalı hesabınızı
+                    kalıcı olarak silmek istediğinize emin misiniz?
+                </p>
+                <div class="mt-5 flex flex-col-reverse sm:flex-row gap-3">
+                    <button type="button" id="cancel-modal"
+                        class="inline-flex justify-center rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2.5 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+                        İptal
+                    </button>
+                    <button type="button" id="confirm-modal"
+                        class="inline-flex justify-center rounded-xl bg-rose-600 text-white px-4 py-2.5 text-sm font-semibold hover:bg-rose-700">
+                        Onayla ve Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const form = document.getElementById('delete-form');
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            const deleteBtn = document.getElementById('delete-btn');
+            const statusEl = document.getElementById('status');
+            const modal = document.getElementById('modal');
+            const confirmEmail = document.getElementById('confirm-email');
+            const cancelModalBtn = document.getElementById('cancel-modal');
+            const confirmModalBtn = document.getElementById('confirm-modal');
+
+            // Backend endpoint - gerektiğinde değiştirin
+            // Firebase Functions URL - deploy and replace below value, e.g.:
+            // https://<region>-<project-id>.cloudfunctions.net/deleteAccount
+            const API_URL = 'https://<region>-<project-id>.cloudfunctions.net/deleteAccount';
+
+            let pendingEmail = '';
+
+            function showStatus(message, type) {
+                // type: 'success' | 'error' | 'info'
+                const base = 'mt-4 rounded-xl px-4 py-3 text-sm';
+                const color =
+                    type === 'success'
+                        ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20 dark:bg-green-900/20 dark:text-green-300'
+                        : type === 'error'
+                            ? 'bg-rose-50 text-rose-700 ring-1 ring-rose-600/20 dark:bg-rose-900/20 dark:text-rose-300'
+                            : 'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20 dark:bg-blue-900/20 dark:text-blue-300';
+                statusEl.className = base + ' ' + color;
+                statusEl.textContent = message;
+                statusEl.classList.remove('hidden');
+            }
+
+            function hideStatus() {
+                statusEl.classList.add('hidden');
+                statusEl.textContent = '';
+            }
+
+            function validateEmail(value) {
+                // Basit e-posta kontrolü
+                return /\S+@\S+\.\S+/.test(value);
+            }
+
+            function toggleLoading(isLoading) {
+                deleteBtn.disabled = isLoading;
+                deleteBtn.textContent = isLoading ? 'Siliniyor…' : 'Hesabımı Kalıcı Olarak Sil';
+            }
+
+            function openModal(email) {
+                confirmEmail.textContent = email;
+                modal.classList.remove('hidden');
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                hideStatus();
+                emailError.classList.add('hidden');
+                const email = emailInput.value.trim();
+                if (!validateEmail(email)) {
+                    emailError.classList.remove('hidden');
+                    emailInput.focus();
+                    return;
+                }
+                pendingEmail = email;
+                openModal(email);
+            });
+
+            cancelModalBtn.addEventListener('click', () => {
+                closeModal();
+            });
+
+            confirmModalBtn.addEventListener('click', async () => {
+                closeModal();
+                toggleLoading(true);
+                hideStatus();
+                try {
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: pendingEmail }),
+                    });
+                    if (res.ok) {
+                        showStatus('Hesap silme talebiniz başarıyla alındı.', 'success');
+                        // İsteğe bağlı: formu temizle
+                        // emailInput.value = '';
+                    } else {
+                        const text = await res.text().catch(() => '');
+                        showStatus(`Hata: ${res.status} ${text || ''}`.trim(), 'error');
+                    }
+                } catch (err) {
+                    showStatus('Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.', 'error');
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>
