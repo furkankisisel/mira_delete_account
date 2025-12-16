@@ -33,22 +33,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Future<void> _loadPlans() async {
     try {
       debugPrint('[SubscriptionScreen] Loading plans...');
-      
+
       // Service init edilmemişse burada garantiye alalım
       if (!IAPService.instance.isReady) {
-         await IAPService.instance.init();
+        await IAPService.instance.init();
       }
 
       await IAPService.instance.loadProducts();
       final plans = IAPService.instance.plans;
-      
+
       debugPrint(
         '[SubscriptionScreen] Plans loaded: ${plans.length} plans available',
       );
 
       // --- GÜNCELLENEN KISIM BAŞLANGIÇ ---
       // Artık BasePlanId değil, doğrudan Ürün ID'sine (mira_month / mira_year) bakıyoruz.
-      
+
       try {
         _monthlyPlan = plans.firstWhere(
           (p) => p.id == AppConstants.monthlyProductId, // mira_month
@@ -94,7 +94,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       debugPrint(
         '[SubscriptionScreen] User selected plan: ${plan.id} (${plan.label})',
       );
-      
+
       // UI feedback
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -106,12 +106,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       }
 
       await IAPService.instance.buyPlan(plan);
-      
     } catch (e) {
       debugPrint('[SubscriptionScreen] Error buying plan: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(AppLocalizations.of(context)!.failedToLoad(e.toString()))),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.failedToLoad(e.toString()),
+            ),
+          ),
         );
       }
     }
@@ -122,18 +125,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       await IAPService.instance.restorePurchases();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.checkingPurchases)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.checkingPurchases),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('${AppLocalizations.of(context)!.restoreError}: $e')),
+          SnackBar(
+            content: Text('${AppLocalizations.of(context)!.restoreError}: $e'),
+          ),
         );
       }
     }
   }
-  
+
   Future<void> _applyPromoCode() async {
     final code = _promoCodeController.text.trim();
     if (code.isEmpty) {
@@ -142,17 +149,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       );
       return;
     }
-    
+
     setState(() => _isApplyingPromoCode = true);
-    
+
     try {
       final success = await PremiumManager.instance.activatePromoCode(code);
-      
+
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('🎉 Promosyon kodu başarıyla uygulandı! Premium erişiminiz aktifleştirildi.'),
+              content: Text(
+                '🎉 Promosyon kodu başarıyla uygulandı! Premium erişiminiz aktifleştirildi.',
+              ),
               backgroundColor: Colors.green,
               duration: Duration(seconds: 3),
             ),
@@ -166,9 +175,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           final hasUsed = PremiumManager.instance.hasUsedPromoCode;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(hasUsed 
-                ? 'Bu hesapta daha önce bir promosyon kodu kullanılmış.'
-                : 'Geçersiz promosyon kodu. Lütfen kontrol edip tekrar deneyin.'),
+              content: Text(
+                hasUsed
+                    ? 'Bu hesapta daha önce bir promosyon kodu kullanılmış.'
+                    : 'Geçersiz promosyon kodu. Lütfen kontrol edip tekrar deneyin.',
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -186,7 +197,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       }
     }
   }
-  
+
   @override
   void dispose() {
     _promoCodeController.dispose();
@@ -196,17 +207,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.premiumPlans), elevation: 0),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.premiumPlans),
+        elevation: 0,
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(_error!, textAlign: TextAlign.center),
-                  ),
-                )
-              : _buildPlansView(),
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(_error!, textAlign: TextAlign.center),
+              ),
+            )
+          : _buildPlansView(),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -237,7 +251,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (_yearlyPlan != null) available.add(_yearlyPlan!);
 
     if (available.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noPlansAvailable));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.noPlansAvailable),
+      );
     }
 
     if (_selectedPlanIndex < 0 || _selectedPlanIndex >= available.length) {
@@ -269,17 +285,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
-        Icon(Icons.workspace_premium, size: 64, color: Theme.of(context).primaryColor),
+        Icon(
+          Icons.workspace_premium,
+          size: 64,
+          color: Theme.of(context).primaryColor,
+        ),
         const SizedBox(height: 12),
         Text(
           'Mira Premium',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
           AppLocalizations.of(context)!.unlockAllFeatures,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
           textAlign: TextAlign.center,
         ),
       ],
@@ -293,10 +317,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required VoidCallback onBuy,
   }) {
     final theme = Theme.of(context);
-    
+
     // --- GÜNCELLENEN KISIM ---
     // Planın aylık olup olmadığını anlamak için ID kontrolü
-    final isMonthly = plan.id == AppConstants.monthlyProductId; 
+    final isMonthly = plan.id == AppConstants.monthlyProductId;
 
     return GestureDetector(
       onTap: onSelect,
@@ -310,18 +334,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.dividerColor,
+            color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
             width: isSelected ? 2 : 1,
           ),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: theme.colorScheme.primary.withOpacity(0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            )
-          ] : [],
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
         ),
         child: Column(
           children: [
@@ -334,7 +358,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? theme.colorScheme.primary : Colors.grey,
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : Colors.grey,
                       width: 2,
                     ),
                   ),
@@ -364,9 +390,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        isMonthly 
-                          ? AppLocalizations.of(context)!.flexiblePlan 
-                          : AppLocalizations.of(context)!.annualPlanDesc,
+                        isMonthly
+                            ? AppLocalizations.of(context)!.flexiblePlan
+                            : AppLocalizations.of(context)!.annualPlanDesc,
                         style: theme.textTheme.bodySmall,
                       ),
                     ],
@@ -383,8 +409,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                     ),
                     Text(
-                       isMonthly ? AppLocalizations.of(context)!.perMonth : AppLocalizations.of(context)!.perYear,
-                       style: theme.textTheme.bodySmall,
+                      isMonthly
+                          ? AppLocalizations.of(context)!.perMonth
+                          : AppLocalizations.of(context)!.perYear,
+                      style: theme.textTheme.bodySmall,
                     ),
                   ],
                 ),
@@ -398,12 +426,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   onPressed: onBuy,
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: Text(AppLocalizations.of(context)!.continueButton, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    AppLocalizations.of(context)!.continueButton,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ]
+            ],
           ],
         ),
       ),
@@ -415,7 +448,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.5),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainer.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -423,7 +458,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         children: [
           Text(
             l10n.premiumFeatures,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           _featureItem(l10n.featureDetailedAnalysis),
@@ -447,21 +484,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             size: 20,
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
         ],
       ),
     );
   }
-  
+
   Widget _buildPromoCodeSection() {
     final theme = Theme.of(context);
     final hasUsedCode = PremiumManager.instance.hasUsedPromoCode;
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -474,9 +506,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
-        ),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -549,11 +579,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Icon(Icons.redeem_rounded),
-                label: Text(_isApplyingPromoCode ? 'Uygulanıyor...' : 'Kodu Uygula'),
+                label: Text(
+                  _isApplyingPromoCode ? 'Uygulanıyor...' : 'Kodu Uygula',
+                ),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(

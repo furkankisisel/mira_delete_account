@@ -562,10 +562,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
           // monthly: show day numbers (1, 5, 10, 15, 20, 25, 30)
           final day = idx + 1;
           if (day == 1 || day % 5 == 0) {
-            return Text(
-              '$day',
-              style: Theme.of(context).textTheme.labelSmall,
-            );
+            return Text('$day', style: Theme.of(context).textTheme.labelSmall);
           }
           return const Text('');
         } else if (_selectedPeriod == 2) {
@@ -1391,21 +1388,27 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
   DateTimeRange _getDateRange(int period) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    
-    if (period == 0) { // Weekly
+
+    if (period == 0) {
+      // Weekly
       final monday = today.subtract(Duration(days: today.weekday - 1));
       final sunday = monday.add(const Duration(days: 6));
       return DateTimeRange(start: monday, end: sunday);
-    } else if (period == 1) { // Monthly
+    } else if (period == 1) {
+      // Monthly
       final startOfMonth = DateTime(today.year, today.month, 1);
       final endOfMonth = DateTime(today.year, today.month + 1, 0);
       return DateTimeRange(start: startOfMonth, end: endOfMonth);
-    } else if (period == 2) { // Yearly
+    } else if (period == 2) {
+      // Yearly
       final startOfYear = DateTime(today.year, 1, 1);
       final endOfYear = DateTime(today.year, 12, 31);
       return DateTimeRange(start: startOfYear, end: endOfYear);
-    } else { // Overall
-      final start = _liveHabit != null ? _parseIsoDate(_liveHabit!.startDate) : today;
+    } else {
+      // Overall
+      final start = _liveHabit != null
+          ? _parseIsoDate(_liveHabit!.startDate)
+          : today;
       return DateTimeRange(start: start, end: today);
     }
   }
@@ -1415,7 +1418,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final habit = _liveHabit!;
     final range = _getDateRange(0);
     final List<double> values = List.filled(7, 0);
-    
+
     for (int i = 0; i < 7; i++) {
       final d = range.start.add(Duration(days: i));
       final key = _dateKey(d);
@@ -1434,7 +1437,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final habit = _liveHabit!;
     final range = _getDateRange(1);
     final daysInMonth = range.duration.inDays + 1;
-    
+
     final List<double> values = List.filled(daysInMonth, 0);
     for (int i = 0; i < daysInMonth; i++) {
       final d = range.start.add(Duration(days: i));
@@ -1454,7 +1457,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final habit = _liveHabit!;
     final now = DateTime.now();
     final List<double> months = [];
-    
+
     for (int m = 1; m <= 12; m++) {
       final monthDate = DateTime(now.year, m, 1);
       final daysIn = _daysInMonth(monthDate.year, monthDate.month);
@@ -1598,11 +1601,15 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final range = _getDateRange(_selectedPeriod);
     int count = 0;
     final habit = _liveHabit!;
-    
-    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
-       if (!_isEffectiveDay(d, habit)) continue;
-       final key = _dateKey(d);
-       if (HabitRepository.evaluateCompletionFromLog(habit, key)) count++;
+
+    for (
+      var d = range.start;
+      !d.isAfter(range.end);
+      d = d.add(const Duration(days: 1))
+    ) {
+      if (!_isEffectiveDay(d, habit)) continue;
+      final key = _dateKey(d);
+      if (HabitRepository.evaluateCompletionFromLog(habit, key)) count++;
     }
     return count;
   }
@@ -1614,14 +1621,18 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final habit = _liveHabit!;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    
-    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
-       if (!_isEffectiveDay(d, habit)) continue;
-       // Don't count future days as unsuccessful
-       if (d.isAfter(today)) continue;
-       
-       final key = _dateKey(d);
-       if (!HabitRepository.evaluateCompletionFromLog(habit, key)) count++;
+
+    for (
+      var d = range.start;
+      !d.isAfter(range.end);
+      d = d.add(const Duration(days: 1))
+    ) {
+      if (!_isEffectiveDay(d, habit)) continue;
+      // Don't count future days as unsuccessful
+      if (d.isAfter(today)) continue;
+
+      final key = _dateKey(d);
+      if (!HabitRepository.evaluateCompletionFromLog(habit, key)) count++;
     }
     return count;
   }
@@ -1637,8 +1648,12 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final range = _getDateRange(_selectedPeriod);
     int sum = 0;
     final habit = _liveHabit!;
-    
-    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+
+    for (
+      var d = range.start;
+      !d.isAfter(range.end);
+      d = d.add(const Duration(days: 1))
+    ) {
       final key = _dateKey(d);
       sum += habit.dailyLog[key] ?? 0;
     }
@@ -1651,8 +1666,12 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     final range = _getDateRange(_selectedPeriod);
     int sum = 0;
     final habit = _liveHabit!;
-    
-    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+
+    for (
+      var d = range.start;
+      !d.isAfter(range.end);
+      d = d.add(const Duration(days: 1))
+    ) {
       final key = _dateKey(d);
       sum += habit.dailyLog[key] ?? 0;
     }
@@ -1684,7 +1703,11 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       final range = _getDateRange(0);
       double sum = 0;
       int eff = 0;
-      for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+      for (
+        var d = range.start;
+        !d.isAfter(range.end);
+        d = d.add(const Duration(days: 1))
+      ) {
         if (!_isEffectiveDay(d, habit)) continue;
         final key = _dateKey(d);
         final raw = habit.dailyLog[key] ?? 0;
@@ -1696,7 +1719,11 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       final range = _getDateRange(1);
       double sum = 0;
       int eff = 0;
-      for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+      for (
+        var d = range.start;
+        !d.isAfter(range.end);
+        d = d.add(const Duration(days: 1))
+      ) {
         if (!_isEffectiveDay(d, habit)) continue;
         final key = _dateKey(d);
         final raw = habit.dailyLog[key] ?? 0;

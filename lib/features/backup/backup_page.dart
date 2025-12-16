@@ -57,7 +57,8 @@ class _BackupPageState extends State<BackupPage> {
       _status = content == null
           ? AppLocalizations.of(context)!.restoreFailed
           : AppLocalizations.of(context)!.restoreSuccess(
-              content.substring(0, content.length > 100 ? 100 : content.length));
+              content.substring(0, content.length > 100 ? 100 : content.length),
+            );
     });
   }
 

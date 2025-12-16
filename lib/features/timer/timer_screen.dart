@@ -381,12 +381,14 @@ class _TimerScreenState extends State<TimerScreen>
         : isPrimary
         ? accent
         : (isDark
-            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.6)
-            : colorScheme.surfaceContainerHighest);
+              ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.6)
+              : colorScheme.surfaceContainerHighest);
 
     final textColor = isDestructive || isPrimary
         ? Colors.white
-        : (isDark ? Colors.white.withValues(alpha: 0.85) : colorScheme.onSurface);
+        : (isDark
+              ? Colors.white.withValues(alpha: 0.85)
+              : colorScheme.onSurface);
 
     return Container(
       decoration: BoxDecoration(
@@ -403,8 +405,9 @@ class _TimerScreenState extends State<TimerScreen>
         boxShadow: isPrimary || isDestructive
             ? [
                 BoxShadow(
-                  color: (isDestructive ? Colors.red : accent)
-                      .withValues(alpha: 0.25),
+                  color: (isDestructive ? Colors.red : accent).withValues(
+                    alpha: 0.25,
+                  ),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -901,10 +904,7 @@ class _TimerScreenState extends State<TimerScreen>
                     Colors.white.withValues(alpha: 0.08),
                     Colors.white.withValues(alpha: 0.04),
                   ]
-                : [
-                    Colors.white,
-                    accent.withValues(alpha: 0.05),
-                  ],
+                : [Colors.white, accent.withValues(alpha: 0.05)],
           ),
           border: Border.all(
             color: accent.withValues(alpha: isDark ? 0.4 : 0.3),
@@ -997,17 +997,17 @@ class _TimerScreenState extends State<TimerScreen>
                         ? LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              accent,
-                              accent.withValues(alpha: 0.7),
-                            ],
+                            colors: [accent, accent.withValues(alpha: 0.7)],
                           )
                         : null,
                     color: isCompleted || isCurrent
                         ? null
                         : Colors.grey.withValues(alpha: 0.25),
                     border: isCurrent
-                        ? Border.all(color: accent.withValues(alpha: 0.4), width: 2)
+                        ? Border.all(
+                            color: accent.withValues(alpha: 0.4),
+                            width: 2,
+                          )
                         : null,
                     boxShadow: isCompleted || isCurrent
                         ? [
@@ -1024,9 +1024,9 @@ class _TimerScreenState extends State<TimerScreen>
             }),
           ),
         ),
-        // Timer
+        // Timer - same flex as stopwatch and countdown
         Expanded(
-          flex: 4,
+          flex: 3,
           child: Center(
             child: _buildCircularTimer(
               context: context,
@@ -1095,23 +1095,24 @@ class _TimerScreenState extends State<TimerScreen>
             ],
           ),
         ),
-        // Buttons - compact with padding
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: _buildCompactActionButtons(
-            context,
-            isRunning: isRunning,
-            onPlayPause: () =>
-                isRunning ? controller.pause() : controller.startPomodoro(),
-            onFinish: controller.finish,
-            onReset: controller.reset,
-            onSettings: _showPomodoroConfigDialog,
-            onSkip: controller.activeMode == TimerMode.pomodoro
-                ? controller.skipPomodoroPhase
-                : null,
+        // Buttons - same layout as stopwatch and countdown
+        Expanded(
+          flex: 2,
+          child: SingleChildScrollView(
+            child: _buildFloatingActionButtons(
+              context,
+              isRunning: isRunning,
+              onPlayPause: () =>
+                  isRunning ? controller.pause() : controller.startPomodoro(),
+              onFinish: controller.finish,
+              onReset: controller.reset,
+              onSettings: _showPomodoroConfigDialog,
+              onSkip: controller.activeMode == TimerMode.pomodoro
+                  ? controller.skipPomodoroPhase
+                  : null,
+            ),
           ),
         ),
-        // History list - take remaining space
         if (controller.sessions.isNotEmpty) ...[
           const Divider(height: 1),
           SizedBox(height: _historySectionHeight, child: _buildHistoryList()),
@@ -1191,15 +1192,23 @@ class _TimerScreenState extends State<TimerScreen>
                     color: s.assigned
                         ? null
                         : (isDark
-                            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)
-                            : Colors.white),
+                              ? theme.colorScheme.surfaceContainerHighest
+                                    .withValues(alpha: 0.4)
+                              : Colors.white),
                     borderRadius: BorderRadius.circular(16),
                     border: s.assigned
-                        ? Border.all(color: accent.withValues(alpha: 0.3), width: 1.5)
+                        ? Border.all(
+                            color: accent.withValues(alpha: 0.3),
+                            width: 1.5,
+                          )
                         : Border.all(
                             color: isDark
-                                ? theme.colorScheme.outline.withValues(alpha: 0.1)
-                                : theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                ? theme.colorScheme.outline.withValues(
+                                    alpha: 0.1,
+                                  )
+                                : theme.colorScheme.outlineVariant.withValues(
+                                    alpha: 0.3,
+                                  ),
                             width: 1,
                           ),
                     boxShadow: [
@@ -1249,7 +1258,10 @@ class _TimerScreenState extends State<TimerScreen>
                           const SizedBox(height: 2),
                           Text(
                             modeLabel,
-                            style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[600],
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1712,7 +1724,9 @@ class _TimerScreenState extends State<TimerScreen>
                     ]
                   : [
                       colorScheme.surfaceContainerHighest,
-                      colorScheme.surfaceContainerHighest.withValues(alpha: 0.7),
+                      colorScheme.surfaceContainerHighest.withValues(
+                        alpha: 0.7,
+                      ),
                     ],
             ),
             borderRadius: BorderRadius.circular(16),
@@ -1774,10 +1788,7 @@ class _TimerScreenState extends State<TimerScreen>
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: accent.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: accent.withValues(alpha: 0.2), width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -1977,7 +1988,9 @@ class _TimerScreenState extends State<TimerScreen>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white.withValues(alpha: 0.85) : Colors.grey[700],
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.85)
+                    : Colors.grey[700],
               ),
             ),
           ),

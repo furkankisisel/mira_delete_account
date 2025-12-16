@@ -67,10 +67,13 @@ class TimerController extends ChangeNotifier {
     _setupMethodChannel();
     // Session'ları yükle
     _loadSessions();
+    // Timer state'ini yükle
+    _loadState();
   }
   static final TimerController instance = TimerController._();
 
   static const String _sessionsKey = 'timer_sessions';
+  static const String _stateKey = 'timer_state';
   static const int _maxSessionAgeDays = 7; // 1 hafta
 
   Timer? _timer;
@@ -101,8 +104,10 @@ class TimerController extends ChangeNotifier {
       if (sessionsJson != null) {
         final List<dynamic> sessionsList = jsonDecode(sessionsJson);
         final now = DateTime.now();
-        final cutoffDate = now.subtract(const Duration(days: _maxSessionAgeDays));
-        
+        final cutoffDate = now.subtract(
+          const Duration(days: _maxSessionAgeDays),
+        );
+
         _sessions.clear();
         for (final item in sessionsList) {
           try {
@@ -115,7 +120,7 @@ class TimerController extends ChangeNotifier {
             print('Error parsing session: $e');
           }
         }
-        
+
         // Eski session'lar temizlendiyse kaydet
         await _saveSessions();
         notifyListeners();
@@ -136,6 +141,88 @@ class TimerController extends ChangeNotifier {
     }
   }
 
+  /// Timer state'ini yükle
+  Future<void> _loadState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stateJson = prefs.getString(_stateKey);
+      if (stateJson != null) {
+        final state = jsonDecode(stateJson) as Map<String, dynamic>;
+
+        // Active mode
+        _activeMode = TimerMode.values[state['activeMode'] as int? ?? 0];
+
+        // Stopwatch state
+        _elapsed = Duration(milliseconds: state['elapsed'] as int? ?? 0);
+
+        // Countdown state
+        _countdownTotal = Duration(
+          milliseconds: state['countdownTotal'] as int? ?? 0,
+        );
+        _countdownRemaining = Duration(
+          milliseconds: state['countdownRemaining'] as int? ?? 0,
+        );
+
+        // Pomodoro state
+        _pomodoroWorkPhase = state['pomodoroWorkPhase'] as bool? ?? true;
+        _pomodoroWorkDuration = Duration(
+          milliseconds: state['pomodoroWorkDuration'] as int? ?? 25 * 60 * 1000,
+        );
+        _pomodoroShortBreak = Duration(
+          milliseconds: state['pomodoroShortBreak'] as int? ?? 5 * 60 * 1000,
+        );
+        _pomodoroLongBreak = Duration(
+          milliseconds: state['pomodoroLongBreak'] as int? ?? 15 * 60 * 1000,
+        );
+        _pomodoroRemaining = Duration(
+          milliseconds: state['pomodoroRemaining'] as int? ?? 25 * 60 * 1000,
+        );
+        _pomodoroCompletedWorkSessions =
+            state['pomodoroCompletedWorkSessions'] as int? ?? 0;
+        _pomodoroLongBreakInterval =
+            state['pomodoroLongBreakInterval'] as int? ?? 4;
+
+        // Active timer habit
+        _activeTimerHabitId = state['activeTimerHabitId'] as String?;
+
+        // Pending duration
+        _pending = Duration(milliseconds: state['pending'] as int? ?? 0);
+
+        // Eğer timer durmuş haldeyse state'i yükle ama otomatik başlatma
+        // Kullanıcı manuel olarak tekrar başlatmalı
+
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error loading timer state: $e');
+    }
+  }
+
+  /// Timer state'ini kaydet
+  Future<void> _saveState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final state = {
+        'activeMode': _activeMode.index,
+        'elapsed': _elapsed.inMilliseconds,
+        'countdownTotal': _countdownTotal.inMilliseconds,
+        'countdownRemaining': _countdownRemaining.inMilliseconds,
+        'pomodoroWorkPhase': _pomodoroWorkPhase,
+        'pomodoroWorkDuration': _pomodoroWorkDuration.inMilliseconds,
+        'pomodoroShortBreak': _pomodoroShortBreak.inMilliseconds,
+        'pomodoroLongBreak': _pomodoroLongBreak.inMilliseconds,
+        'pomodoroRemaining': _pomodoroRemaining.inMilliseconds,
+        'pomodoroCompletedWorkSessions': _pomodoroCompletedWorkSessions,
+        'pomodoroLongBreakInterval': _pomodoroLongBreakInterval,
+        'activeTimerHabitId': _activeTimerHabitId,
+        'pending': _pending.inMilliseconds,
+      };
+      await prefs.setString(_stateKey, jsonEncode(state));
+    } catch (e) {
+      print('Error saving timer state: $e');
+    }
+  }
+
   // Stopwatch (kronometre)
   Duration _elapsed = Duration.zero;
   bool _stopwatchRunning = false;
@@ -144,6 +231,9 @@ class TimerController extends ChangeNotifier {
   Duration _countdownTotal = Duration.zero;
   Duration _countdownRemaining = Duration.zero;
   bool _countdownRunning = false;
+
+  // State save counter - save every 5 seconds during running
+  int _tickCounter = 0;
 
   // Pomodoro
   bool _pomodoroRunning = false;
@@ -167,6 +257,7 @@ class TimerController extends ChangeNotifier {
 
   void setActiveTimerHabit(String? habitId) {
     _activeTimerHabitId = habitId;
+    _saveState();
     notifyListeners();
   }
 
@@ -215,6 +306,7 @@ class TimerController extends ChangeNotifier {
     _stopAll();
     _activeMode = mode;
     _currentStart = DateTime.now();
+    _saveState();
     notifyListeners();
   }
 
@@ -235,6 +327,7 @@ class TimerController extends ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 1), _onTick);
     _updateNotification();
     _startBackgroundService();
+    _saveState();
     notifyListeners();
   }
 
@@ -258,6 +351,7 @@ class TimerController extends ChangeNotifier {
     _timer?.cancel();
     _updateNotification();
     _stopBackgroundService();
+    _saveState();
     notifyListeners();
   }
 
@@ -280,6 +374,7 @@ class TimerController extends ChangeNotifier {
     _timer?.cancel();
     NotificationService.instance.cancelTimerNotification();
     _stopBackgroundService();
+    _saveState();
     notifyListeners();
   }
 
@@ -287,6 +382,7 @@ class TimerController extends ChangeNotifier {
   void setCountdown(Duration duration) {
     _countdownTotal = duration;
     _countdownRemaining = duration;
+    _saveState();
     notifyListeners();
   }
 
@@ -299,6 +395,7 @@ class TimerController extends ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 1), _onTick);
     _updateNotification();
     _startBackgroundService();
+    _saveState();
     notifyListeners();
   }
 
@@ -311,12 +408,14 @@ class TimerController extends ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 1), _onTick);
     _updateNotification();
     _startBackgroundService();
+    _saveState();
     notifyListeners();
   }
 
   void skipPomodoroPhase() {
     if (_activeMode != TimerMode.pomodoro) return;
     _advancePomodoroPhase();
+    _saveState();
     notifyListeners();
   }
 
@@ -349,6 +448,7 @@ class TimerController extends ChangeNotifier {
         _pomodoroRemaining = isLong ? _pomodoroLongBreak : _pomodoroShortBreak;
       }
     }
+    _saveState();
     notifyListeners();
   }
 
@@ -424,6 +524,14 @@ class TimerController extends ChangeNotifier {
         break;
     }
     _updateNotification();
+
+    // Her 5 saniyede bir state'i kaydet (I/O optimizasyonu)
+    _tickCounter++;
+    if (_tickCounter >= 5) {
+      _tickCounter = 0;
+      _saveState();
+    }
+
     notifyListeners();
   }
 
@@ -479,7 +587,12 @@ class TimerController extends ChangeNotifier {
     switch (_activeMode) {
       case TimerMode.stopwatch:
         if (_elapsed > Duration.zero) {
-          _recordSession(TimerMode.stopwatch, _elapsed, completed: true, addToPending: false);
+          _recordSession(
+            TimerMode.stopwatch,
+            _elapsed,
+            completed: true,
+            addToPending: false,
+          );
         }
         _elapsed = Duration.zero;
         _stopwatchRunning = false;
@@ -488,7 +601,12 @@ class TimerController extends ChangeNotifier {
       case TimerMode.countdown:
         final done = _countdownTotal - _countdownRemaining;
         if (done > Duration.zero) {
-          _recordSession(TimerMode.countdown, done, completed: true, addToPending: false);
+          _recordSession(
+            TimerMode.countdown,
+            done,
+            completed: true,
+            addToPending: false,
+          );
         }
         _countdownRunning = false;
         _countdownRemaining = _countdownTotal;
@@ -513,6 +631,7 @@ class TimerController extends ChangeNotifier {
     _timer?.cancel();
     NotificationService.instance.cancelTimerNotification();
     _stopBackgroundService();
+    _saveState();
     notifyListeners();
   }
 
@@ -584,6 +703,7 @@ class TimerController extends ChangeNotifier {
     }
     // Session güncellemesini kaydet
     _saveSessions();
+    _saveState();
     notifyListeners();
     return true;
   }
@@ -621,12 +741,14 @@ class TimerController extends ChangeNotifier {
 
     repo.addTimerProgress(habitId, totalToSave);
     _pending = Duration.zero;
+    _saveState();
     notifyListeners();
   }
 
   void discardPending() {
     if (_pending <= Duration.zero) return;
     _pending = Duration.zero;
+    _saveState();
     notifyListeners();
   }
 

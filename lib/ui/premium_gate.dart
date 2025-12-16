@@ -104,9 +104,7 @@ Future<void> showPremiumDialog(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppLocalizations.of(context)!.mustBePremiumToUse,
-            ),
+            Text(AppLocalizations.of(context)!.mustBePremiumToUse),
             const SizedBox(height: 12),
             Text(AppLocalizations.of(context)!.premiumBenefits),
             const SizedBox(height: 8),

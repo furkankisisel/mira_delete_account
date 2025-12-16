@@ -89,7 +89,7 @@ class _DashboardFortuneEggsCardState extends State<DashboardFortuneEggsCard> {
     }
 
     lastIndices[eggIndex] = pick;
-  final answer = answers[pick % poolSize];
+    final answer = answers[pick % poolSize];
 
     showDialog(
       context: context,
@@ -156,16 +156,8 @@ class _DashboardFortuneEggsCardState extends State<DashboardFortuneEggsCard> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(
-                              Icons.chevron_left,
-                              size: 28,
-                              color: accent,
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 28,
-                              color: accent,
-                            ),
+                            Icon(Icons.chevron_left, size: 28, color: accent),
+                            Icon(Icons.chevron_right, size: 28, color: accent),
                           ],
                         ),
                       ),

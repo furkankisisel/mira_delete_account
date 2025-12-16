@@ -914,7 +914,9 @@ class _SettingsTabState extends State<_SettingsTab> {
                           );
                           messenger.showSnackBar(
                             SnackBar(
-                              content: Text(l10n.restoreSuccess('Profile Data')),
+                              content: Text(
+                                l10n.restoreSuccess('Profile Data'),
+                              ),
                             ),
                           );
                         } catch (e) {

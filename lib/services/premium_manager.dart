@@ -17,7 +17,7 @@ class PremiumManager {
   static const String _premiumStatusKey = 'premium_status';
   static const String _premiumExpiryKey = 'premium_expiry_timestamp';
   static const String _promoCodeUsedKey = 'promo_code_used';
-  
+
   // Valid promo codes for unlimited premium access
   static const List<String> _validPromoCodes = ['OZELKULLANICI'];
 
@@ -30,7 +30,7 @@ class PremiumManager {
   DateTime? get expiryDate => _expiryTimestamp != null
       ? DateTime.fromMillisecondsSinceEpoch(_expiryTimestamp!)
       : null;
-  
+
   /// Whether a promo code was used for unlimited access
   String? _usedPromoCode;
   String? get usedPromoCode => _usedPromoCode;
@@ -157,26 +157,29 @@ class PremiumManager {
   /// Returns true if the code is valid and premium was activated.
   Future<bool> activatePromoCode(String code) async {
     final trimmedCode = code.trim().toUpperCase();
-    
+
     if (!_validPromoCodes.contains(trimmedCode)) {
       debugPrint('[Premium] Invalid promo code: $code');
       return false;
     }
-    
+
     // Check if already used
     if (_usedPromoCode != null) {
       debugPrint('[Premium] Promo code already used: $_usedPromoCode');
       return false;
     }
-    
+
     // Activate unlimited premium (10 years expiry)
     _usedPromoCode = trimmedCode;
-    await setPremium(true, expiryDate: DateTime.now().add(const Duration(days: 365 * 10)));
-    
+    await setPremium(
+      true,
+      expiryDate: DateTime.now().add(const Duration(days: 365 * 10)),
+    );
+
     debugPrint('[Premium] Promo code activated: $trimmedCode');
     return true;
   }
-  
+
   /// Check if a promo code has been used
   bool get hasUsedPromoCode => _usedPromoCode != null;
 

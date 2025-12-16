@@ -79,9 +79,11 @@ class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
       }
       // If neither can be opened, show message
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.cannotOpenPlayStore)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.cannotOpenPlayStore),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -339,11 +341,17 @@ class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _DetailRow(l10n.statusLabel, _isPremium ? l10n.active : l10n.inactive),
+            _DetailRow(
+              l10n.statusLabel,
+              _isPremium ? l10n.active : l10n.inactive,
+            ),
             if (_expiryDate != null)
               _DetailRow(l10n.endDate, _formatDate(_expiryDate!)),
             if (_expiryDate != null)
-              _DetailRow(l10n.daysRemaining, '${_daysRemaining()} ${l10n.daysLeft}'),
+              _DetailRow(
+                l10n.daysRemaining,
+                '${_daysRemaining()} ${l10n.daysLeft}',
+              ),
             const Divider(height: 24),
             Text(
               l10n.usePlayStoreToManage,
