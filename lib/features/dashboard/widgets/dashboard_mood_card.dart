@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../design_system/tokens/colors.dart';
-import '../../mood/mood_screen.dart';
-import '../../mood/data/mood_repository.dart';
-import '../../mood/data/mood_entry.dart';
+import '../../mood/data/detailed_mood_repository.dart';
 import '../../mood/data/mood_models.dart';
 import '../../mood/presentation/mood_selection_screen.dart';
 import '../../mood/presentation/mood_analytics_screen.dart';
 import '../../../design_system/theme/theme_variations.dart';
-import '../../../l10n/app_localizations.dart';
 
 enum Mood { terrible, bad, ok, good, great }
 
@@ -40,7 +36,7 @@ class DashboardMoodCard extends StatefulWidget {
 
 class _DashboardMoodCardState extends State<DashboardMoodCard> {
   Mood? _selected;
-  final _repo = MoodRepository();
+  final _repo = DetailedMoodRepository();
 
   @override
   void initState() {
@@ -50,40 +46,26 @@ class _DashboardMoodCardState extends State<DashboardMoodCard> {
 
   Future<void> _init() async {
     try {
-      await _repo.initialize();
-      final today = DateTime.now();
-      final existing = _repo.getForDate(today);
-      if (existing != null) {
-        _selected = _toDashboardMood(existing.mood);
-      }
+      final latest = await _repo.getLatestMoodEntry();
+      if (latest != null) _selected = _toDashboardMood(latest.mood);
       if (mounted) setState(() {});
     } catch (_) {
       if (mounted) setState(() {});
     }
   }
 
-  Mood _toDashboardMood(MoodValue v) => Mood.values[v.index];
-  MoodValue _toRepoMood(Mood m) => MoodValue.values[m.index];
-
-  Future<void> _selectAndNavigate(Mood m) async {
-    setState(() => _selected = m);
-    HapticFeedback.selectionClick();
-    await _repo.upsertForDate(DateTime.now(), _toRepoMood(m), null);
-    if (!mounted) return;
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ChangeNotifierProvider(
-          create: (_) => MoodFlowState(),
-          child: const MoodSelectionScreen(),
-        ),
-      ),
-    );
-    // refresh on return (in case edits happened)
-    final latest = _repo.getForDate(DateTime.now());
-    if (mounted) {
-      setState(() {
-        _selected = latest != null ? _toDashboardMood(latest.mood) : _selected;
-      });
+  Mood _toDashboardMood(MoodLevel v) {
+    switch (v) {
+      case MoodLevel.terrible:
+        return Mood.terrible;
+      case MoodLevel.bad:
+        return Mood.bad;
+      case MoodLevel.neutral:
+        return Mood.ok;
+      case MoodLevel.good:
+        return Mood.good;
+      case MoodLevel.excellent:
+        return Mood.great;
     }
   }
 
@@ -97,7 +79,7 @@ class _DashboardMoodCardState extends State<DashboardMoodCard> {
       ),
     );
     // When returning, try to reflect persisted state
-    final latest = _repo.getForDate(DateTime.now());
+    final latest = await _repo.getLatestMoodEntry();
     if (mounted) {
       setState(
         () => _selected = latest != null
@@ -141,7 +123,6 @@ class _DashboardMoodCardState extends State<DashboardMoodCard> {
             Expanded(
               child: Builder(
                 builder: (ctx) {
-                  final l10n = AppLocalizations.of(ctx);
                   final swipeBg = Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     alignment: Alignment.center,

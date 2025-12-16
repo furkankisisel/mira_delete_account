@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mira/features/habit/domain/habit_model.dart';
 import 'package:mira/features/habit/domain/habit_repository.dart';
 import 'package:mira/features/habit/domain/habit_types.dart';
-import 'package:mira/features/habit/presentation/advanced_habit_wizard_screen.dart';
+import 'package:mira/features/habit/presentation/advanced_habit_screen.dart';
 import '../../../l10n/app_localizations.dart';
 import 'package:flutter/services.dart'
     show rootBundle, Clipboard, ClipboardData;
@@ -507,7 +507,7 @@ class _TemplatesTabState extends State<_TemplatesTab> {
                         ' • ' +
                         AppLocalizations.of(
                           rootContext,
-                        ).dayRangeShort(rangeStart, rangeEnd);
+                        ).dayRangeShort(rangeEnd, rangeStart);
                     details = '$details$rangeText';
                     return ListTile(
                       leading: CircleAvatar(
@@ -1186,11 +1186,10 @@ class _ManualTabState extends State<_ManualTab> {
                       MaterialPageRoute(
                         builder: (_) => Theme(
                           data: localTheme,
-                          child: AdvancedHabitWizardScreen(
-                            isEditing: true,
-                            editingHabit: initialMap,
-                            scheduleBeforeFrequency: true,
+                          child: AdvancedHabitScreen(
+                            editingHabitMap: initialMap,
                             useVisionDayOffsets: true,
+                            returnAsMap: true,
                           ),
                         ),
                       ),
@@ -1229,7 +1228,7 @@ class _ManualTabState extends State<_ManualTab> {
                   h.endDay != null
                       ? AppLocalizations.of(
                           context,
-                        ).dayRangeShort(h.startDay, h.endDay!)
+                        ).dayRangeShort(h.endDay!, h.startDay)
                       : AppLocalizations.of(context).dayShort(h.startDay),
                 ),
                 trailing: Row(
@@ -1462,8 +1461,19 @@ class _ManualTabState extends State<_ManualTab> {
     String? endDate = h.endDate;
     try {
       final s = m['startDate']?.toString();
-      if (s != null)
-        startDate = DateTime.parse(s).toIso8601String().substring(0, 10);
+      if (s != null) {
+        final parsedS = DateTime.parse(s);
+        startDate = parsedS.toIso8601String().substring(0, 10);
+        // Check if this new start date is before the vision start date
+        if (_startDate != null) {
+          final visionStart = _dateOnly(_startDate!);
+          final habitStart = _dateOnly(parsedS);
+          if (habitStart.isBefore(visionStart)) {
+            // Update vision start date to accommodate this earlier habit
+            _setVisionStartDate(habitStart);
+          }
+        }
+      }
       final e = m['endDate']?.toString();
       if (e != null)
         endDate = DateTime.parse(e).toIso8601String().substring(0, 10);
@@ -1484,6 +1494,9 @@ class _ManualTabState extends State<_ManualTab> {
       }
       list.sort();
       scheduledDates = list;
+    } else if (m['scheduledDates'] is List &&
+        (m['scheduledDates'] as List).isNotEmpty) {
+      scheduledDates = List<String>.from(m['scheduledDates']);
     } else {
       // If no explicit offsets provided, keep existing schedule as-is
       scheduledDates = h.scheduledDates == null
@@ -1491,16 +1504,25 @@ class _ManualTabState extends State<_ManualTab> {
           : List<String>.from(h.scheduledDates!);
     }
 
+    int colorValue = h.color.value;
+    if (m['color'] is Color) {
+      colorValue = (m['color'] as Color).value;
+    } else if (m['color'] is int) {
+      colorValue = m['color'] as int;
+    }
+
     final updated =
         Habit(
             id: h.id,
-            title: (m['name'] as String?)?.trim().isNotEmpty == true
+            title: (m['title'] as String?)?.trim().isNotEmpty == true
+                ? m['title']
+                : (m['name'] as String?)?.trim().isNotEmpty == true
                 ? m['name']
                 : h.title,
             description: (m['description'] as String?) ?? h.description,
             icon: h.icon,
             emoji: (m['emoji'] as String?) ?? h.emoji,
-            color: Color((m['color'] as int?) ?? h.color.value),
+            color: Color(colorValue),
             targetCount: target,
             habitType: habitType,
             unit: unit,
@@ -1644,16 +1666,27 @@ class _ManualTabState extends State<_ManualTab> {
         : _dateOnly(DateTime.now());
     final DateTime baseBefore = normalizedStart ?? fallbackBase;
 
+    // Automatically adjust vision start date if the new habit starts earlier
     if (normalizedStart != null) {
       _setVisionStartDate(normalizedStart);
     } else if (_startDate == null) {
       _setVisionStartDate(baseBefore);
     }
 
+    // Re-read base after potential update
     final DateTime base = _dateOnly(_startDate ?? baseBefore);
 
     final DateTime startDate = normalizedStart ?? base;
     int startDay = startDate.difference(base).inDays + 1;
+    // If startDay < 1, it means the habit starts before the vision base.
+    // _setVisionStartDate should have handled this, but just in case:
+    if (startDay < 1) {
+      // Force update vision start to habit start
+      _setVisionStartDate(startDate, force: true);
+      // Recalculate base and startDay
+      final newBase = _dateOnly(_startDate!);
+      startDay = startDate.difference(newBase).inDays + 1;
+    }
     if (startDay < 1) startDay = 1;
 
     int? endDay;
@@ -1678,8 +1711,36 @@ class _ManualTabState extends State<_ManualTab> {
         adjusted.sort();
         activeOffsets = adjusted;
       }
+    } else {
+      // Handle scheduledDates from AdvancedHabitScreen
+      final scheduled = m['scheduledDates'] as List?;
+      if (scheduled != null && scheduled.isNotEmpty) {
+        final adjusted = <int>[];
+        for (final dateStr in scheduled) {
+          final date = DateTime.tryParse(dateStr.toString());
+          if (date != null) {
+            final day = _dateOnly(date);
+            final newOffset = day.difference(base).inDays + 1;
+            if (newOffset >= startDay &&
+                (endDay == null || newOffset <= endDay)) {
+              adjusted.add(newOffset);
+            }
+          }
+        }
+        if (adjusted.isNotEmpty) {
+          adjusted.sort();
+          activeOffsets = adjusted;
+        }
+      }
     }
-    final colorValue = (m['color'] as int?) ?? _color.value;
+
+    int colorValue = _color.value;
+    if (m['color'] is Color) {
+      colorValue = (m['color'] as Color).value;
+    } else if (m['color'] is int) {
+      colorValue = m['color'] as int;
+    }
+
     final emoji = (m['emoji'] as String?) ?? _emoji;
 
     // Reminder settings
@@ -1695,7 +1756,9 @@ class _ManualTabState extends State<_ManualTab> {
     }
 
     return VisionHabitTemplate(
-      title: (m['name'] as String?)?.trim().isNotEmpty == true
+      title: (m['title'] as String?)?.trim().isNotEmpty == true
+          ? m['title']
+          : (m['name'] as String?)?.trim().isNotEmpty == true
           ? m['name']
           : AppLocalizations.of(context).habit,
       description: (m['description'] as String?)?.trim().isNotEmpty == true
@@ -1854,7 +1917,7 @@ class _ManualTabState extends State<_ManualTab> {
   }
 
   void _addNewHabit() async {
-    // Use the same local theme as VisionCreateScreen for the wizard
+    // Use the same local theme as VisionCreateScreen for the screen
     final baseTheme = Theme.of(context);
     final bool isDark = baseTheme.brightness == Brightness.dark;
     final ThemeData localTheme = (widget.variant == ThemeVariant.world)
@@ -1862,15 +1925,14 @@ class _ManualTabState extends State<_ManualTab> {
               ? ThemeVariations.dark(ThemeVariant.earth)
               : ThemeVariations.light(ThemeVariant.earth))
         : baseTheme;
-    final useVisionOffsets = true; // always use vision-day offsets
     final map = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
         builder: (_) => Theme(
           data: localTheme,
-          child: AdvancedHabitWizardScreen(
-            scheduleBeforeFrequency: true,
-            useVisionDayOffsets: useVisionOffsets,
+          child: AdvancedHabitScreen(
+            useVisionDayOffsets: true,
             visionStartDate: _startDate,
+            returnAsMap: true,
           ),
         ),
       ),
@@ -1889,7 +1951,7 @@ class _ManualTabState extends State<_ManualTab> {
     final initialMap = _advancedMapFromVisionHabit(_newHabits[index]);
     // Decide mode based on whether this vision habit uses explicit activeOffsets
     final wasFinite = _newHabits[index].activeOffsets != null;
-    // Use the same local theme as VisionCreateScreen for the wizard
+    // Use the same local theme as VisionCreateScreen for the screen
     final baseTheme = Theme.of(context);
     final bool isDark = baseTheme.brightness == Brightness.dark;
     final ThemeData localTheme = (widget.variant == ThemeVariant.world)
@@ -1901,12 +1963,11 @@ class _ManualTabState extends State<_ManualTab> {
       MaterialPageRoute(
         builder: (_) => Theme(
           data: localTheme,
-          child: AdvancedHabitWizardScreen(
-            isEditing: true,
-            editingHabit: initialMap,
-            scheduleBeforeFrequency: true,
+          child: AdvancedHabitScreen(
+            editingHabitMap: initialMap,
             useVisionDayOffsets: wasFinite,
             visionStartDate: _startDate,
+            returnAsMap: true,
           ),
         ),
       ),

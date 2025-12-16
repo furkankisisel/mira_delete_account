@@ -1,0 +1,25 @@
+{
+    "name": "mira-functions",
+    "description": "Cloud Functions for deleting account by email and cleaning Firestore.",
+    "engines": {
+        "node": "20"
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "serve": "firebase emulators:start --only functions",
+        "shell": "firebase functions:shell",
+        "start": "npm run serve",
+        "deploy": "firebase deploy --only functions",
+        "logs": "firebase functions:log"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "firebase-admin": "^12.5.0",
+        "firebase-functions": "^5.0.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.57.0",
+        "eslint-config-google": "^0.14.0"
+    },
+    "private": true
+}

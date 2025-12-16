@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:app_settings/app_settings.dart' as sys;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../data/notification_settings_repository.dart';
@@ -19,7 +20,6 @@ class NotificationSettingsScreen extends StatefulWidget {
 class _NotificationSettingsScreenState
     extends State<NotificationSettingsScreen> {
   bool _permissionGranted = false;
-  bool _exactAlarmGranted = false;
   bool _initializing = true;
   String? _timezoneId;
   String? _timezoneLocalized;
@@ -67,11 +67,9 @@ class _NotificationSettingsScreenState
         >();
     final granted =
         await androidImpl?.requestNotificationsPermission() ?? false;
-    final exact = await androidImpl?.requestExactAlarmsPermission() ?? false;
 
     setState(() {
       _permissionGranted = granted;
-      _exactAlarmGranted = exact;
       _initializing = false;
     });
   }
@@ -228,20 +226,15 @@ class _NotificationSettingsScreenState
                         subtitle: Text(
                           _permissionGranted ? l10n.granted : l10n.notGranted,
                         ),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: Icon(
-                          _exactAlarmGranted
-                              ? Icons.check_circle
-                              : Icons.error_outline,
-                          color: _exactAlarmGranted
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.error,
-                        ),
-                        title: Text(l10n.exactAlarmPermission),
-                        subtitle: Text(
-                          _exactAlarmGranted ? l10n.granted : l10n.notGranted,
+                        trailing: TextButton.icon(
+                          onPressed: () {
+                            // Open OS notification settings page for this app
+                            sys.AppSettings.openAppSettings(
+                              type: sys.AppSettingsType.notification,
+                            );
+                          },
+                          icon: const Icon(Icons.open_in_new),
+                          label: const Text('Open'),
                         ),
                       ),
                     ],
@@ -280,6 +273,33 @@ class _NotificationSettingsScreenState
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onErrorContainer,
                           ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            OutlinedButton.icon(
+                              onPressed: () => sys.AppSettings.openAppSettings(
+                                type: sys.AppSettingsType.notification,
+                              ),
+                              icon: const Icon(Icons.notifications_active),
+                              label: const Text('Open notification settings'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: () =>
+                                  sys.AppSettings.openAppSettings(),
+                              icon: const Icon(Icons.settings),
+                              label: const Text('Open system settings'),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: () => sys.AppSettings.openAppSettings(
+                                type: sys.AppSettingsType.batteryOptimization,
+                              ),
+                              icon: const Icon(Icons.battery_saver),
+                              label: const Text('Open battery optimization'),
+                            ),
+                          ],
                         ),
                       ],
                     ),

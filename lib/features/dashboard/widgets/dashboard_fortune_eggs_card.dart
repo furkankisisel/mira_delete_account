@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../design_system/tokens/colors.dart';
-import '../../fortune_eggs/presentation/fortune_eggs_screen.dart';
 import '../../fortune_eggs/widgets/fortune_egg.dart' as fe;
 import '../../fortune_eggs/data/answers.dart';
 import 'dart:math';
@@ -90,7 +89,7 @@ class _DashboardFortuneEggsCardState extends State<DashboardFortuneEggsCard> {
     }
 
     lastIndices[eggIndex] = pick;
-    final answer = answers![pick % poolSize];
+  final answer = answers[pick % poolSize];
 
     showDialog(
       context: context,
@@ -106,7 +105,6 @@ class _DashboardFortuneEggsCardState extends State<DashboardFortuneEggsCard> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     final bool isWorld = widget.variant == ThemeVariant.world;
     final Color accent = isWorld ? AppColors.accentPurple : cs.secondary;
@@ -128,27 +126,52 @@ class _DashboardFortuneEggsCardState extends State<DashboardFortuneEggsCard> {
           final pagerWidth = availW;
           // Compute egg size relative to pager width, but clamp to a reasonable max
           final eggSize = (pagerWidth * 0.75).clamp(48.0, 100.0);
-          // If we have much space, use a tighter viewport to show mostly one egg
-          final vf = pagerWidth > 200 ? 0.95 : 0.85;
-          // We use a fixed viewportFraction set in initState; avoid mutating
 
           return Center(
             child: SizedBox(
               width: pagerWidth,
               height: eggSize,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _themes.length,
-                onPageChanged: (i) => setState(() => _selected = i),
-                itemBuilder: (context, i) => Center(
-                  child: fe.FortuneEgg(
-                    theme: _themes[i],
-                    size: eggSize * 0.84,
-                    crackProgress: 0,
-                    isSelected: _selected == i,
-                    onTap: () => _showAnswer(i),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: _themes.length,
+                    onPageChanged: (i) => setState(() => _selected = i),
+                    itemBuilder: (context, i) => Center(
+                      child: fe.FortuneEgg(
+                        theme: _themes[i],
+                        size: eggSize * 0.84,
+                        crackProgress: 0,
+                        isSelected: _selected == i,
+                        onTap: () => _showAnswer(i),
+                      ),
+                    ),
                   ),
-                ),
+                  IgnorePointer(
+                    child: Opacity(
+                      opacity: 0.18,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              Icons.chevron_left,
+                              size: 28,
+                              color: accent,
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 28,
+                              color: accent,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );

@@ -19,6 +19,7 @@ import '../data/freeform_image_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import '../data/vision_template_repository.dart';
+import '../../../ui/premium_gate.dart';
 
 class VisionScreen extends StatefulWidget {
   const VisionScreen({
@@ -252,7 +253,10 @@ class _VisionScreenState extends State<VisionScreen> {
               title: Text(AppLocalizations.of(context).visionCreateTitle),
               onTap: () {
                 Navigator.pop(ctx);
-                _openCreate();
+                requirePremium(context).then((ok) {
+                  if (!ok) return;
+                  _openCreate();
+                });
               },
             ),
             if (_freeform)
@@ -261,6 +265,8 @@ class _VisionScreenState extends State<VisionScreen> {
                 title: Text(AppLocalizations.of(context).addText),
                 onTap: () async {
                   Navigator.pop(ctx);
+                  final ok = await requirePremium(context);
+                  if (!ok) return;
                   await _openCreateTextSticker();
                 },
               ),
@@ -270,6 +276,8 @@ class _VisionScreenState extends State<VisionScreen> {
                 title: Text(AppLocalizations.of(context).addImage),
                 onTap: () async {
                   Navigator.pop(ctx);
+                  final ok = await requirePremium(context);
+                  if (!ok) return;
                   await _openCreateImageSticker();
                 },
               ),
@@ -1778,83 +1786,28 @@ class _ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = _computeProgress(vision);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        LinearProgressIndicator(
-          value: progress,
-          minHeight: 8,
-          backgroundColor: (color ?? Theme.of(context).colorScheme.primary)
-              .withValues(alpha: 0.15),
-          valueColor: AlwaysStoppedAnimation<Color>(
-            color ?? Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text('${(progress * 100).toStringAsFixed(0)}%'),
-      ],
+    return FutureBuilder<double>(
+      future: VisionRepository.instance.calculateVisionProgress(vision.id),
+      builder: (context, snapshot) {
+        final progress = snapshot.data ?? 0.0;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: (color ?? Theme.of(context).colorScheme.primary)
+                  .withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                color ?? Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text('${(progress * 100).toStringAsFixed(0)}%'),
+          ],
+        );
+      },
     );
-  }
-
-  double _computeProgress(Vision v) {
-    // Basic placeholder: average of linked habits' completion ratio today.
-    // If no habits, return 0.
-    if (v.linkedHabitIds.isEmpty) return 0;
-    final repo = HabitRepository.instance;
-    final all = repo.habits;
-    final linked = all.where((h) => v.linkedHabitIds.contains(h.id)).toList();
-    if (linked.isEmpty) return 0;
-    double sum = 0;
-    for (final h in linked) {
-      sum += _habitProgress(h);
-    }
-    return (sum / linked.length).clamp(0, 1);
-  }
-
-  double _habitProgress(Habit h) {
-    // Use today's key from model (progressDate) and evaluate by policy
-    final todayKey = h.progressDate;
-    // If explicit schedule excludes today, count as satisfied
-    if (h.scheduledDates != null && h.scheduledDates!.isNotEmpty) {
-      if (!h.scheduledDates!.contains(todayKey)) {
-        return 1.0;
-      }
-    }
-    final int value =
-        h.dailyLog[todayKey] ?? (h.isCompleted ? h.targetCount : 0);
-    final bool completed = HabitRepository.evaluateCompletionForProgress(
-      h,
-      value,
-    );
-    if (completed) return 1.0;
-    final int t = h.targetCount;
-    if (h.habitType == HabitType.numerical) {
-      switch (h.numericalTargetType) {
-        case NumericalTargetType.minimum:
-          return t > 0
-              ? (value / t).clamp(0, 1).toDouble()
-              : (value > 0 ? 1.0 : 0.0);
-        case NumericalTargetType.exact:
-          return t > 0 ? (value / t).clamp(0, 1).toDouble() : 0.0;
-        case NumericalTargetType.maximum:
-          // Failed (value > target) -> show 0 progress
-          return 0.0;
-      }
-    } else if (h.habitType == HabitType.timer) {
-      switch (h.timerTargetType) {
-        case TimerTargetType.minimum:
-          return t > 0
-              ? (value / t).clamp(0, 1).toDouble()
-              : (value > 0 ? 1.0 : 0.0);
-        case TimerTargetType.exact:
-          return t > 0 ? (value / t).clamp(0, 1).toDouble() : 0.0;
-        case TimerTargetType.maximum:
-          return 0.0;
-      }
-    }
-    // Fallback simple
-    return t > 0 ? (value / t).clamp(0, 1).toDouble() : (value > 0 ? 1.0 : 0.0);
   }
 }
 

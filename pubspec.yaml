@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+4
+version: 1.0.3+23
 
 environment:
   sdk: ^3.8.0
@@ -52,12 +52,17 @@ dependencies:
   provider: ^6.1.2
   http: ^1.1.0
   google_sign_in: ^6.0.0
-  firebase_core: ^4.1.0
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  url_launcher: ^6.2.5
+  app_settings: ^5.1.1
+  webview_flutter: ^4.10.0
   # For rendering SVG assets if needed for scalable logo variants
   flutter_svg: ^2.0.10
   # For background timer execution
   flutter_background_service: ^5.0.5
   flutter_background_service_android: ^6.2.4
+  in_app_purchase_android: ^0.4.0+8
 
 dev_dependencies:
   flutter_test:
@@ -133,6 +138,7 @@ flutter_launcher_icons:
 #   color: "#000000"
 #   image: assets/icons/miralogo.png
 #   android: true
+
 #   ios: true
 #   web: false
 

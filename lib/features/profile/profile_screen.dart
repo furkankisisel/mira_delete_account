@@ -16,6 +16,10 @@ import 'dart:convert';
 import '../onboarding/data/onboarding_repository.dart';
 import '../onboarding/presentation/onboarding_screen.dart';
 import 'privacy_security_screen.dart';
+import '../../ui/premium_gate.dart';
+import '../../ui/manage_subscription_screen.dart';
+import 'package:http/http.dart' as http;
+import '../../config/constants.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -797,26 +801,32 @@ class _SettingsTabState extends State<_SettingsTab> {
                 if (!auth.isSignedIn) {
                   return ListTile(
                     leading: const Icon(Icons.login, size: 28),
-                    title: const Text('Sign in with Google'),
+                    title: Text(l10n.signInWithGoogle),
                     onTap: () async {
                       await auth.signIn();
                     },
                   );
                 }
                 final acc = auth.account!;
-                return ListTile(
-                  leading: (acc.photoUrl != null)
-                      ? CircleAvatar(
-                          backgroundImage: NetworkImage(acc.photoUrl!),
-                        )
-                      : const CircleAvatar(child: Icon(Icons.person_outline)),
-                  title: Text(acc.displayName ?? acc.email),
-                  subtitle: Text(acc.email),
-                  trailing: TextButton(
-                    onPressed: () async =>
-                        await AuthRepository.instance.signOut(),
-                    child: Text(l10n.logout),
-                  ),
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: (acc.photoUrl != null)
+                          ? CircleAvatar(
+                              backgroundImage: NetworkImage(acc.photoUrl!),
+                            )
+                          : const CircleAvatar(
+                              child: Icon(Icons.person_outline),
+                            ),
+                      title: Text(acc.displayName ?? acc.email),
+                      subtitle: Text(acc.email),
+                      trailing: TextButton(
+                        onPressed: () async =>
+                            await AuthRepository.instance.signOut(),
+                        child: Text(l10n.logout),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -829,8 +839,11 @@ class _SettingsTabState extends State<_SettingsTab> {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.upload_file),
-                      title: const Text('Backup now'),
+                      title: Text(l10n.backupNow),
                       onTap: () async {
+                        // Require premium to use backup feature
+                        final ok = await requirePremium(ctx);
+                        if (!ok) return;
                         final messenger = ScaffoldMessenger.of(ctx);
                         final navigator = Navigator.of(
                           ctx,
@@ -851,20 +864,17 @@ class _SettingsTabState extends State<_SettingsTab> {
                             'avatarPath': profile.avatarPath,
                             'timestamp': DateTime.now().toIso8601String(),
                           };
-                          final ok = await BackupRepository.instance
-                              .uploadBackup(jsonEncode(payload));
-                          if (ok) {
-                            messenger.showSnackBar(
-                              const SnackBar(content: Text('Backup succeeded')),
-                            );
-                          } else {
-                            messenger.showSnackBar(
-                              const SnackBar(content: Text('Backup failed')),
-                            );
-                          }
+                          await BackupRepository.instance.uploadBackup(
+                            jsonEncode(payload),
+                          );
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.backupSuccess('Google Drive')),
+                            ),
+                          );
                         } catch (e) {
                           messenger.showSnackBar(
-                            SnackBar(content: Text('Backup failed: $e')),
+                            SnackBar(content: Text('${l10n.backupError}: $e')),
                           );
                         } finally {
                           // close loader
@@ -874,8 +884,11 @@ class _SettingsTabState extends State<_SettingsTab> {
                     ),
                     ListTile(
                       leading: const Icon(Icons.download),
-                      title: const Text('Restore latest'),
+                      title: Text(l10n.restoreLatest),
                       onTap: () async {
+                        // Require premium to use restore feature
+                        final ok = await requirePremium(ctx);
+                        if (!ok) return;
                         final messenger = ScaffoldMessenger.of(ctx);
                         final navigator = Navigator.of(
                           ctx,
@@ -890,30 +903,23 @@ class _SettingsTabState extends State<_SettingsTab> {
                         try {
                           final data = await BackupRepository.instance
                               .downloadBackup();
-                          if (data == null) {
-                            messenger.showSnackBar(
-                              const SnackBar(content: Text('No backup found')),
-                            );
-                          } else {
-                            final obj =
-                                jsonDecode(data) as Map<String, dynamic>;
-                            // Restore profile fields
-                            await ProfileRepository.instance.setName(
-                              obj['name'] ?? '',
-                            );
-                            // bio restore intentionally omitted (UI no longer supports editing bio)
-                            await ProfileRepository.instance.setAvatarPath(
-                              obj['avatarPath'],
-                            );
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('Restore succeeded'),
-                              ),
-                            );
-                          }
+                          final obj = jsonDecode(data!) as Map<String, dynamic>;
+                          // Restore profile fields
+                          await ProfileRepository.instance.setName(
+                            obj['name'] ?? '',
+                          );
+                          // bio restore intentionally omitted (UI no longer supports editing bio)
+                          await ProfileRepository.instance.setAvatarPath(
+                            obj['avatarPath'],
+                          );
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.restoreSuccess('Profile Data')),
+                            ),
+                          );
                         } catch (e) {
                           messenger.showSnackBar(
-                            SnackBar(content: Text('Restore failed: $e')),
+                            SnackBar(content: Text('${l10n.restoreError}: $e')),
                           );
                         } finally {
                           navigator.pop();
@@ -925,16 +931,121 @@ class _SettingsTabState extends State<_SettingsTab> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: Text(l10n.profileInfo),
+              leading: const Icon(Icons.subscriptions),
+              title: Text(l10n.manageSubscription),
+              subtitle: Text(l10n.manageSubscriptionSubtitle),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ManageSubscriptionScreen(),
+                  ),
+                );
+              },
             ),
-            ListTile(
-              leading: const Icon(Icons.lock_outline),
-              title: Text(l10n.privacySecurity),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+            // Delete Account action
+            Builder(
+              builder: (ctx) => ListTile(
+                leading: const Icon(Icons.delete_forever, color: Colors.red),
+                title: Text(l10n.deleteMyAccount),
+                subtitle: Text(l10n.deleteAccountSubtitle),
+                onTap: () async {
+                  final auth = AuthRepository.instance;
+                  final emailController = TextEditingController(
+                    text: auth.isSignedIn ? auth.account!.email : '',
+                  );
+                  final confirmed = await showDialog<bool>(
+                    context: ctx,
+                    builder: (dCtx) => AlertDialog(
+                      title: Text(l10n.confirmDeleteAccount),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.deleteAccountWarning),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: l10n.yourEmail,
+                              prefixIcon: const Icon(Icons.email_outlined),
+                            ),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(dCtx, false),
+                          child: Text(l10n.cancel),
+                        ),
+                        FilledButton(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () => Navigator.pop(dCtx, true),
+                          child: Text(l10n.delete),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (confirmed != true) {
+                    emailController.dispose();
+                    return;
+                  }
+                  final email = emailController.text.trim();
+                  if (email.isEmpty) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(content: Text(l10n.pleaseEnterEmail)),
+                    );
+                    emailController.dispose();
+                    return;
+                  }
+                  // Show blocking loader
+                  showDialog<void>(
+                    context: ctx,
+                    barrierDismissible: false,
+                    builder: (_) =>
+                        const Center(child: CircularProgressIndicator()),
+                  );
+                  try {
+                    final uri = Uri.parse(
+                      '${AppConstants.backendBaseUrl}/delete-account',
+                    );
+                    final res = await http.post(
+                      uri,
+                      headers: {'Content-Type': 'application/json'},
+                      body: jsonEncode({'email': email}),
+                    );
+                    Navigator.of(ctx, rootNavigator: true).pop();
+                    if (res.statusCode == 200) {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.deleteAccountRequestSuccess),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${l10n.deleteAccountFailed}: ${res.statusCode}',
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    Navigator.of(ctx, rootNavigator: true).pop();
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(
+                        content: Text('${l10n.deleteAccountFailed}: $e'),
+                      ),
+                    );
+                  } finally {
+                    emailController.dispose();
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -944,8 +1055,8 @@ class _SettingsTabState extends State<_SettingsTab> {
           children: [
             ListTile(
               leading: const Icon(Icons.psychology_outlined),
-              title: const Text('Reset Onboarding'),
-              subtitle: const Text('Retake personality test'),
+              title: Text(l10n.resetOnboarding),
+              subtitle: Text(l10n.retakePersonalityTest),
               onTap: () async {
                 // Show confirmation dialog
                 final confirmed = await showDialog<bool>(
@@ -982,16 +1093,6 @@ class _SettingsTabState extends State<_SettingsTab> {
                   }
                 }
               },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.about),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: Text(l10n.logout),
-              onTap: () {},
             ),
           ],
         ),

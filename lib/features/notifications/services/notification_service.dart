@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/services.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -75,10 +76,7 @@ class NotificationService {
         ?.requestNotificationsPermission();
     print('🔔 Notification permission: $notificationPermission');
 
-    // Request exact alarm permission for Android 12+
-    final exactAlarmPermission = await androidPlugin
-        ?.requestExactAlarmsPermission();
-    print('⏰ Exact alarm permission: $exactAlarmPermission');
+    // Do not request exact alarm permission; we use inexact scheduling to avoid this requirement on Android 12+
 
     _initialized = true;
     print('✅ NotificationService initialized successfully');
@@ -314,14 +312,44 @@ class NotificationService {
         body,
         scheduledDate,
         details,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        // Use inexact scheduling to avoid exact alarm permission on Android 12+
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents:
-            DateTimeComponents.time, // Repeat daily at this time
+        // Try daily repeat at this time
+        matchDateTimeComponents: DateTimeComponents.time,
         payload: 'habit:${habit.id}',
       );
       print('✅ Reminder scheduled successfully!');
+    } on PlatformException catch (e) {
+      // Some OEMs/OS versions still enforce exact alarms for repeating schedules
+      // Fall back to scheduling a one-off inexact alarm for the next occurrence
+      if (e.code == 'exact_alarms_not_permitted') {
+        print(
+          '⚠️ exact_alarms_not_permitted; falling back to one-shot inexact schedule',
+        );
+        try {
+          await _plugin.zonedSchedule(
+            notificationId,
+            title,
+            body,
+            scheduledDate,
+            details,
+            androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            // No repeat component -> one-shot
+            payload: 'habit:${habit.id}',
+          );
+          print(
+            '✅ One-shot reminder scheduled (fallback). Will not auto-repeat.',
+          );
+        } catch (e2) {
+          print('❌ Fallback scheduling failed: $e2');
+        }
+      } else {
+        print('❌ Error scheduling reminder: $e');
+      }
     } catch (e) {
       print('❌ Error scheduling reminder: $e');
     }

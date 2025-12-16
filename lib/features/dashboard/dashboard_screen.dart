@@ -248,9 +248,9 @@ class _DashboardHabitCarouselState extends State<_DashboardHabitCarousel> {
     final habits = _repo.habits;
     if (habits.isEmpty) return const SizedBox.shrink();
     return SizedBox(
-      height: 140,
+      height: 145,
       child: PageView.builder(
-        controller: PageController(viewportFraction: 1.0),
+        controller: PageController(viewportFraction: 0.95),
         itemCount: habits.length,
         itemBuilder: (context, i) {
           final h = habits[i];
@@ -261,107 +261,166 @@ class _DashboardHabitCarouselState extends State<_DashboardHabitCarousel> {
   }
 }
 
-class _HabitMiniCard extends StatelessWidget {
+class _HabitMiniCard extends StatefulWidget {
   const _HabitMiniCard({required this.habit});
   final Habit habit;
 
   @override
+  State<_HabitMiniCard> createState() => _HabitMiniCardState();
+}
+
+class _HabitMiniCardState extends State<_HabitMiniCard> {
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final days = _last7Days();
-    final status = _last7Statuses(habit, days);
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => HabitAnalysisScreen(
-              habitId: habit.id,
-              habitTitle: habit.title,
-              habitDescription: habit.description,
-              habitIcon: habit.icon,
-              habitColor: habit.color,
-              currentStreak: habit.currentStreak,
-              targetCount: habit.targetCount,
-              unit: habit.unit,
+    final status = _last7Statuses(widget.habit, days);
+    final doneCount = status.where((v) => v).length;
+
+    final fill = Color.alphaBlend(
+      widget.habit.color.withValues(alpha: 0.12),
+      theme.colorScheme.surfaceContainerHighest,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => HabitAnalysisScreen(
+                habitId: widget.habit.id,
+                habitTitle: widget.habit.title,
+                habitDescription: widget.habit.description,
+                habitIcon: widget.habit.icon,
+                habitColor: widget.habit.color,
+                currentStreak: widget.habit.currentStreak,
+                targetCount: widget.habit.targetCount,
+                unit: widget.habit.unit,
+              ),
             ),
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(18),
           ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Color.alphaBlend(
-            habit.color.withValues(alpha: 0.10),
-            theme.colorScheme.surfaceContainerHighest,
-          ),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: habit.color.withValues(alpha: 0.28),
-                  ),
-                  child: Center(
-                    child: (habit.emoji != null && habit.emoji!.isNotEmpty)
-                        ? Text(
-                            habit.emoji!,
-                            style: const TextStyle(fontSize: 20),
-                          )
-                        : Icon(habit.icon, color: habit.color),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    habit.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.habit.color.withValues(alpha: 0.2),
+                    ),
+                    child: Center(
+                      child:
+                          (widget.habit.emoji != null &&
+                              widget.habit.emoji!.isNotEmpty)
+                          ? Text(
+                              widget.habit.emoji!,
+                              style: const TextStyle(fontSize: 18),
+                            )
+                          : Icon(
+                              widget.habit.icon,
+                              color: widget.habit.color,
+                              size: 18,
+                            ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(days.length, (i) {
-                final d = days[i];
-                final done = status[i];
-                return Column(
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOutCubic,
-                      width: 18,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: done
-                            ? habit.color
-                            : theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(999),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.habit.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '${widget.habit.currentStreak} gün • $doneCount/7',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: List.generate(days.length, (i) {
+                  final d = days[i];
+                  final done = status[i];
+                  final isToday = _isToday(d);
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: i == 0 ? 0 : 1.5,
+                        right: i == days.length - 1 ? 0 : 1.5,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: done
+                                  ? widget.habit.color
+                                  : theme.colorScheme.surfaceContainerHighest
+                                        .withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(6),
+                              border: isToday
+                                  ? Border.all(
+                                      color: widget.habit.color,
+                                      width: 1.5,
+                                    )
+                                  : null,
+                            ),
+                            child: Center(
+                              child: done
+                                  ? Icon(
+                                      Icons.check_rounded,
+                                      color: Colors.white,
+                                      size: 14,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _dayName(d),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              fontSize: 10,
+                              fontWeight: isToday
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                              color: theme.colorScheme.onSurfaceVariant
+                                  .withValues(alpha: isToday ? 0.9 : 0.6),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _weekdayLabel(context, d),
-                      style: theme.textTheme.labelSmall,
-                    ),
-                  ],
-                );
-              }),
-            ),
-          ],
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -381,18 +440,15 @@ class _HabitMiniCard extends StatelessWidget {
     }).toList();
   }
 
-  String _weekdayLabel(BuildContext context, DateTime d) {
-    final l10n = AppLocalizations.of(context);
-    final labels = [
-      l10n.weekdaysShortMon,
-      l10n.weekdaysShortTue,
-      l10n.weekdaysShortWed,
-      l10n.weekdaysShortThu,
-      l10n.weekdaysShortFri,
-      l10n.weekdaysShortSat,
-      l10n.weekdaysShortSun,
-    ];
-    // DateTime.weekday: Monday=1 ... Sunday=7
-    return labels[d.weekday - 1];
+  String _dateLabel(DateTime d) => '${d.day}/${d.month}';
+
+  String _dayName(DateTime d) {
+    const days = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+    return days[d.weekday % 7];
+  }
+
+  bool _isToday(DateTime d) {
+    final now = DateTime.now();
+    return d.year == now.year && d.month == now.month && d.day == now.day;
   }
 }

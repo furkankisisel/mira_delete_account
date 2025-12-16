@@ -1160,6 +1160,12 @@ abstract class AppLocalizations {
   /// **'Bitir'**
   String get finish;
 
+  /// No description provided for @historyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçmiş'**
+  String get historyTitle;
+
   /// No description provided for @fitness.
   ///
   /// In tr, this message translates to:
@@ -2432,6 +2438,12 @@ abstract class AppLocalizations {
   /// **'Oturumu Kaydet'**
   String get timerSaveSessionTitle;
 
+  /// No description provided for @timerQuickPresets.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hızlı Ayarlar'**
+  String get timerQuickPresets;
+
   /// No description provided for @timerSessionAlreadySaved.
   ///
   /// In tr, this message translates to:
@@ -3017,7 +3029,7 @@ abstract class AppLocalizations {
   /// No description provided for @motivationBody.
   ///
   /// In tr, this message translates to:
-  /// **'Harika! {period} boyunca %{percent} başarı oranına ulaştınız.'**
+  /// **'Tebrikler! {period} içinde başarı oranınız {percent}%. Harika bir ilerleme kaydettiniz.'**
   String motivationBody(Object percent, Object period);
 
   /// No description provided for @weeklyProgress.
@@ -4165,6 +4177,648 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Alışkanlıklar eklenirken hata: {error}'**
   String habitAddError(Object error);
+
+  /// No description provided for @unlistedItems.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listelenmemiş'**
+  String get unlistedItems;
+
+  /// No description provided for @unknownList.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilinmeyen Liste'**
+  String get unknownList;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google ile giriş yap'**
+  String get signInWithGoogle;
+
+  /// No description provided for @backupNow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hemen yedekle'**
+  String get backupNow;
+
+  /// No description provided for @restoreLatest.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son yeдеği geri yükle'**
+  String get restoreLatest;
+
+  /// No description provided for @backupSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedeklendi: {id}'**
+  String backupSuccess(Object id);
+
+  /// No description provided for @backupError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedekleme hatası'**
+  String get backupError;
+
+  /// No description provided for @restoreSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'İndirildi: {content}'**
+  String restoreSuccess(Object content);
+
+  /// No description provided for @restoreError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri yükleme hatası'**
+  String get restoreError;
+
+  /// No description provided for @manageSubscription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aboneliği yönet'**
+  String get manageSubscription;
+
+  /// No description provided for @manageSubscriptionSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mira Plus aboneliğini Google Play üzerinden düzenle'**
+  String get manageSubscriptionSubtitle;
+
+  /// No description provided for @deleteMyAccount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabımı sil'**
+  String get deleteMyAccount;
+
+  /// No description provided for @deleteAccountSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabınızın ve verilerinizin silinmesini talep edin'**
+  String get deleteAccountSubtitle;
+
+  /// No description provided for @confirmDeleteAccount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabı silmeyi onayla'**
+  String get confirmDeleteAccount;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu işlem geri alınamaz. Lütfen hesabınızla ilişkili e-posta adresini onaylayın.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @yourEmail.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta adresiniz'**
+  String get yourEmail;
+
+  /// No description provided for @pleaseEnterEmail.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen e-posta girin'**
+  String get pleaseEnterEmail;
+
+  /// No description provided for @deleteAccountRequestSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesap silme talebiniz başarıyla alındı'**
+  String get deleteAccountRequestSuccess;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesap silme başarısız'**
+  String get deleteAccountFailed;
+
+  /// No description provided for @resetOnboarding.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tanıtımı sıfırla'**
+  String get resetOnboarding;
+
+  /// No description provided for @retakePersonalityTest.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kişilik testini tekrar yap'**
+  String get retakePersonalityTest;
+
+  /// No description provided for @processingWait.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşlem başlatılıyor, lütfen bekleyin...'**
+  String get processingWait;
+
+  /// No description provided for @checkingPurchases.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satın almalar kontrol ediliyor...'**
+  String get checkingPurchases;
+
+  /// No description provided for @premiumPlans.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium Planlar'**
+  String get premiumPlans;
+
+  /// No description provided for @restorePurchases.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satın Almaları Geri Yükle'**
+  String get restorePurchases;
+
+  /// No description provided for @noPlansAvailable.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şu anda görüntülenecek plan yok.'**
+  String get noPlansAvailable;
+
+  /// No description provided for @cannotOpenPlayStore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Play Store açılamıyor'**
+  String get cannotOpenPlayStore;
+
+  /// No description provided for @subscriptionDetails.
+  ///
+  /// In tr, this message translates to:
+  /// **'Abonelik Detayları'**
+  String get subscriptionDetails;
+
+  /// No description provided for @goToPlayStore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Play Store\'a Git'**
+  String get goToPlayStore;
+
+  /// No description provided for @becomePremium.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium Olun'**
+  String get becomePremium;
+
+  /// No description provided for @premiumFeature.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium Özellik'**
+  String get premiumFeature;
+
+  /// No description provided for @premiumBenefits.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium avantajları:'**
+  String get premiumBenefits;
+
+  /// No description provided for @later.
+  ///
+  /// In tr, this message translates to:
+  /// **'Daha Sonra'**
+  String get later;
+
+  /// No description provided for @becomePremiumShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium Ol'**
+  String get becomePremiumShort;
+
+  /// No description provided for @shareDashboard.
+  ///
+  /// In tr, this message translates to:
+  /// **'Panoyu paylaş'**
+  String get shareDashboard;
+
+  /// No description provided for @roundCorners.
+  ///
+  /// In tr, this message translates to:
+  /// **'Köşeleri yuvarlat'**
+  String get roundCorners;
+
+  /// No description provided for @customUnit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Özel Birim'**
+  String get customUnit;
+
+  /// No description provided for @pastelColors.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pastel Tonlar'**
+  String get pastelColors;
+
+  /// No description provided for @habitNameHintTimer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn: Meditasyon, Egzersiz...'**
+  String get habitNameHintTimer;
+
+  /// No description provided for @habitNameHintNumerical.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn: Su içmek, Sayfa okumak...'**
+  String get habitNameHintNumerical;
+
+  /// No description provided for @habitDescriptionHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kısa bir açıklama ekle...'**
+  String get habitDescriptionHint;
+
+  /// No description provided for @target.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hedef'**
+  String get target;
+
+  /// No description provided for @amount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Miktar'**
+  String get amount;
+
+  /// No description provided for @custom.
+  ///
+  /// In tr, this message translates to:
+  /// **'Özel'**
+  String get custom;
+
+  /// No description provided for @customUnitHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn: porsiyon, set, km...'**
+  String get customUnitHint;
+
+  /// No description provided for @unitAdet.
+  ///
+  /// In tr, this message translates to:
+  /// **'adet'**
+  String get unitAdet;
+
+  /// No description provided for @unitBardak.
+  ///
+  /// In tr, this message translates to:
+  /// **'bardak'**
+  String get unitBardak;
+
+  /// No description provided for @unitSayfa.
+  ///
+  /// In tr, this message translates to:
+  /// **'sayfa'**
+  String get unitSayfa;
+
+  /// No description provided for @unitKm.
+  ///
+  /// In tr, this message translates to:
+  /// **'km'**
+  String get unitKm;
+
+  /// No description provided for @unitLitre.
+  ///
+  /// In tr, this message translates to:
+  /// **'litre'**
+  String get unitLitre;
+
+  /// No description provided for @unitKalori.
+  ///
+  /// In tr, this message translates to:
+  /// **'kalori'**
+  String get unitKalori;
+
+  /// No description provided for @unitAdim.
+  ///
+  /// In tr, this message translates to:
+  /// **'adım'**
+  String get unitAdim;
+
+  /// No description provided for @unitKez.
+  ///
+  /// In tr, this message translates to:
+  /// **'kez'**
+  String get unitKez;
+
+  /// No description provided for @premiumFeatures.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium Özellikler'**
+  String get premiumFeatures;
+
+  /// No description provided for @featureDetailedAnalysis.
+  ///
+  /// In tr, this message translates to:
+  /// **'Detaylı Kişilik Analizleri'**
+  String get featureDetailedAnalysis;
+
+  /// No description provided for @featureUnlimitedPalmReading.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sınırsız El Okuma Hakkı'**
+  String get featureUnlimitedPalmReading;
+
+  /// No description provided for @featureAIInsights.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yapay Zeka Destekli Öngörüler'**
+  String get featureAIInsights;
+
+  /// No description provided for @featureAdFree.
+  ///
+  /// In tr, this message translates to:
+  /// **'Reklamsız Kullanım'**
+  String get featureAdFree;
+
+  /// No description provided for @featurePrioritySupport.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öncelikli Destek'**
+  String get featurePrioritySupport;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In tr, this message translates to:
+  /// **'/ay'**
+  String get perMonth;
+
+  /// No description provided for @perYear.
+  ///
+  /// In tr, this message translates to:
+  /// **'/yıl'**
+  String get perYear;
+
+  /// No description provided for @unlockAllFeatures.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm özellikleri açın ve sınırları kaldırın.'**
+  String get unlockAllFeatures;
+
+  /// No description provided for @flexiblePlan.
+  ///
+  /// In tr, this message translates to:
+  /// **'Esnek plan, istediğin zaman iptal et'**
+  String get flexiblePlan;
+
+  /// No description provided for @annualPlanDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'12 ay boyunca kesintisiz erişim'**
+  String get annualPlanDesc;
+
+  /// No description provided for @trialInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'14 gün ücretsiz deneme, istediğin zaman iptal et.'**
+  String get trialInfo;
+
+  /// No description provided for @miraPlusActive.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mira Plus Aktif'**
+  String get miraPlusActive;
+
+  /// No description provided for @miraPlusInactive.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mira Plus Aktif Değil'**
+  String get miraPlusInactive;
+
+  /// No description provided for @validity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçerlilik'**
+  String get validity;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In tr, this message translates to:
+  /// **'gün kaldı'**
+  String get daysLeft;
+
+  /// No description provided for @subscribeToEnjoyPremium.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium özelliklerin keyfini çıkarmak için abone olun'**
+  String get subscribeToEnjoyPremium;
+
+  /// No description provided for @advancedAnalysis.
+  ///
+  /// In tr, this message translates to:
+  /// **'İleri Seviye Analiz'**
+  String get advancedAnalysis;
+
+  /// No description provided for @detailedCharts.
+  ///
+  /// In tr, this message translates to:
+  /// **'Detaylı grafikler ve istatistikler'**
+  String get detailedCharts;
+
+  /// No description provided for @cloudBackup.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bulut Yedekleme'**
+  String get cloudBackup;
+
+  /// No description provided for @backupToDrive.
+  ///
+  /// In tr, this message translates to:
+  /// **'Verilerinizi Google Drive\'da yedekleyin'**
+  String get backupToDrive;
+
+  /// No description provided for @adFreeExperience.
+  ///
+  /// In tr, this message translates to:
+  /// **'Reklamsız Deneyim'**
+  String get adFreeExperience;
+
+  /// No description provided for @uninterruptedUsage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kesintisiz kullanım'**
+  String get uninterruptedUsage;
+
+  /// No description provided for @advancedTimer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gelişmiş Timer'**
+  String get advancedTimer;
+
+  /// No description provided for @pomodoroAndCustomTimers.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pomodoro ve özel zamanlayıcılar'**
+  String get pomodoroAndCustomTimers;
+
+  /// No description provided for @personalizedInsights.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kişiselleştirilmiş İçgörüler'**
+  String get personalizedInsights;
+
+  /// No description provided for @aiPoweredRecommendations.
+  ///
+  /// In tr, this message translates to:
+  /// **'AI destekli öneriler'**
+  String get aiPoweredRecommendations;
+
+  /// No description provided for @buyPremium.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium Satın Al'**
+  String get buyPremium;
+
+  /// No description provided for @manageOnGooglePlay.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aboneliği Google Play\'de Yönet'**
+  String get manageOnGooglePlay;
+
+  /// No description provided for @manageSubscriptionDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Plan değiştir, iptal et veya fatura bilgilerini gör'**
+  String get manageSubscriptionDesc;
+
+  /// No description provided for @billingHistory.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fatura Geçmişi'**
+  String get billingHistory;
+
+  /// No description provided for @viewInvoicesOnPlayStore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google Play Store\'dan faturalarınızı görüntüleyin'**
+  String get viewInvoicesOnPlayStore;
+
+  /// No description provided for @seeFullSubscriptionInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tam abonelik bilgilerinizi görün'**
+  String get seeFullSubscriptionInfo;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yardım ve Destek'**
+  String get helpAndSupport;
+
+  /// No description provided for @howToCancel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Nasıl iptal ederim?'**
+  String get howToCancel;
+
+  /// No description provided for @cancelInstructions.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google Play Store → Abonelikler → Mira Plus → İptal Et'**
+  String get cancelInstructions;
+
+  /// No description provided for @whatHappensIfCancel.
+  ///
+  /// In tr, this message translates to:
+  /// **'İptal edersem ne olur?'**
+  String get whatHappensIfCancel;
+
+  /// No description provided for @cancelEffect.
+  ///
+  /// In tr, this message translates to:
+  /// **'Abonelik süreniz bitene kadar premium özelliklerden faydalanmaya devam edersiniz.'**
+  String get cancelEffect;
+
+  /// No description provided for @ifTrialCancelled.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ücretsiz deneme iptal edilirse?'**
+  String get ifTrialCancelled;
+
+  /// No description provided for @trialCancelEffect.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ücretsiz deneme sırasında iptal ederseniz hemen ücretlendirilmezsiniz.'**
+  String get trialCancelEffect;
+
+  /// No description provided for @canIGetRefund.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri ödeme alabilir miyim?'**
+  String get canIGetRefund;
+
+  /// No description provided for @refundPolicy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri ödeme talepleri Google Play politikalarına tabidir. Play Store\'dan başvurabilirsiniz.'**
+  String get refundPolicy;
+
+  /// No description provided for @active.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aktif'**
+  String get active;
+
+  /// No description provided for @inactive.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnaktif'**
+  String get inactive;
+
+  /// No description provided for @daysRemaining.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kalan Gün'**
+  String get daysRemaining;
+
+  /// No description provided for @usePlayStoreToManage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aboneliğinizi yönetmek için Google Play Store\'u kullanın.'**
+  String get usePlayStoreToManage;
+
+  /// No description provided for @thisFeatureIsPremium.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu özellik Premium\'da'**
+  String get thisFeatureIsPremium;
+
+  /// No description provided for @mustBePremiumToUse.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu özelliği kullanmak için Premium abonesi olmalısınız.'**
+  String get mustBePremiumToUse;
+
+  /// No description provided for @advancedAnalysisAndReports.
+  ///
+  /// In tr, this message translates to:
+  /// **'İleri seviye analiz ve raporlar'**
+  String get advancedAnalysisAndReports;
+
+  /// No description provided for @unlimitedDataStorage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sınırsız veri depolama'**
+  String get unlimitedDataStorage;
+
+  /// No description provided for @freeTrial14Days.
+  ///
+  /// In tr, this message translates to:
+  /// **'14 gün ücretsiz deneme'**
+  String get freeTrial14Days;
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedekleme başarısız'**
+  String get backupFailed;
+
+  /// No description provided for @restoreFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri yükleme başarısız'**
+  String get restoreFailed;
+
+  /// No description provided for @plansLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Planlar yüklenirken hata oluştu: {error}'**
+  String plansLoadError(Object error);
 }
 
 class _AppLocalizationsDelegate

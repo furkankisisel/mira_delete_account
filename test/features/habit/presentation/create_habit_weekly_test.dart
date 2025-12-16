@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mira/features/habit/presentation/create_habit_screen.dart';
+import 'package:mira/features/habit/presentation/simple_habit_screen.dart';
 import 'package:mira/l10n/app_localizations.dart';
 
 void main() {
@@ -22,7 +22,7 @@ void main() {
                   final res = await Navigator.of(context)
                       .push<Map<String, dynamic>>(
                         MaterialPageRoute(
-                          builder: (_) => const CreateHabitScreen(),
+                          builder: (_) => const SimpleHabitScreen(),
                         ),
                       );
                   if (res != null) results.add(res);

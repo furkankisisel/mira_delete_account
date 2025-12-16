@@ -42,17 +42,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCuOZ7mHZ93nnN7PvYrUDVKcnEjYW82S_w',
-    appId: '1:593291053883:web:8e5ad69cd21cc70209051e',
+    appId: '1:593291053883:web:2259eff818377a8b09051e',
     messagingSenderId: '593291053883',
     projectId: 'mira-1fdc3',
     authDomain: 'mira-1fdc3.firebaseapp.com',
     storageBucket: 'mira-1fdc3.firebasestorage.app',
-    measurementId: 'G-N50G7QBTRR',
+    measurementId: 'G-DNP3CE3E7Z',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA3bxYHT2ZYRNeMckMkHWzgC6fX4L_PK6M',
-    appId: '1:593291053883:android:3115a83d8d4e852309051e',
+    appId: '1:593291053883:android:ddf6b3873819b4b709051e',
     messagingSenderId: '593291053883',
     projectId: 'mira-1fdc3',
     storageBucket: 'mira-1fdc3.firebasestorage.app',
@@ -60,33 +60,34 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBHIx44p9xsXJTtb926e_-k6NYdQSgq-20',
-    appId: '1:593291053883:ios:f42d103a0403414209051e',
+    appId: '1:593291053883:ios:c2670e4419fa681409051e',
     messagingSenderId: '593291053883',
     projectId: 'mira-1fdc3',
     storageBucket: 'mira-1fdc3.firebasestorage.app',
-    iosClientId:
-        '593291053883-4hu1pd574kfbncgqs75qgh8p6jukaprk.apps.googleusercontent.com',
+    androidClientId: '593291053883-e5askargi4p2cb1vghe9fh3llgiqfj7b.apps.googleusercontent.com',
+    iosClientId: '593291053883-jngmu7luvem85sjm7523501jeeurto11.apps.googleusercontent.com',
     iosBundleId: 'com.koralabs.mira',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBHIx44p9xsXJTtb926e_-k6NYdQSgq-20',
-    appId: '1:593291053883:ios:f42d103a0403414209051e',
+    appId: '1:593291053883:ios:c2670e4419fa681409051e',
     messagingSenderId: '593291053883',
     projectId: 'mira-1fdc3',
     storageBucket: 'mira-1fdc3.firebasestorage.app',
-    iosClientId:
-        '593291053883-4hu1pd574kfbncgqs75qgh8p6jukaprk.apps.googleusercontent.com',
+    androidClientId: '593291053883-e5askargi4p2cb1vghe9fh3llgiqfj7b.apps.googleusercontent.com',
+    iosClientId: '593291053883-jngmu7luvem85sjm7523501jeeurto11.apps.googleusercontent.com',
     iosBundleId: 'com.koralabs.mira',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyCuOZ7mHZ93nnN7PvYrUDVKcnEjYW82S_w',
-    appId: '1:593291053883:web:6877e06021181aa609051e',
+    appId: '1:593291053883:web:b1d4cedcf65ba81809051e',
     messagingSenderId: '593291053883',
     projectId: 'mira-1fdc3',
     authDomain: 'mira-1fdc3.firebaseapp.com',
     storageBucket: 'mira-1fdc3.firebasestorage.app',
-    measurementId: 'G-GTMX79Z4EE',
+    measurementId: 'G-SPMK8T1815',
   );
+
 }

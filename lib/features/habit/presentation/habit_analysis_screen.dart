@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -343,10 +344,10 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
                   const SizedBox(height: 12),
                   Text(
                     AppLocalizations.of(context).motivationBody(
+                      _selectedAvgPercent().round(),
                       _motivationPeriodTextLocalized(
                         AppLocalizations.of(context),
                       ),
-                      _selectedAvgPercent().round(),
                     ),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
@@ -487,8 +488,21 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
                 },
               ),
             ),
-            leftTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 32,
+                interval: 25,
+                getTitlesWidget: (value, meta) {
+                  if (value % 25 == 0) {
+                    return Text(
+                      '${value.toInt()}%',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ),
             topTitles: const AxisTitles(
               sideTitles: SideTitles(showTitles: false),
@@ -545,10 +559,11 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
             style: Theme.of(context).textTheme.labelSmall,
           );
         } else if (_selectedPeriod == 1) {
-          // monthly: show day numbers for a reasonable count
-          if (count <= 31) {
+          // monthly: show day numbers (1, 5, 10, 15, 20, 25, 30)
+          final day = idx + 1;
+          if (day == 1 || day % 5 == 0) {
             return Text(
-              '${idx + 1}',
+              '$day',
               style: Theme.of(context).textTheme.labelSmall,
             );
           }
@@ -571,65 +586,93 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
         }
       }
 
-      return BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: 100,
-          barTouchData: BarTouchData(enabled: false),
-          titlesData: FlTitlesData(
-            show: true,
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: bottomTitleWidget,
-                reservedSize: 32,
+      // Make the chart horizontally scrollable when there are many bars.
+      const double minGroupSpacing = 12.0;
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final double desiredWidth = math.max(
+            constraints.maxWidth,
+            (count * (barWidth + minGroupSpacing)) + 24.0,
+          );
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: desiredWidth,
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  maxY: 100,
+                  barTouchData: BarTouchData(enabled: false),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: bottomTitleWidget,
+                        reservedSize: 32,
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 32,
+                        interval: 25,
+                        getTitlesWidget: (value, meta) {
+                          if (value % 25 == 0) {
+                            return Text(
+                              '${value.toInt()}%',
+                              style: Theme.of(context).textTheme.labelSmall,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    ),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                  ),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    getDrawingHorizontalLine: (value) => FlLine(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.outline.withValues(alpha: 0.36)
+                          : Theme.of(
+                              context,
+                            ).colorScheme.outline.withValues(alpha: 0.20),
+                      strokeWidth: 1,
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  barGroups: bars.map((entry) {
+                    final x = entry.key;
+                    final y = entry.value.clamp(0, 100).toDouble();
+                    return BarChartGroupData(
+                      x: x,
+                      barRods: [
+                        BarChartRodData(
+                          toY: y,
+                          color: widget.habitColor,
+                          width: barWidth,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(4),
+                            topRight: Radius.circular(4),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             ),
-            leftTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-          ),
-          gridData: FlGridData(
-            show: true,
-            drawVerticalLine: false,
-            getDrawingHorizontalLine: (value) => FlLine(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(
-                      context,
-                    ).colorScheme.outline.withValues(alpha: 0.36)
-                  : Theme.of(
-                      context,
-                    ).colorScheme.outline.withValues(alpha: 0.20),
-              strokeWidth: 1,
-            ),
-          ),
-          borderData: FlBorderData(show: false),
-          barGroups: bars.map((entry) {
-            final x = entry.key;
-            // ensure a double is passed to BarChartRodData.toY
-            final y = entry.value.clamp(0, 100).toDouble();
-            return BarChartGroupData(
-              x: x,
-              barRods: [
-                BarChartRodData(
-                  toY: y,
-                  color: widget.habitColor,
-                  width: barWidth,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(4),
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
+          );
+        },
       );
     }
   }
@@ -1345,72 +1388,88 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     );
   }
 
+  DateTimeRange _getDateRange(int period) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    
+    if (period == 0) { // Weekly
+      final monday = today.subtract(Duration(days: today.weekday - 1));
+      final sunday = monday.add(const Duration(days: 6));
+      return DateTimeRange(start: monday, end: sunday);
+    } else if (period == 1) { // Monthly
+      final startOfMonth = DateTime(today.year, today.month, 1);
+      final endOfMonth = DateTime(today.year, today.month + 1, 0);
+      return DateTimeRange(start: startOfMonth, end: endOfMonth);
+    } else if (period == 2) { // Yearly
+      final startOfYear = DateTime(today.year, 1, 1);
+      final endOfYear = DateTime(today.year, 12, 31);
+      return DateTimeRange(start: startOfYear, end: endOfYear);
+    } else { // Overall
+      final start = _liveHabit != null ? _parseIsoDate(_liveHabit!.startDate) : today;
+      return DateTimeRange(start: start, end: today);
+    }
+  }
+
   void _buildWeeklyFromDailyLog(bool isTimer) {
     if (_liveHabit == null) return;
-    final now = DateTime.now();
-    final startOfWeek = now.subtract(
-      Duration(days: now.weekday % 7),
-    ); // Pazartesi 1 kabul -> Pazar 0 düzeni için mod
-    final startDate = _liveHabit!.startDate;
+    final habit = _liveHabit!;
+    final range = _getDateRange(0);
     final List<double> values = List.filled(7, 0);
+    
     for (int i = 0; i < 7; i++) {
-      final d = startOfWeek.add(Duration(days: i));
-      final key =
-          '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-      if (key.compareTo(startDate) < 0) {
+      final d = range.start.add(Duration(days: i));
+      final key = _dateKey(d);
+      if (!_isEffectiveDay(d, habit)) {
         values[i] = 0;
         continue;
       }
-      final raw = _liveHabit!.dailyLog[key] ?? 0;
-      final target = _safeTarget();
-      final pct = (raw / target * 100).clamp(0, 100);
-      values[i] = pct.toDouble();
+      final raw = habit.dailyLog[key] ?? 0;
+      values[i] = _percentFor(habit, key, raw);
     }
     _computedWeekly = values;
   }
 
   void _buildMonthlyFromDailyLog(bool isTimer) {
     if (_liveHabit == null) return;
-    final now = DateTime.now();
-    final start = now.subtract(const Duration(days: 29));
-    final startDate = _liveHabit!.startDate;
-    final List<double> values = List.filled(30, 0);
-    for (int i = 0; i < 30; i++) {
-      final d = start.add(Duration(days: i));
-      final key =
-          '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-      if (key.compareTo(startDate) < 0) {
+    final habit = _liveHabit!;
+    final range = _getDateRange(1);
+    final daysInMonth = range.duration.inDays + 1;
+    
+    final List<double> values = List.filled(daysInMonth, 0);
+    for (int i = 0; i < daysInMonth; i++) {
+      final d = range.start.add(Duration(days: i));
+      final key = _dateKey(d);
+      if (!_isEffectiveDay(d, habit)) {
         values[i] = 0;
         continue;
       }
-      final raw = _liveHabit!.dailyLog[key] ?? 0;
-      final target = _safeTarget();
-      final pct = (raw / target * 100).clamp(0, 100);
-      values[i] = pct.toDouble();
+      final raw = habit.dailyLog[key] ?? 0;
+      values[i] = _percentFor(habit, key, raw);
     }
     _computedMonthly = values;
   }
 
   void _buildYearlyFromDailyLog(bool isTimer) {
     if (_liveHabit == null) return;
+    final habit = _liveHabit!;
     final now = DateTime.now();
-    final startDate = _liveHabit!.startDate;
     final List<double> months = [];
-    for (int m = 0; m < 12; m++) {
-      final monthDate = DateTime(now.year, now.month - m, 1);
-      final count = _daysInMonth(monthDate.year, monthDate.month);
+    
+    for (int m = 1; m <= 12; m++) {
+      final monthDate = DateTime(now.year, m, 1);
+      final daysIn = _daysInMonth(monthDate.year, monthDate.month);
       double sum = 0;
-      for (int d = 0; d < count; d++) {
+      int eff = 0;
+      for (int d = 0; d < daysIn; d++) {
         final day = DateTime(monthDate.year, monthDate.month, 1 + d);
-        final key =
-            '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-        if (key.compareTo(startDate) < 0) continue;
-        final raw = _liveHabit!.dailyLog[key] ?? 0;
-        final target = _safeTarget();
-        sum += (raw / target * 100).clamp(0, 100);
+        if (!_isEffectiveDay(day, habit)) continue;
+        final key = _dateKey(day);
+        final raw = habit.dailyLog[key] ?? 0;
+        sum += _percentFor(habit, key, raw);
+        eff++;
       }
-      final double avg = count > 0 ? (sum / count) : 0.0;
-      months.insert(0, avg); // kronolojik sırada ilerlesin
+      final double avg = eff > 0 ? (sum / eff) : 0.0;
+      months.add(avg);
     }
     _computedYearly = months;
   }
@@ -1421,11 +1480,8 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       _computedGeneral = [];
       return;
     }
-    // Find earliest date key
-    final keys = _liveHabit!.dailyLog.keys.toList()
-      ..sort((a, b) => a.compareTo(b));
-    // Respect startDate by moving start to max(first log, startDate)
-    final sd = _liveHabit!.startDate;
+    final habit = _liveHabit!;
+    // Determine first effective date
     DateTime parseKey(String k) {
       final parts = k.split('-');
       return DateTime(
@@ -1435,24 +1491,29 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       );
     }
 
-    DateTime firstDate = parseKey(keys.first);
-    final startDate = parseKey(sd);
-    if (startDate.isAfter(firstDate)) firstDate = startDate;
+    DateTime start = parseKey(habit.startDate);
+    if (habit.dailyLog.isNotEmpty) {
+      final firstLogKey = (habit.dailyLog.keys.toList()..sort()).first;
+      final firstLogDate = parseKey(firstLogKey);
+      if (firstLogDate.isAfter(start)) start = firstLogDate;
+    }
     final now = DateTime.now();
-    // Build month-by-month averages from firstDate's month to now
     final List<double> series = [];
-    DateTime cursor = DateTime(firstDate.year, firstDate.month, 1);
-    final target = _safeTarget();
+    DateTime cursor = DateTime(start.year, start.month, 1);
     while (!DateTime(cursor.year, cursor.month + 1, 1).isAfter(now)) {
       final daysIn = _daysInMonth(cursor.year, cursor.month);
       double sumPct = 0;
+      int eff = 0;
       for (int d = 1; d <= daysIn; d++) {
+        final day = DateTime(cursor.year, cursor.month, d);
+        if (!_isEffectiveDay(day, habit)) continue;
         final key =
             '${cursor.year}-${cursor.month.toString().padLeft(2, '0')}-${d.toString().padLeft(2, '0')}';
-        final raw = _liveHabit!.dailyLog[key] ?? 0;
-        sumPct += (raw / target * 100).clamp(0, 100);
+        final raw = habit.dailyLog[key] ?? 0;
+        sumPct += _percentFor(habit, key, raw);
+        eff++;
       }
-      final avg = daysIn > 0 ? (sumPct / daysIn) : 0.0;
+      final avg = eff > 0 ? (sumPct / eff) : 0.0;
       series.add(avg);
       cursor = DateTime(cursor.year, cursor.month + 1, 1);
     }
@@ -1477,118 +1538,125 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
   double _avg(List<double> xs) =>
       xs.isEmpty ? 0 : xs.reduce((a, b) => a + b) / xs.length;
 
+  // A day is effective if it is within start/end, not in the future, and if scheduledDates is set, the date is scheduled
+  bool _isEffectiveDay(DateTime date, Habit habit) {
+    final today = DateTime.now();
+    final dateOnly = DateTime(date.year, date.month, date.day);
+    final start = _parseIsoDate(habit.startDate);
+    final end = habit.endDate != null ? _parseIsoDate(habit.endDate!) : null;
+    if (dateOnly.isBefore(start)) return false;
+    if (end != null && dateOnly.isAfter(end)) return false;
+    if (dateOnly.isAfter(DateTime(today.year, today.month, today.day))) {
+      return false; // future day
+    }
+    if (habit.scheduledDates != null && habit.scheduledDates!.isNotEmpty) {
+      final key = _dateKey(dateOnly);
+      return habit.scheduledDates!.contains(key);
+    }
+    return true;
+  }
+
+  // Compute percent contribution for a given raw value according to habit policy.
+  // - minimum: raw/target * 100 capped at 100
+  // - exact: 100 if raw == target else 0
+  // - maximum: 100 if raw <= target and there is an entry; values above target score 0 to reflect overage against a maximum policy
+  double _percentFor(Habit habit, String dateKey, int raw) {
+    switch (habit.habitType) {
+      case HabitType.simple:
+        return HabitRepository.evaluateCompletionForProgress(habit, raw)
+            ? 100
+            : 0;
+      case HabitType.numerical:
+        switch (habit.numericalTargetType) {
+          case NumericalTargetType.minimum:
+            final target = habit.targetCount <= 0 ? 1 : habit.targetCount;
+            return (raw / target * 100).clamp(0, 100).toDouble();
+          case NumericalTargetType.exact:
+            return raw == habit.targetCount ? 100 : 0;
+          case NumericalTargetType.maximum:
+            // Only count if there is an explicit entry for the day
+            if (!habit.dailyLog.containsKey(dateKey)) return 0;
+            return raw <= habit.targetCount ? 100 : 0;
+        }
+      case HabitType.timer:
+        switch (habit.timerTargetType) {
+          case TimerTargetType.minimum:
+            final target = habit.targetCount <= 0 ? 1 : habit.targetCount;
+            return (raw / target * 100).clamp(0, 100).toDouble();
+          case TimerTargetType.exact:
+            return raw == habit.targetCount ? 100 : 0;
+          case TimerTargetType.maximum:
+            if (!habit.dailyLog.containsKey(dateKey)) return 0;
+            return raw <= habit.targetCount ? 100 : 0;
+        }
+    }
+  }
+
   // --- Yeni metrik yardımcıları ---
   int _successfulDaysSelected() {
-    if (_selectedPeriod == 0) return _completedDaysInLastNDays(7);
-    if (_selectedPeriod == 1) return _completedDaysInLastNDays(30);
-    if (_selectedPeriod == 2) return _completedDaysInLastNDays(365);
-    return _completedDaysInAllHistory();
+    if (_liveHabit == null) return 0;
+    final range = _getDateRange(_selectedPeriod);
+    int count = 0;
+    final habit = _liveHabit!;
+    
+    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+       if (!_isEffectiveDay(d, habit)) continue;
+       final key = _dateKey(d);
+       if (HabitRepository.evaluateCompletionFromLog(habit, key)) count++;
+    }
+    return count;
   }
 
   int _unsuccessfulDaysSelected() {
-    if (_selectedPeriod == 3) {
-      final totalDays = _totalDaysInAllHistory();
-      final succ = _successfulDaysSelected();
-      final val = totalDays - succ;
-      return val < 0 ? 0 : val;
-    }
-    final window = _selectedPeriod == 0 ? 7 : (_selectedPeriod == 1 ? 30 : 365);
-    final effectiveDays = _effectiveDaysInLastNDays(window);
-    final succ = _successfulDaysSelected();
-    final val = effectiveDays - succ;
-    if (val < 0) return 0;
-    if (val > effectiveDays) return effectiveDays;
-    return val;
-  }
-
-  int _effectiveDaysInLastNDays(int n) {
     if (_liveHabit == null) return 0;
+    final range = _getDateRange(_selectedPeriod);
     int count = 0;
-    final startDate = _liveHabit!.startDate;
-    for (int i = 0; i < n; i++) {
-      final day = DateTime.now().subtract(Duration(days: i));
-      final key =
-          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-      if (key.compareTo(startDate) >= 0) count++;
+    final habit = _liveHabit!;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    
+    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+       if (!_isEffectiveDay(d, habit)) continue;
+       // Don't count future days as unsuccessful
+       if (d.isAfter(today)) continue;
+       
+       final key = _dateKey(d);
+       if (!HabitRepository.evaluateCompletionFromLog(habit, key)) count++;
     }
     return count;
   }
 
   int _currentStreakSelected() {
     if (_liveHabit == null) return 0;
-    final target = _safeTarget();
-    int current = 0;
-    final window = _selectedPeriod == 0
-        ? 7
-        : (_selectedPeriod == 1
-              ? 30
-              : (_selectedPeriod == 2 ? 365 : _totalDaysInAllHistory()));
-    for (int i = 0; i < window; i++) {
-      final day = DateTime.now().subtract(Duration(days: i));
-      final key =
-          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-      final raw = _liveHabit!.dailyLog[key] ?? 0;
-      if (raw >= target) {
-        current++;
-      } else {
-        break; // seri bugün/son günlerden kesildi
-      }
-    }
-    return current;
+    final habit = _liveHabit!;
+    return _repo.consecutiveStreakFor(habit, upTo: DateTime.now());
   }
 
   String _totalRawSelectedWithUnit() {
-    // zamanlayıcı dışındaki alışkanlıklarda, ham değerlerin toplamını ve birimi göster
     if (_liveHabit == null) return '0';
-    final window = _selectedPeriod == 0
-        ? 7
-        : (_selectedPeriod == 1
-              ? 30
-              : (_selectedPeriod == 2 ? 365 : _totalDaysInAllHistory()));
+    final range = _getDateRange(_selectedPeriod);
     int sum = 0;
-    for (int i = 0; i < window; i++) {
-      final day = DateTime.now().subtract(Duration(days: i));
-      final key =
-          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-      sum += _liveHabit!.dailyLog[key] ?? 0;
+    final habit = _liveHabit!;
+    
+    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+      final key = _dateKey(d);
+      sum += habit.dailyLog[key] ?? 0;
     }
     final unit = widget.unit;
     return unit == null || unit.isEmpty ? '$sum' : '$sum $unit';
   }
 
-  int _longestStreakWindow({required int days}) {
+  int _totalMinutesSelected() {
     if (_liveHabit == null) return 0;
-    int longest = 0, current = 0;
-    final target = _safeTarget();
-    for (int i = days - 1; i >= 0; i--) {
-      final day = DateTime.now().subtract(Duration(days: i));
-      final key =
-          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-      final raw = _liveHabit!.dailyLog[key] ?? 0;
-      if (raw >= target) {
-        current++;
-        if (current > longest) longest = current;
-      } else {
-        current = 0;
-      }
+    final range = _getDateRange(_selectedPeriod);
+    int sum = 0;
+    final habit = _liveHabit!;
+    
+    for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+      final key = _dateKey(d);
+      sum += habit.dailyLog[key] ?? 0;
     }
-    return longest;
-  }
-
-  int _completedDaysInLastNDays(int n) {
-    if (_liveHabit == null) return 0;
-    int count = 0;
-    final startDate = _liveHabit!.startDate;
-    for (int i = 0; i < n; i++) {
-      final day = DateTime.now().subtract(Duration(days: i));
-      final key =
-          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-      if (key.compareTo(startDate) < 0) continue;
-      final raw = _liveHabit!.dailyLog[key] ?? 0;
-      if (HabitRepository.evaluateCompletionForProgress(_liveHabit!, raw))
-        count++;
-    }
-    return count;
+    return sum;
   }
 
   int _completedDaysInAllHistory() {
@@ -1601,35 +1669,6 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     return count;
   }
 
-  int _totalMinutesSelected() {
-    if (_liveHabit == null) return 0;
-    if (_selectedPeriod == 2) {
-      // yearly total minutes for last 365 days
-      return _sumMinutesInLastNDays(365);
-    }
-    if (_selectedPeriod == 1) {
-      return _sumMinutesInLastNDays(30);
-    }
-    if (_selectedPeriod == 0) {
-      return _sumMinutesInLastNDays(7);
-    }
-    return _sumMinutesAllHistory();
-  }
-
-  int _sumMinutesInLastNDays(int n) {
-    if (_liveHabit == null) return 0;
-    int sum = 0;
-    final startDate = _liveHabit!.startDate;
-    for (int i = 0; i < n; i++) {
-      final day = DateTime.now().subtract(Duration(days: i));
-      final key =
-          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
-      if (key.compareTo(startDate) < 0) continue;
-      sum += _liveHabit!.dailyLog[key] ?? 0;
-    }
-    return sum;
-  }
-
   int _sumMinutesAllHistory() {
     if (_liveHabit == null) return 0;
     int sum = 0;
@@ -1638,10 +1677,33 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
   }
 
   double _selectedAvgPercent() {
+    if (_liveHabit == null) return 0;
+    final habit = _liveHabit!;
+    // For weekly/monthly, compute average only over effective days (exclude non-scheduled/future days)
     if (_selectedPeriod == 0) {
-      return _computedWeekly.isEmpty ? 0 : _avg(_computedWeekly);
+      final range = _getDateRange(0);
+      double sum = 0;
+      int eff = 0;
+      for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+        if (!_isEffectiveDay(d, habit)) continue;
+        final key = _dateKey(d);
+        final raw = habit.dailyLog[key] ?? 0;
+        sum += _percentFor(habit, key, raw);
+        eff++;
+      }
+      return eff > 0 ? (sum / eff) : 0;
     } else if (_selectedPeriod == 1) {
-      return _computedMonthly.isEmpty ? 0 : _avg(_computedMonthly);
+      final range = _getDateRange(1);
+      double sum = 0;
+      int eff = 0;
+      for (var d = range.start; !d.isAfter(range.end); d = d.add(const Duration(days: 1))) {
+        if (!_isEffectiveDay(d, habit)) continue;
+        final key = _dateKey(d);
+        final raw = habit.dailyLog[key] ?? 0;
+        sum += _percentFor(habit, key, raw);
+        eff++;
+      }
+      return eff > 0 ? (sum / eff) : 0;
     } else if (_selectedPeriod == 2) {
       return _computedYearly.isEmpty ? 0 : _avg(_computedYearly);
     } else {
@@ -1664,34 +1726,45 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
   }
 
   int _totalDaysInAllHistory() {
-    if (_liveHabit == null || _liveHabit!.dailyLog.isEmpty) return 0;
-    // Between first and last date keys inclusive
-    DateTime parseKey(String k) {
-      final parts = k.split('-');
-      return DateTime(
-        int.parse(parts[0]),
-        int.parse(parts[1]),
-        int.parse(parts[2]),
-      );
+    if (_liveHabit == null) return 0;
+    final habit = _liveHabit!;
+    // Count only scheduled/effective days from start to today (or endDate)
+    final DateTime start = _parseIsoDate(habit.startDate);
+    final DateTime end = DateTime.now();
+    int count = 0;
+    DateTime cursor = DateTime(start.year, start.month, start.day);
+    while (!cursor.isAfter(end)) {
+      if (_isEffectiveDay(cursor, habit)) count++;
+      cursor = cursor.add(const Duration(days: 1));
     }
-
-    final keys = _liveHabit!.dailyLog.keys.toList()
-      ..sort((a, b) => a.compareTo(b));
-    final firstLog = parseKey(keys.first);
-    final start = parseKey(_liveHabit!.startDate);
-    final first = start.isAfter(firstLog) ? start : firstLog;
-    final last = DateTime.now();
-    final diff =
-        last.difference(DateTime(first.year, first.month, first.day)).inDays +
-        1;
-    return diff < 0 ? 0 : diff;
+    return count;
   }
 
   int _longestStreakAllHistory() {
     if (_liveHabit == null) return 0;
-    final days = _totalDaysInAllHistory();
-    if (days == 0) return 0;
-    return _longestStreakWindow(days: days);
+    final habit = _liveHabit!;
+    // Scan from start to today; skip non-effective days; use log-based completion
+    final DateTime start = _parseIsoDate(habit.startDate);
+    final DateTime end = DateTime.now();
+    int longest = 0;
+    int current = 0;
+    DateTime cursor = DateTime(start.year, start.month, start.day);
+    while (!cursor.isAfter(end)) {
+      if (_isEffectiveDay(cursor, habit)) {
+        final completed = HabitRepository.evaluateCompletionFromLog(
+          habit,
+          _dateKey(cursor),
+        );
+        if (completed) {
+          current++;
+          if (current > longest) longest = current;
+        } else {
+          current = 0;
+        }
+      }
+      cursor = cursor.add(const Duration(days: 1));
+    }
+    return longest;
   }
 }
 

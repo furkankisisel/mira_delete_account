@@ -1,132 +1,161 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:http/http.dart' as http;
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
 import '../config/constants.dart';
-import 'storage_service.dart';
-import 'trial_manager.dart';
+import '../models/mira_plan.dart';
+import 'premium_manager.dart';
 
-/// IAP servis: ürün sorgu, satın alma, restore ve doğrulama
 class IAPService {
-  IAPService._({http.Client? httpClient}) : _http = httpClient ?? http.Client();
+  IAPService._();
   static final IAPService instance = IAPService._();
 
   final InAppPurchase _iap = InAppPurchase.instance;
-  final http.Client _http;
+  late StreamSubscription<List<PurchaseDetails>> _purchaseStreamSubscription;
 
-  final StreamController<PurchaseDetails> _purchaseEvents =
-      StreamController.broadcast();
-  Stream<PurchaseDetails> get purchaseStream => _purchaseEvents.stream;
+  List<MiraPlan> _plans = [];
+  List<MiraPlan> get plans => _plans;
 
-  List<ProductDetails> _products = [];
-  List<ProductDetails> get products => _products;
+  bool _isReady = false;
+  bool get isReady => _isReady;
 
-  StreamSubscription<List<PurchaseDetails>>? _sub;
+  final StreamController<PurchaseDetails> _purchaseUpdates =
+      StreamController<PurchaseDetails>.broadcast();
+  Stream<PurchaseDetails> get purchaseStream => _purchaseUpdates.stream;
 
-  Future<void> initialize() async {
-    final available = await _iap.isAvailable();
-    if (!available) return;
+  final StreamController<bool> _premiumStatusStream =
+      StreamController<bool>.broadcast();
+  Stream<bool> get premiumStatusStream => _premiumStatusStream.stream;
 
-    // Ürünleri sorgula
-    await queryProducts();
+  Future<void> init() async {
+    final bool available = await _iap.isAvailable();
+    if (!available) {
+      debugPrint('[IAP] Mağaza kullanılamıyor.');
+      _isReady = false;
+      return;
+    }
 
-    // Satın alma stream'i dinle
-    _sub = _iap.purchaseStream.listen(
-      (purchases) async {
-        for (final p in purchases) {
-          _purchaseEvents.add(p);
-          if (p.status == PurchaseStatus.purchased ||
-              p.status == PurchaseStatus.restored) {
-            await _verifyAndAcknowledge(p);
-          } else if (p.status == PurchaseStatus.error) {
-            // Hata durumunu logla/handle et
-          }
-        }
-      },
-      onDone: () => _sub?.cancel(),
-      onError: (e) {},
+    _isReady = true;
+    _purchaseStreamSubscription = _iap.purchaseStream.listen(
+      _handlePurchaseUpdate,
+      onError: (error) => debugPrint('[IAP] Stream Hatası: $error'),
     );
-
-    // Uygulama açılışında server'dan güncel entitlement'ı çek
-    await refreshEntitlementsFromServer();
   }
 
-  Future<void> queryProducts() async {
-    final ids = {AppConstants.productMonthly, AppConstants.productYearly};
-    final response = await _iap.queryProductDetails(ids);
-    _products = response.productDetails;
-  }
-
-  Future<bool> buy(ProductDetails product) async {
-    final purchaseParam = PurchaseParam(productDetails: product);
-    return _iap.buyNonConsumable(purchaseParam: purchaseParam);
-  }
-
-  Future<void> restore() async => _iap.restorePurchases();
-
-  Future<void> dispose() async {
-    await _sub?.cancel();
-    await _purchaseEvents.close();
-  }
-
-  Future<void> _verifyAndAcknowledge(PurchaseDetails p) async {
-    // Platform ve receipt bilgisi
-    final platform = Platform.isAndroid ? 'android' : 'ios';
-    final receipt = p.verificationData.serverVerificationData;
-    final userId = await StorageService.instance.getUserId() ?? 'mock-user';
-
-    // Backend doğrulaması
-    final uri = Uri.parse('${AppConstants.backendBaseUrl}/verifyPurchase');
+  /// Ürünleri Google Play'den yükler
+  Future<void> loadProducts() async {
     try {
-      final res = await _http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'userId': userId,
-          'platform': platform,
-          'productId': p.productID,
-          'receipt': receipt,
-        }),
-      );
-      if (res.statusCode == 200) {
-        await TrialManager.instance.setEntitlement(Entitlement.premium);
-      }
-    } catch (_) {}
+      // Artık iki ayrı ID sorguluyoruz
+      final Set<String> ids = {
+        AppConstants.monthlyProductId, // mira_month
+        AppConstants.yearlyProductId, // mira_year
+      };
 
-    // Acknowledge / complete purchase
-    if (p.pendingCompletePurchase) {
-      await _iap.completePurchase(p);
+      final ProductDetailsResponse response = await _iap.queryProductDetails(
+        ids,
+      );
+
+      if (response.error != null) {
+        debugPrint('[IAP] Ürün çekme hatası: ${response.error}');
+        return;
+      }
+
+      if (response.productDetails.isEmpty) {
+        debugPrint('[IAP] Ürün bulunamadı. ID\'leri kontrol edin: $ids');
+        return;
+      }
+
+      _plans.clear();
+
+      for (final product in response.productDetails) {
+        debugPrint('[IAP] Ürün yüklendi: ${product.id} - ${product.price}');
+
+        // ID'ye göre hangisi olduğunu anlıyoruz
+        final bool isMonthly = product.id == AppConstants.monthlyProductId;
+
+        final plan = MiraPlan(
+          id: product.id,
+          label: isMonthly
+              ? 'Aylık Premium (14 gün ücretsiz)'
+              : 'Yıllık Premium (14 gün ücretsiz)',
+          billingPeriod: isMonthly ? 'monthly' : 'yearly',
+          trial: const Duration(days: AppConstants.trialDays),
+          productDetails: product,
+          basePlanId: product.id,
+          formattedPrice: product.price, // Direkt kendi fiyatı
+          offerToken: null,
+        );
+        _plans.add(plan);
+      }
+
+      // Listeyi sıralayalım (Önce aylık, sonra yıllık görünsün)
+      _plans.sort((a, b) => a.billingPeriod == 'monthly' ? -1 : 1);
+    } catch (e) {
+      debugPrint('[IAP] Yükleme hatası: $e');
     }
   }
 
-  Future<Entitlement> refreshEntitlementsFromServer() async {
-    final userId = await StorageService.instance.getUserId() ?? 'mock-user';
-    final uri = Uri.parse('${AppConstants.backendBaseUrl}/checkEntitlements');
-    try {
-      final res = await _http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'userId': userId}),
+  Future<void> buyPlan(MiraPlan plan) async {
+    if (!_isReady) await init();
+
+    debugPrint('[IAP] Satın alınıyor: ${plan.id}');
+
+    // Ayrı ürünler olduğu için PurchaseParam yeterlidir
+    final PurchaseParam purchaseParam;
+
+    if (Platform.isAndroid && plan.productDetails is GooglePlayProductDetails) {
+      purchaseParam = GooglePlayPurchaseParam(
+        productDetails: plan.productDetails as GooglePlayProductDetails,
       );
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final entStr = (data['entitlement'] as String?) ?? 'none';
-        final ent = Entitlement.values.firstWhere(
-          (e) => e.name == entStr,
-          orElse: () => Entitlement.none,
-        );
-        await TrialManager.instance.setEntitlement(ent);
-        return ent;
-      }
-    } catch (_) {}
-    return StorageService.instance.getEntitlement();
+    } else {
+      purchaseParam = PurchaseParam(productDetails: plan.productDetails);
+    }
+
+    await _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
-  /// Trial bitmiş ve satın alma yoksa, client-side temizlik ve UI güncelleme
-  Future<void> clientCleanupIfNeeded() async {
-    await TrialManager.instance.endTrialIfExpired();
+  void _handlePurchaseUpdate(List<PurchaseDetails> purchases) {
+    for (final purchase in purchases) {
+      if (purchase.status == PurchaseStatus.purchased ||
+          purchase.status == PurchaseStatus.restored) {
+        debugPrint('[IAP] Başarılı işlem: ${purchase.productID}');
+
+        if (purchase.pendingCompletePurchase) {
+          _iap.completePurchase(purchase);
+        }
+
+        // Calculate expiry date based on product type
+        DateTime? expiryDate;
+        if (purchase.productID == AppConstants.monthlyProductId) {
+          // Monthly subscription: 1 month + 14 day trial
+          expiryDate = DateTime.now().add(
+            const Duration(days: 30 + AppConstants.trialDays),
+          );
+        } else if (purchase.productID == AppConstants.yearlyProductId) {
+          // Yearly subscription: 1 year + 14 day trial
+          expiryDate = DateTime.now().add(
+            const Duration(days: 365 + AppConstants.trialDays),
+          );
+        }
+
+        PremiumManager.instance.setPremium(true, expiryDate: expiryDate);
+        _premiumStatusStream.add(true);
+
+        debugPrint('[IAP] Premium activated until: $expiryDate');
+      }
+    }
+  }
+
+  Future<void> restorePurchases() async {
+    await _iap.restorePurchases();
+  }
+
+  void dispose() {
+    _purchaseStreamSubscription.cancel();
+    _purchaseUpdates.close();
+    _premiumStatusStream.close();
   }
 }

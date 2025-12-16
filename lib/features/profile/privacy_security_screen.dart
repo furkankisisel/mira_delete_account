@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/privacy/privacy_service.dart';
+import 'privacy_webview_screen.dart';
 import '../../services/storage_service.dart';
 import '../notifications/services/notification_service.dart';
 import '../habit/domain/habit_repository.dart';
@@ -20,13 +21,17 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
     PrivacyService.instance.initialize();
   }
 
+  // Minimal wrapper to expose url_launcher functions used above.
+  // Kept private and synchronous since url_launcher provides top-level methods.
+  // No facade needed; use url_launcher directly below.
+
   Future<void> _confirmAndDeleteAll(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.clearHistory),
-        content: Text(
+        content: const Text(
           'Tüm uygulama verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
         ),
         actions: [
@@ -36,7 +41,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Sil'),
+            child: const Text('Sil'),
           ),
         ],
       ),
@@ -100,21 +105,12 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 title: const Text('Gizlilik Politikası'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Gizlilik Politikası'),
-                      content: const SingleChildScrollView(
-                        child: Text(
-                          'Bu uygulama, özelleştirilmiş deneyim sunmak için yerel cihazınızda sınırlı veriler saklar. İsteğe bağlı olarak anonim tanılama ve çökme raporu paylaşımını etkinleştirebilirsiniz. Tüm verilerinizi dilediğiniz zaman silebilirsiniz.',
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: Text(l10n.ok),
-                        ),
-                      ],
+                  final uri = Uri.parse(
+                    'https://furkankisisel.github.io/mira_privacy_policy/privacy_policy.html',
+                  );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => PrivacyWebViewScreen(uri: uri),
                     ),
                   );
                 },

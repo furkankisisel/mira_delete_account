@@ -23,6 +23,7 @@ subprojects {
 subprojects {
     // Configure Java compile tasks across all subprojects
     tasks.withType(org.gradle.api.tasks.compile.JavaCompile::class.java).configureEach {
+        options.compilerArgs.add("-Xlint:-options")
         sourceCompatibility = JavaVersion.VERSION_17.toString()
         targetCompatibility = JavaVersion.VERSION_17.toString()
     }

@@ -7,18 +7,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:593291053883:android:3115a83d8d4e852309051e",
+        "mobilesdk_app_id": "1:593291053883:android:ddf6b3873819b4b709051e",
         "android_client_info": {
           "package_name": "com.koralabs.mira"
         }
       },
       "oauth_client": [
         {
-          "client_id": "593291053883-e5askargi4p2cb1vghe9fh3llgiqfj7b.apps.googleusercontent.com",
+          "client_id": "593291053883-32g0rr9o18930cgd6ht8id7eluf8p1sl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.koralabs.mira",
-            "certificate_hash": "d8da597f2607864f93eed46b212f8c5b7fcd89f4"
+            "certificate_hash": "9dd96d23d07fbbfc1bc0e3f97e016abc359dbb0b"
+          }
+        },
+        {
+          "client_id": "593291053883-ifdpo4nf14tdb0lrpsp91f8onibsqlth.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.koralabs.mira",
+            "certificate_hash": "bfe9d5b658d270b6551f730daacc97b02d337c65"
           }
         },
         {
@@ -42,7 +50,7 @@
               "client_id": "593291053883-4hu1pd574kfbncgqs75qgh8p6jukaprk.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.koralabs.mira"
+                "bundle_id": "com.example.mira"
               }
             }
           ]

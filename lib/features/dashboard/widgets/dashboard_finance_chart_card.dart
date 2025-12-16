@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import '../../../design_system/tokens/colors.dart';
 
 import '../../finance/data/transaction_model.dart';
 import '../../finance/data/transaction_repository.dart';
 import '../../finance/finance_analysis_screen.dart';
+import '../../../ui/premium_gate.dart';
 import '../../../design_system/theme/theme_variations.dart';
 
 class DashboardFinanceChartCard extends StatefulWidget {
@@ -63,7 +65,11 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
 
     final card = InkWell(
       borderRadius: cardRadius,
-      onTap: () {
+      onTap: () async {
+        final ok = await requirePremium(context);
+        if (!ok) return;
+        if (!context.mounted) return;
+
         final now = DateTime.now();
         final firstOfMonth = DateTime(now.year, now.month, 1);
         Navigator.of(context).push(
@@ -112,7 +118,7 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
                 child: hasAny
                     ? IgnorePointer(
                         ignoring: true, // let taps hit the card InkWell
-                        child: _BarChart7(days: days, totals: totals),
+                        child: _LineChart7(days: days, totals: totals),
                       )
                     : Center(
                         child: Text(
@@ -154,8 +160,8 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 }
 
-class _BarChart7 extends StatelessWidget {
-  const _BarChart7({required this.days, required this.totals});
+class _LineChart7 extends StatelessWidget {
+  const _LineChart7({required this.days, required this.totals});
   final List<DateTime> days;
   final List<double> totals;
 
@@ -169,41 +175,21 @@ class _BarChart7 extends StatelessWidget {
     // Ensure the axis range fully contains the data (no clamping that could cause paint overflow)
     final double maxY = maxAbs == 0 ? 10.0 : (maxAbs * 1.2);
 
-    final groups = <BarChartGroupData>[];
+    final spots = <FlSpot>[];
     for (var i = 0; i < totals.length; i++) {
-      final v = totals[i];
-      final isPos = v >= 0;
-      groups.add(
-        BarChartGroupData(
-          x: i,
-          barRods: [
-            BarChartRodData(
-              toY: v,
-              color: isPos ? Colors.green : Colors.redAccent,
-              width: 10,
-              borderRadius: isPos
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    )
-                  : const BorderRadius.only(
-                      bottomLeft: Radius.circular(4),
-                      bottomRight: Radius.circular(4),
-                    ),
-            ),
-          ],
-        ),
-      );
+      spots.add(FlSpot(i.toDouble(), totals[i]));
     }
 
-    return BarChart(
-      BarChartData(
+    return LineChart(
+      LineChartData(
+        minX: 0,
+        maxX: (totals.length - 1).toDouble(),
         minY: -maxY,
         maxY: maxY,
         gridData: const FlGridData(show: false),
         borderData: FlBorderData(show: false),
-        alignment: BarChartAlignment.spaceAround,
-        barGroups: groups,
+        clipData: const FlClipData.all(),
+        lineTouchData: const LineTouchData(enabled: false),
         titlesData: FlTitlesData(
           leftTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
@@ -214,17 +200,20 @@ class _BarChart7 extends StatelessWidget {
           rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          bottomTitles: AxisTitles(
+              bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 18,
+              interval: 1,
               getTitlesWidget: (v, meta) {
                 final idx = v.toInt();
                 if (idx < 0 || idx >= days.length) {
                   return const SizedBox.shrink();
                 }
+                final locale = Localizations.localeOf(context).toString();
+                final label = DateFormat.E(locale).format(days[idx]);
                 return Text(
-                  _weekdayLabel(context, days[idx]),
+                  label,
                   style: Theme.of(context).textTheme.labelSmall,
                 );
               },
@@ -240,21 +229,23 @@ class _BarChart7 extends StatelessWidget {
             ),
           ],
         ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            preventCurveOverShooting: true,
+            color: theme.colorScheme.primary,
+            barWidth: 3,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              color: theme.colorScheme.primary.withValues(alpha: 0.08),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  String _weekdayLabel(BuildContext context, DateTime d) {
-    final l = AppLocalizations.of(context);
-    final labels = [
-      l.weekdaysShortMon,
-      l.weekdaysShortTue,
-      l.weekdaysShortWed,
-      l.weekdaysShortThu,
-      l.weekdaysShortFri,
-      l.weekdaysShortSat,
-      l.weekdaysShortSun,
-    ];
-    return labels[d.weekday - 1];
-  }
+  // old date label helper removed; bottom axis now shows localized weekday names
 }

@@ -4,9 +4,9 @@ import 'widgets/fab_menu.dart';
 import 'widgets/daily_task_dialog.dart';
 import 'widgets/list_creation_dialog.dart';
 import 'widgets/habit_card.dart';
-import 'create_habit_screen.dart';
+import 'simple_habit_screen.dart';
+import 'advanced_habit_screen.dart';
 import 'habit_analysis_screen.dart';
-import 'advanced_habit_wizard_screen.dart';
 import 'package:mira/l10n/app_localizations.dart';
 import '../domain/habit_types.dart';
 import '../domain/habit_repository.dart';
@@ -19,6 +19,25 @@ import '../domain/daily_task_model.dart';
 import '../../vision/data/vision_repository.dart';
 import '../../vision/data/vision_model.dart';
 // removed unused imports
+
+/// Represents a grouped item for the habit/task list view
+sealed class _GroupedItem {}
+
+class _ListHeader extends _GroupedItem {
+  final String? listId;
+  final String title;
+  _ListHeader({required this.listId, required this.title});
+}
+
+class _TaskItem extends _GroupedItem {
+  final DailyTask task;
+  _TaskItem(this.task);
+}
+
+class _HabitItem extends _GroupedItem {
+  final Habit habit;
+  _HabitItem(this.habit);
+}
 
 class HabitScreen extends StatefulWidget {
   const HabitScreen({super.key});
@@ -814,6 +833,423 @@ class HabitScreenState extends State<HabitScreen> {
     }
   }
 
+  /// Groups habits and tasks by their listId for grouped display
+  List<_GroupedItem> _buildGroupedItems(
+    List<Habit> habits,
+    List<DailyTask> tasks,
+  ) {
+    final items = <_GroupedItem>[];
+    final l10n = AppLocalizations.of(context);
+
+    // Get all lists and create a map for quick lookup
+    final listsMap = <String, AppList>{};
+    for (final l in _listRepo.lists) {
+      listsMap[l.id] = l;
+    }
+
+    // Collect all unique listIds from habits and tasks
+    final listIds = <String?>{};
+    for (final h in habits) {
+      listIds.add(h.listId);
+    }
+    for (final t in tasks) {
+      listIds.add(t.listId);
+    }
+
+    // Sort listIds: named lists first (alphabetically), then null (unlisted) at the end
+    final sortedListIds = listIds.toList()
+      ..sort((a, b) {
+        if (a == null && b == null) return 0;
+        if (a == null) return 1; // null goes last
+        if (b == null) return -1;
+        final aTitle = listsMap[a]?.title ?? '';
+        final bTitle = listsMap[b]?.title ?? '';
+        return aTitle.compareTo(bTitle);
+      });
+
+    // Build grouped items
+    for (final listId in sortedListIds) {
+      final listHabits = habits.where((h) => h.listId == listId).toList();
+      final listTasks = tasks.where((t) => t.listId == listId).toList();
+
+      if (listHabits.isEmpty && listTasks.isEmpty) continue;
+
+      // Add list header
+      final listTitle = listId == null
+          ? l10n.unlistedItems
+          : (listsMap[listId]?.title ?? l10n.unknownList);
+      items.add(_ListHeader(listId: listId, title: listTitle));
+
+      // Add tasks first, then habits
+      for (final task in listTasks) {
+        items.add(_TaskItem(task));
+      }
+      for (final habit in listHabits) {
+        items.add(_HabitItem(habit));
+      }
+    }
+
+    return items;
+  }
+
+  Widget _buildListHeaderWidget(_ListHeader header) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isUnlisted = header.listId == null;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isUnlisted
+                  ? colorScheme.outline.withOpacity(0.1)
+                  : colorScheme.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              isUnlisted ? Icons.inbox_outlined : Icons.folder_outlined,
+              size: 18,
+              color: isUnlisted ? colorScheme.outline : colorScheme.primary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              header.title,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isUnlisted ? colorScheme.outline : colorScheme.onSurface,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskCardWidget(DailyTask task) {
+    return _TaskCard(
+      title: task.title,
+      description: task.description,
+      isDone: task.isDone,
+      listName:
+          null, // Don't show list name in grouped view since it's under the header
+      onToggleDone: (value) {
+        setState(() {
+          task.isDone = value;
+        });
+        _taskRepo.updateTask(task);
+      },
+      onAssignToList: () => _assignTaskToListDialog(task),
+      onEdit: () async {
+        final res = await showDialog<Map<String, dynamic>>(
+          context: context,
+          builder: (ctx) => DailyTaskDialog(),
+        );
+        if (res != null) {
+          final newTitle = (res['title'] as String?)?.trim() ?? task.title;
+          final newDescription =
+              (res['description'] as String?)?.trim() ?? task.description;
+          task.title = newTitle;
+          task.description = newDescription;
+          await _taskRepo.updateTask(task);
+        }
+      },
+      onDelete: () async {
+        final confirmed = await _confirmDelete(
+          title: AppLocalizations.of(context).delete,
+          message:
+              '${AppLocalizations.of(context).deleteTaskConfirmTitle}\n\n${AppLocalizations.of(context).deleteTaskConfirmMessage}',
+          confirmText: AppLocalizations.of(context).delete,
+          cancelText: AppLocalizations.of(context).cancel,
+        );
+        if (confirmed) {
+          await _taskRepo.removeTask(task.id);
+        }
+      },
+    );
+  }
+
+  Widget _buildHabitCardWidget(Habit habit) {
+    final String dayKey =
+        '${_selected.year}-${_selected.month.toString().padLeft(2, '0')}-${_selected.day.toString().padLeft(2, '0')}';
+    final now = DateTime.now();
+    final todayDate = DateTime(now.year, now.month, now.day);
+    final selectedDate = DateTime(
+      _selected.year,
+      _selected.month,
+      _selected.day,
+    );
+    final bool isToday = _isSameDay(selectedDate, todayDate);
+    final bool isFuture = selectedDate.isAfter(todayDate);
+
+    final String startDateStr = habit.startDate;
+    final DateTime startDate = DateTime(
+      int.parse(startDateStr.substring(0, 4)),
+      int.parse(startDateStr.substring(5, 7)),
+      int.parse(startDateStr.substring(8, 10)),
+    );
+    final bool isBeforeStart = selectedDate.isBefore(
+      DateTime(startDate.year, startDate.month, startDate.day),
+    );
+
+    final int dayProgress = isToday
+        ? habit.currentStreak
+        : (habit.dailyLog[dayKey] ?? 0);
+    final bool dayCompleted = isToday
+        ? (habit.isCompleted ||
+              HabitRepository.evaluateCompletionFromLog(habit, dayKey))
+        : HabitRepository.evaluateCompletionFromLog(habit, dayKey);
+    final int missedBefore = _consecutiveMissedDaysBefore(
+      habit,
+      selectedDate,
+      cap: 7,
+    );
+
+    return HabitCard(
+      title: habit.title,
+      description: _buildHabitSubtitle(habit),
+      icon: habit.icon,
+      emoji: habit.emoji,
+      categoryName: habit.categoryName,
+      color: habit.color,
+      currentStreak: dayProgress,
+      streakCount: HabitRepository.instance.consecutiveStreak(
+        habit.id,
+        upTo: selectedDate,
+      ),
+      targetCount: habit.targetCount,
+      isCompleted: dayCompleted,
+      habitType: habit.habitType,
+      numericalTargetType: habit.habitType == HabitType.numerical
+          ? habit.numericalTargetType
+          : null,
+      timerTargetType: habit.habitType == HabitType.timer
+          ? habit.timerTargetType
+          : null,
+      unit: habit.unit,
+      readOnly: isFuture || isBeforeStart,
+      iceEnabled:
+          !isFuture && !isBeforeStart && habit.habitType == HabitType.simple,
+      requiredBreakTaps: missedBefore,
+      onTap: () {
+        if (isFuture || isBeforeStart) return;
+        if (habit.habitType == HabitType.simple) {
+          if (isToday) {
+            _repo.toggleSimple(habit.id);
+          } else {
+            _repo.toggleSimpleForDate(habit.id, _selected);
+          }
+        }
+      },
+      onAssignToList: () => _assignHabitToListDialog(habit),
+      showStreakIndicator: _repo.getShowStreakIndicatorFor(habit.id),
+      onToggleStreakIndicator: (v) async {
+        await _repo.setShowStreakIndicatorFor(habit.id, v);
+      },
+      onValueUpdate: (newValue) {
+        if (isFuture || isBeforeStart) return;
+        if (habit.habitType == HabitType.numerical ||
+            habit.habitType == HabitType.timer) {
+          if (isToday) {
+            _repo.setManualProgress(habit.id, newValue);
+          } else {
+            _repo.setManualProgressForDate(habit.id, _selected, newValue);
+          }
+        }
+      },
+      onAnalyze: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HabitAnalysisScreen(
+              habitTitle: habit.title,
+              habitDescription: habit.description,
+              habitIcon: habit.icon,
+              habitColor: habit.color,
+              currentStreak: habit.currentStreak,
+              targetCount: habit.targetCount,
+              unit: habit.unit,
+              habitId: habit.id,
+            ),
+          ),
+        );
+      },
+      onEdit: () => _editHabit(habit),
+      onDelete: () => _deleteHabit(habit),
+    );
+  }
+
+  Future<void> _editHabit(Habit habit) async {
+    // Vision habits: edit with AdvancedHabitScreen (vision context)
+    if (habit.linkedVisionId != null) {
+      final visionRepo = VisionRepository.instance;
+      await visionRepo.initialize();
+      final visions = await visionRepo.stream.first;
+      final vision = visions.cast<Vision?>().firstWhere(
+        (v) => v?.id == habit.linkedVisionId,
+        orElse: () => null,
+      );
+      if (vision != null) {
+        final result = await Navigator.of(context).push<Map<String, dynamic>>(
+          MaterialPageRoute(
+            builder: (context) => AdvancedHabitScreen(
+              editingHabitMap: {
+                'id': habit.id,
+                'title': habit.title,
+                'description': habit.description,
+                'icon': habit.icon,
+                'color': habit.color,
+                'targetCount': habit.targetCount,
+                'habitType': habit.habitType,
+                'unit': habit.unit,
+                if (habit.emoji != null) 'emoji': habit.emoji,
+                'numericalTargetType': habit.numericalTargetType,
+                'timerTargetType': habit.timerTargetType,
+                'startDate': habit.startDate,
+                'endDate': habit.endDate,
+                if (habit.scheduledDates != null)
+                  'scheduledDates': habit.scheduledDates,
+                'reminderEnabled': habit.reminderEnabled,
+                if (habit.reminderTime != null)
+                  'reminderTime': {
+                    'hour': habit.reminderTime!.hour,
+                    'minute': habit.reminderTime!.minute,
+                  },
+                'visionId': vision.id,
+                'visionStartDate': vision.startDate,
+                'visionEndDate': vision.endDate,
+              },
+              useVisionDayOffsets: true,
+              returnAsMap: true,
+            ),
+          ),
+        );
+        if (result != null) {
+          _applyHabitEditResult(habit, result);
+        }
+      }
+      return;
+    }
+
+    // Simple habit type
+    if (habit.habitType == HabitType.simple && !habit.isAdvanced) {
+      final editedHabit = await Navigator.of(context).push<Habit>(
+        MaterialPageRoute(
+          builder: (context) => SimpleHabitScreen(existingHabit: habit),
+        ),
+      );
+      if (editedHabit != null) {
+        habit.title = editedHabit.title;
+        habit.description = editedHabit.description;
+        habit.emoji = editedHabit.emoji;
+        habit.color = editedHabit.color;
+        habit.frequency = editedHabit.frequency;
+        habit.frequencyType = editedHabit.frequencyType;
+        habit.selectedWeekdays = editedHabit.selectedWeekdays;
+        habit.selectedMonthDays = editedHabit.selectedMonthDays;
+        habit.selectedYearDays = editedHabit.selectedYearDays;
+        habit.periodicDays = editedHabit.periodicDays;
+        habit.scheduledDates = editedHabit.scheduledDates;
+        habit.reminderEnabled = editedHabit.reminderEnabled;
+        habit.reminderTime = editedHabit.reminderTime;
+        await _repo.updateHabit(habit);
+      }
+      return;
+    }
+
+    // Advanced habit - Habit objesi döndür
+    final editedHabit = await Navigator.of(context).push<Habit>(
+      MaterialPageRoute(
+        builder: (context) => AdvancedHabitScreen(existingHabit: habit),
+      ),
+    );
+    if (editedHabit != null) {
+      habit.title = editedHabit.title;
+      habit.description = editedHabit.description;
+      habit.color = editedHabit.color;
+      habit.emoji = editedHabit.emoji;
+      habit.habitType = editedHabit.habitType;
+      habit.targetCount = editedHabit.targetCount;
+      habit.unit = editedHabit.unit;
+      habit.numericalTargetType = editedHabit.numericalTargetType;
+      habit.timerTargetType = editedHabit.timerTargetType;
+      habit.frequency = editedHabit.frequency;
+      habit.frequencyType = editedHabit.frequencyType;
+      habit.selectedWeekdays = editedHabit.selectedWeekdays;
+      habit.selectedMonthDays = editedHabit.selectedMonthDays;
+      habit.selectedYearDays = editedHabit.selectedYearDays;
+      habit.periodicDays = editedHabit.periodicDays;
+      habit.scheduledDates = editedHabit.scheduledDates;
+      habit.reminderEnabled = editedHabit.reminderEnabled;
+      habit.reminderTime = editedHabit.reminderTime;
+      await _repo.updateHabit(habit);
+    }
+  }
+
+  void _applyHabitEditResult(Habit habit, Map<String, dynamic> result) {
+    habit.title = (result['title'] ?? habit.title) as String;
+    habit.description = (result['description'] ?? habit.description) as String;
+    if (result['color'] is int) {
+      habit.color = Color(result['color'] as int);
+    } else if (result['color'] is Color) {
+      habit.color = result['color'] as Color;
+    }
+    if (result['emoji'] is String &&
+        (result['emoji'] as String).trim().isNotEmpty) {
+      habit.emoji = (result['emoji'] as String).trim();
+    }
+    if (result['frequency'] is String) {
+      final f = (result['frequency'] as String).trim();
+      habit.frequency = f.isEmpty ? null : f;
+    }
+    if (result['frequencyType'] != null) {
+      habit.frequencyType = result['frequencyType']?.toString();
+    }
+
+    if (result['targetCount'] is int) {
+      habit.targetCount = result['targetCount'] as int;
+    }
+    if (result['unit'] is String) {
+      habit.unit = result['unit'] as String;
+    }
+    if (result['habitType'] is HabitType) {
+      habit.habitType = result['habitType'] as HabitType;
+    }
+    if (result['numericalTargetType'] is NumericalTargetType) {
+      habit.numericalTargetType =
+          result['numericalTargetType'] as NumericalTargetType;
+    }
+    if (result['timerTargetType'] is TimerTargetType) {
+      habit.timerTargetType = result['timerTargetType'] as TimerTargetType;
+    }
+    if (result['scheduledDates'] is List) {
+      habit.scheduledDates = List<String>.from(result['scheduledDates']);
+    }
+    if (result['startDate'] is String) {
+      habit.startDate = result['startDate'] as String;
+    }
+    if (result['endDate'] is String?) {
+      habit.endDate = result['endDate'] as String?;
+    }
+
+    _repo.updateHabit(habit);
+  }
+
+  Future<void> _deleteHabit(Habit habit) async {
+    final confirmed = await _confirmDelete(
+      title: AppLocalizations.of(context).delete,
+      message: AppLocalizations.of(context).deleteHabitConfirm(habit.title),
+      confirmText: AppLocalizations.of(context).delete,
+      cancelText: AppLocalizations.of(context).cancel,
+    );
+    if (confirmed) {
+      _repo.removeHabit(habit.id);
+    }
+  }
+
   String _buildHabitSubtitle(Habit habit) {
     // Only show the habit's own description; do not append the list title.
     return habit.description;
@@ -1017,174 +1453,118 @@ class HabitScreenState extends State<HabitScreen> {
     }
   }
 
-  void _navigateToCreateHabit() async {
-    final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute(builder: (context) => const CreateHabitScreen()),
+  void _navigateToCreateHabit() {
+    _showHabitTypeSelectionModal();
+  }
+
+  void _showHabitTypeSelectionModal() {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurfaceVariant.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Title
+            Text(
+              'Alışkanlık Türü Seç',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Nasıl bir alışkanlık oluşturmak istiyorsun?',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+
+            // Simple Habit Option
+            _HabitTypeOption(
+              icon: Icons.check_circle_outline,
+              title: 'Basit Alışkanlık',
+              description: 'Günlük yapılacaklar için. Tamamla veya tamamlama.',
+              color: colorScheme.primary,
+              onTap: () {
+                Navigator.pop(context);
+                _createSimpleHabit();
+              },
+            ),
+            const SizedBox(height: 12),
+
+            // Advanced Habit Option
+            _HabitTypeOption(
+              icon: Icons.auto_graph,
+              title: 'Gelişmiş Alışkanlık',
+              description: 'Sayısal hedefler, zamanlayıcı ve detaylı takip.',
+              color: colorScheme.secondary,
+              onTap: () {
+                Navigator.pop(context);
+                _createAdvancedHabit();
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _createSimpleHabit() async {
+    final habit = await Navigator.of(context).push<Habit>(
+      MaterialPageRoute(builder: (context) => const SimpleHabitScreen()),
     );
 
-    if (result != null) {
-      // Kaynaktan field çıkarımları
-      final isAdvanced = (result['isAdvanced'] == true);
-      HabitType type = HabitType.simple;
-      int target = 1;
-      String? unit;
-      if (isAdvanced) {
-        // Advanced wizard alanlarını çöz
-        final typeStr = result['type']?.toString();
-        if (typeStr != null) {
-          if (typeStr.contains('numerical'))
-            type = HabitType.numerical;
-          else if (typeStr.contains('timer'))
-            type = HabitType.timer;
-          else
-            type = HabitType.simple;
-        }
-        if (type == HabitType.timer) {
-          target = (result['timerTargetMinutes'] as int?) ?? target;
-          unit = 'dakika';
-          final ttt = result['timerTargetType']?.toString();
-          if (ttt != null) {
-            // stored as enum.toString()
-            if (ttt.contains('exact')) {
-              // handled later when constructing Habit
-            }
-          }
-        } else if (type == HabitType.numerical) {
-          target = (result['numericalTarget'] as int?) ?? target;
-          unit = (result['numericalUnit'] as String?)?.trim();
-        }
+    if (habit != null && mounted) {
+      await _repo.addHabit(habit);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).habitCreatedMessage(habit.title),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        );
       }
+    }
+  }
 
-      // Resolve categoryName: prefer explicit result['categoryName'],
-      // else try to resolve from selected category id (custom or predefined).
-      String? resolvedCategoryName;
-      try {
-        resolvedCategoryName = (result['categoryName'] as String?)?.trim();
-      } catch (_) {
-        resolvedCategoryName = null;
-      }
-      // If not provided, try to resolve from categoryId
-      final selCatId = result['categoryId'] as String?;
-      if ((resolvedCategoryName == null || resolvedCategoryName.isEmpty) &&
-          selCatId != null) {
-        // Check custom categories first
-        try {
-          final repo = CategoryRepository.instance;
-          // ensure initialized (fast if already done)
-          await repo.initialize();
-          final custom = repo.customCategories.firstWhere(
-            (c) => c.id == selCatId,
-            orElse: () => HabitCategory('_none', '', Icons.help, Colors.grey),
-          );
-          if (custom.id != '_none') resolvedCategoryName = custom.name;
-        } catch (_) {}
-        // If still not found, map predefined ids to localized labels
-        if (resolvedCategoryName == null) {
-          try {
-            final l10n = AppLocalizations.of(context);
-            switch (selCatId) {
-              case 'health':
-                resolvedCategoryName = l10n.health;
-                break;
-              case 'fitness':
-                resolvedCategoryName = l10n.fitness;
-                break;
-              case 'productivity':
-                resolvedCategoryName = l10n.productivity;
-                break;
-              case 'mindfulness':
-                resolvedCategoryName = l10n.mindfulness;
-                break;
-              case 'education':
-                resolvedCategoryName = l10n.education;
-                break;
-              case 'social':
-                resolvedCategoryName = l10n.social;
-                break;
-            }
-          } catch (_) {}
-        }
-      }
+  void _createAdvancedHabit() async {
+    final habit = await Navigator.of(context).push<Habit>(
+      MaterialPageRoute(builder: (context) => const AdvancedHabitScreen()),
+    );
 
-      final habit = Habit(
-        id: UniqueKey().toString(),
-        title: (result['title'] ?? result['name'] ?? '') as String,
-        description: (result['description'] ?? '') as String,
-        icon: result['icon'] is int
-            ? materialIconFromCodePoint(result['icon'] as int)
-            : (result['icon'] is IconData
-                  ? result['icon'] as IconData
-                  : Icons.check_circle),
-        emoji: (result['emoji'] as String?)?.trim(),
-        color: result['color'] is int
-            ? Color(result['color'] as int)
-            : (result['color'] is Color
-                  ? result['color'] as Color
-                  : Colors.blue),
-        targetCount: target,
-        habitType: type,
-        unit: unit == '' ? null : unit,
-        frequency: (result['frequency'] as String?)?.trim(),
-        frequencyType: result['frequencyType']?.toString(),
-        selectedWeekdays: (result['selectedWeekdays'] as List?)
-            ?.whereType<num>()
-            .map((e) => e.toInt())
-            .toList(),
-        selectedMonthDays: (result['selectedMonthDays'] as List?)
-            ?.whereType<num>()
-            .map((e) => e.toInt())
-            .toList(),
-        selectedYearDays: (result['selectedYearDays'] as List?)
-            ?.map((e) => e.toString())
-            .toList(),
-        periodicDays: (result['periodicDays'] as num?)?.toInt(),
-        currentStreak: 0,
-        isCompleted: false,
-        progressDate: DateTime.now().toIso8601String().split('T').first,
-        startDate:
-            ((result['startDate'] as String?) ??
-                    (result['createdAt'] is String
-                        ? result['createdAt'] as String
-                        : null))
-                ?.split('T')
-                .first ??
-            DateTime.now().toIso8601String().split('T').first,
-        endDate: (result['endDate'] as String?)?.split('T').first,
-        numericalTargetType: (() {
-          final v = result['numericalTargetType']?.toString();
-          if (v == null) return NumericalTargetType.minimum;
-          if (v.contains('exact')) return NumericalTargetType.exact;
-          if (v.contains('maximum')) return NumericalTargetType.maximum;
-          return NumericalTargetType.minimum;
-        })(),
-        timerTargetType: (() {
-          final v = result['timerTargetType']?.toString();
-          if (v == null) return TimerTargetType.minimum;
-          if (v.contains('exact')) return TimerTargetType.exact;
-          if (v.contains('maximum')) return TimerTargetType.maximum;
-          return TimerTargetType.minimum;
-        })(),
-        scheduledDates: (result['scheduledDates'] as List?)
-            ?.map((e) => e.toString().split('T').first)
-            .toList(),
-        // optional user-visible category name (from advanced wizard/custom)
-        categoryName: resolvedCategoryName,
-        // Reminder settings
-        reminderEnabled: (result['reminderEnabled'] as bool?) ?? false,
-        reminderTime: (() {
-          final rt = result['reminderTime'];
-          if (rt is Map) {
-            final hour = rt['hour'] as int?;
-            final minute = rt['minute'] as int?;
-            if (hour != null && minute != null) {
-              return TimeOfDay(hour: hour, minute: minute);
-            }
-          }
-          return null;
-        })(),
-      );
-      // Mark advanced if coming from advanced wizard
-      habit.isAdvanced = (result['isAdvanced'] == true);
+    if (habit != null && mounted) {
+      habit.isAdvanced = true;
       await _repo.addHabit(habit);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1365,6 +1745,24 @@ class HabitScreenState extends State<HabitScreen> {
                     final double bottomReserve =
                         mq.viewPadding.bottom + fabHeight + extraGap;
 
+                    // If no list is selected, show grouped view by list
+                    if (_selectedListId == null) {
+                      final groupedItems = _buildGroupedItems(habits, tasks);
+                      return ListView.builder(
+                        padding: EdgeInsets.only(bottom: bottomReserve),
+                        itemCount: groupedItems.length,
+                        itemBuilder: (context, index) {
+                          final item = groupedItems[index];
+                          return switch (item) {
+                            _ListHeader() => _buildListHeaderWidget(item),
+                            _TaskItem() => _buildTaskCardWidget(item.task),
+                            _HabitItem() => _buildHabitCardWidget(item.habit),
+                          };
+                        },
+                      );
+                    }
+
+                    // Otherwise show flat list (existing behavior when a list is selected)
                     return ListView.builder(
                       padding: EdgeInsets.only(bottom: bottomReserve),
                       itemCount:
@@ -1620,7 +2018,7 @@ class HabitScreenState extends State<HabitScreen> {
                                   '   linkedVisionId: ${habit.linkedVisionId}',
                                 );
 
-                                // Vision habits: edit with AdvancedHabitWizardScreen (vision context)
+                                // Vision habits: edit with AdvancedHabitScreen (vision context)
                                 if (habit.linkedVisionId != null) {
                                   print(
                                     '🔍 [HabitScreen] Editing vision habit: ${habit.title}',
@@ -1651,15 +2049,15 @@ class HabitScreenState extends State<HabitScreen> {
 
                                   if (vision != null) {
                                     print('   ✅ Vision found: ${vision.title}');
-                                    // Prepare editing map for AdvancedHabitWizardScreen
+                                    // Prepare editing map for AdvancedHabitScreen
                                     final result = await Navigator.of(context)
                                         .push<Map<String, dynamic>>(
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                AdvancedHabitWizardScreen(
-                                                  isEditing: true,
+                                                AdvancedHabitScreen(
                                                   useVisionDayOffsets: true,
-                                                  editingHabit: {
+                                                  returnAsMap: true,
+                                                  editingHabitMap: {
                                                     'id': habit.id,
                                                     'title': habit.title,
                                                     'description':
@@ -1850,307 +2248,81 @@ class HabitScreenState extends State<HabitScreen> {
                                 // If it's a simple non-advanced habit, edit in basic screen
                                 if (habit.habitType == HabitType.simple &&
                                     !habit.isAdvanced) {
-                                  final result = await Navigator.of(context)
-                                      .push<Map<String, dynamic>>(
+                                  final editedHabit =
+                                      await Navigator.of(context).push<Habit>(
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              CreateHabitScreen(
-                                                isEditing: true,
+                                              SimpleHabitScreen(
                                                 existingHabit: habit,
                                               ),
                                         ),
                                       );
-                                  if (result != null) {
-                                    // Apply simple field updates
-                                    habit.title =
-                                        (result['title'] ?? habit.title)
-                                            as String;
-                                    habit.description =
-                                        (result['description'] ??
-                                                habit.description)
-                                            as String;
-                                    if (result['color'] is int) {
-                                      habit.color = Color(
-                                        result['color'] as int,
-                                      );
-                                    } else if (result['color'] is Color) {
-                                      habit.color = result['color'] as Color;
-                                    }
-                                    if (result['emoji'] is String &&
-                                        (result['emoji'] as String)
-                                            .trim()
-                                            .isNotEmpty) {
-                                      habit.emoji = (result['emoji'] as String)
-                                          .trim();
-                                    }
-                                    if (result['frequency'] is String) {
-                                      final f = (result['frequency'] as String)
-                                          .trim();
-                                      habit.frequency = f.isEmpty ? null : f;
-                                    }
-                                    // Persist detailed frequency config and schedule if provided
-                                    if (result['frequencyType'] != null) {
-                                      habit.frequencyType =
-                                          result['frequencyType']?.toString();
-                                    }
-                                    if (result['selectedWeekdays'] is List) {
-                                      habit.selectedWeekdays =
-                                          (result['selectedWeekdays'] as List)
-                                              .whereType<num>()
-                                              .map((e) => e.toInt())
-                                              .toList();
-                                    }
-                                    if (result['selectedMonthDays'] is List) {
-                                      habit.selectedMonthDays =
-                                          (result['selectedMonthDays'] as List)
-                                              .whereType<num>()
-                                              .map((e) => e.toInt())
-                                              .toList();
-                                    }
-                                    if (result['selectedYearDays'] is List) {
-                                      habit.selectedYearDays =
-                                          (result['selectedYearDays'] as List)
-                                              .map(
-                                                (e) => e
-                                                    .toString()
-                                                    .split('T')
-                                                    .first,
-                                              )
-                                              .toList();
-                                    }
-                                    if (result['periodicDays'] != null) {
-                                      habit.periodicDays =
-                                          (result['periodicDays'] as num?)
-                                              ?.toInt();
-                                    }
-                                    if (result['scheduledDates'] is List) {
-                                      habit.scheduledDates =
-                                          (result['scheduledDates'] as List)
-                                              .map(
-                                                (e) => e
-                                                    .toString()
-                                                    .split('T')
-                                                    .first,
-                                              )
-                                              .toList();
-                                    }
-                                    // Update reminder settings
-                                    if (result.containsKey('reminderEnabled')) {
-                                      habit.reminderEnabled =
-                                          (result['reminderEnabled']
-                                              as bool?) ??
-                                          false;
-                                    }
-                                    if (result['reminderTime'] is Map) {
-                                      final rt = result['reminderTime'] as Map;
-                                      final hour = rt['hour'] as int?;
-                                      final minute = rt['minute'] as int?;
-                                      if (hour != null && minute != null) {
-                                        habit.reminderTime = TimeOfDay(
-                                          hour: hour,
-                                          minute: minute,
-                                        );
-                                      }
-                                    } else if (result['reminderTime'] == null) {
-                                      habit.reminderTime = null;
-                                    }
+                                  if (editedHabit != null) {
+                                    // SimpleHabitScreen döndürdüğü Habit'ten değerleri kopyala
+                                    habit.title = editedHabit.title;
+                                    habit.description = editedHabit.description;
+                                    habit.emoji = editedHabit.emoji;
+                                    habit.color = editedHabit.color;
+                                    habit.frequency = editedHabit.frequency;
+                                    habit.frequencyType =
+                                        editedHabit.frequencyType;
+                                    habit.selectedWeekdays =
+                                        editedHabit.selectedWeekdays;
+                                    habit.selectedMonthDays =
+                                        editedHabit.selectedMonthDays;
+                                    habit.selectedYearDays =
+                                        editedHabit.selectedYearDays;
+                                    habit.periodicDays =
+                                        editedHabit.periodicDays;
+                                    habit.scheduledDates =
+                                        editedHabit.scheduledDates;
+                                    habit.reminderEnabled =
+                                        editedHabit.reminderEnabled;
+                                    habit.reminderTime =
+                                        editedHabit.reminderTime;
                                     await _repo.updateHabit(habit);
                                   }
                                   return;
                                 }
-                                // Otherwise use advanced wizard
-                                Navigator.of(context)
-                                    .push<Map<String, dynamic>>(
+                                // Otherwise use advanced habit screen
+                                final editedHabit = await Navigator.of(context)
+                                    .push<Habit>(
                                       MaterialPageRoute(
-                                        builder: (context) => AdvancedHabitWizardScreen(
-                                          isEditing: true,
-                                          editingHabit: {
-                                            'id': habit.id,
-                                            'title': habit.title,
-                                            'description': habit.description,
-                                            'icon': habit.icon,
-                                            'color': habit.color,
-                                            'targetCount': habit.targetCount,
-                                            'habitType': habit.habitType,
-                                            'unit': habit.unit,
-                                            'currentStreak':
-                                                habit.currentStreak,
-                                            'isCompleted': habit.isCompleted,
-                                            // Prefill scheduling and policy fields for full edit experience
-                                            'startDate': habit.startDate,
-                                            'endDate': habit.endDate,
-                                            if (habit.scheduledDates != null)
-                                              'scheduledDates':
-                                                  habit.scheduledDates,
-                                            'numericalTargetType':
-                                                habit.numericalTargetType,
-                                            'timerTargetType':
-                                                habit.timerTargetType,
-                                            if (habit.emoji != null)
-                                              'emoji': habit.emoji,
-                                            // Reminder settings
-                                            'reminderEnabled':
-                                                habit.reminderEnabled,
-                                            if (habit.reminderTime != null)
-                                              'reminderTime': {
-                                                'hour':
-                                                    habit.reminderTime!.hour,
-                                                'minute':
-                                                    habit.reminderTime!.minute,
-                                              },
-                                            // Frequency details are not stored on Habit model; avoid dynamic access
-                                            // Prefill will default to daily unless provided explicitly from other flows
-                                          },
-                                        ),
+                                        builder: (context) =>
+                                            AdvancedHabitScreen(
+                                              existingHabit: habit,
+                                            ),
                                       ),
-                                    )
-                                    .then((result) async {
-                                      if (result != null) {
-                                        // Güncelleme - şimdilik temel alanlarla sınırlı
-                                        habit.title =
-                                            (result['title'] ?? habit.title)
-                                                as String;
-                                        habit.description =
-                                            (result['description'] ??
-                                                    habit.description)
-                                                as String;
-                                        if (result['icon'] is IconData) {
-                                          habit.icon =
-                                              result['icon'] as IconData;
-                                        } else if (result['icon'] is int) {
-                                          habit.icon =
-                                              materialIconFromCodePoint(
-                                                result['icon'] as int,
-                                              );
-                                        }
-                                        if (result['color'] is Color) {
-                                          habit.color =
-                                              result['color'] as Color;
-                                        } else if (result['color'] is int) {
-                                          habit.color = Color(
-                                            result['color'] as int,
-                                          );
-                                        }
-                                        // Tip/target güncellemeleri: wizard dönen anahtarları map ediyor
-                                        if (result['habitType'] is HabitType) {
-                                          habit.habitType =
-                                              result['habitType'] as HabitType;
-                                        }
-                                        if (result['targetCount'] is int) {
-                                          habit.targetCount =
-                                              result['targetCount'] as int;
-                                        } else if (result['timerTargetMinutes']
-                                            is int) {
-                                          habit.targetCount =
-                                              result['timerTargetMinutes']
-                                                  as int;
-                                        } else if (result['numericalTarget']
-                                            is int) {
-                                          habit.targetCount =
-                                              result['numericalTarget'] as int;
-                                        }
-                                        if (result['numericalUnit'] is String) {
-                                          habit.unit =
-                                              result['numericalUnit'] as String;
-                                        } else if (result['unit'] is String) {
-                                          habit.unit = result['unit'] as String;
-                                        }
-                                        // Policy type updates (minimum/exact/maximum)
-                                        final nt = result['numericalTargetType']
-                                            ?.toString()
-                                            .toLowerCase();
-                                        if (nt != null) {
-                                          if (nt.contains('exact')) {
-                                            habit.numericalTargetType =
-                                                NumericalTargetType.exact;
-                                          } else if (nt.contains('maximum') ||
-                                              nt.contains('max')) {
-                                            habit.numericalTargetType =
-                                                NumericalTargetType.maximum;
-                                          } else {
-                                            habit.numericalTargetType =
-                                                NumericalTargetType.minimum;
-                                          }
-                                        }
-                                        final tt = result['timerTargetType']
-                                            ?.toString()
-                                            .toLowerCase();
-                                        if (tt != null) {
-                                          if (tt.contains('exact')) {
-                                            habit.timerTargetType =
-                                                TimerTargetType.exact;
-                                          } else if (tt.contains('maximum') ||
-                                              tt.contains('max')) {
-                                            habit.timerTargetType =
-                                                TimerTargetType.maximum;
-                                          } else {
-                                            habit.timerTargetType =
-                                                TimerTargetType.minimum;
-                                          }
-                                        }
-
-                                        // Start/end date updates (store as YYYY-MM-DD)
-                                        String? _toDateStr(dynamic v) {
-                                          if (v == null) return null;
-                                          try {
-                                            final d = DateTime.parse(
-                                              v.toString(),
-                                            );
-                                            return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-                                          } catch (_) {
-                                            return v.toString();
-                                          }
-                                        }
-
-                                        final sd = _toDateStr(
-                                          result['startDate'],
-                                        );
-                                        if (sd != null) habit.startDate = sd;
-                                        habit.endDate = _toDateStr(
-                                          result['endDate'],
-                                        );
-
-                                        // Emoji if provided by wizard
-                                        if (result['emoji'] is String &&
-                                            (result['emoji'] as String)
-                                                .trim()
-                                                .isNotEmpty) {
-                                          habit.emoji =
-                                              (result['emoji'] as String)
-                                                  .trim();
-                                        }
-                                        // Mark as advanced if wizard indicates
-                                        if (result['isAdvanced'] is bool) {
-                                          habit.isAdvanced =
-                                              result['isAdvanced'] as bool;
-                                        }
-                                        // Update reminder settings
-                                        if (result.containsKey(
-                                          'reminderEnabled',
-                                        )) {
-                                          habit.reminderEnabled =
-                                              (result['reminderEnabled']
-                                                  as bool?) ??
-                                              false;
-                                        }
-                                        if (result['reminderTime'] is Map) {
-                                          final rt =
-                                              result['reminderTime'] as Map;
-                                          final hour = rt['hour'] as int?;
-                                          final minute = rt['minute'] as int?;
-                                          if (hour != null && minute != null) {
-                                            habit.reminderTime = TimeOfDay(
-                                              hour: hour,
-                                              minute: minute,
-                                            );
-                                          }
-                                        } else if (result['reminderTime'] ==
-                                            null) {
-                                          habit.reminderTime = null;
-                                        }
-                                        await _repo.updateHabit(habit);
-                                      }
-                                    });
+                                    );
+                                if (editedHabit != null) {
+                                  habit.title = editedHabit.title;
+                                  habit.description = editedHabit.description;
+                                  habit.color = editedHabit.color;
+                                  habit.emoji = editedHabit.emoji;
+                                  habit.habitType = editedHabit.habitType;
+                                  habit.targetCount = editedHabit.targetCount;
+                                  habit.unit = editedHabit.unit;
+                                  habit.numericalTargetType =
+                                      editedHabit.numericalTargetType;
+                                  habit.timerTargetType =
+                                      editedHabit.timerTargetType;
+                                  habit.frequency = editedHabit.frequency;
+                                  habit.frequencyType =
+                                      editedHabit.frequencyType;
+                                  habit.selectedWeekdays =
+                                      editedHabit.selectedWeekdays;
+                                  habit.selectedMonthDays =
+                                      editedHabit.selectedMonthDays;
+                                  habit.selectedYearDays =
+                                      editedHabit.selectedYearDays;
+                                  habit.periodicDays = editedHabit.periodicDays;
+                                  habit.scheduledDates =
+                                      editedHabit.scheduledDates;
+                                  habit.reminderEnabled =
+                                      editedHabit.reminderEnabled;
+                                  habit.reminderTime = editedHabit.reminderTime;
+                                  await _repo.updateHabit(habit);
+                                }
                               },
                               onDelete: () {
                                 final removed = habit;
@@ -2378,6 +2550,79 @@ class _TaskCard extends StatelessWidget {
                   ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Alışkanlık türü seçim modalında kullanılan seçenek widget'ı
+class _HabitTypeOption extends StatelessWidget {
+  const _HabitTypeOption({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(color: colorScheme.outlineVariant, width: 1),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
+            ],
           ),
         ),
       ),

@@ -28,16 +28,27 @@ import 'core/settings/settings_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'core/presentation/splash_screen.dart';
-import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/onboarding/data/onboarding_repository.dart';
-import 'ui/subscription_page.dart';
-import 'services/trial_manager.dart';
-import 'services/iap_service.dart';
 import 'core/privacy/privacy_service.dart';
+import 'features/profile/auth_repository.dart';
+import 'features/auth/sign_in_screen.dart';
+import 'features/auth/test_choice_screen.dart';
+// In-app purchase and premium management
+import 'services/premium_manager.dart';
+import 'services/iap_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // In widget tests, Firebase may not be available; guard initialization.
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (_) {
+    // ignore: avoid_print
+    if (kDebugMode)
+      debugPrint('Firebase.initializeApp skipped in this context');
+  }
   runApp(const MiraApp());
 }
 
@@ -63,11 +74,8 @@ class _MiraAppState extends State<MiraApp> {
     // ignore: discarded_futures
     SettingsRepository.instance.initialize();
     unawaited(_initializeNotifications());
-    // IAP & Trial init (non-blocking)
-    // ignore: discarded_futures
-    TrialManager.instance.initialize();
-    // ignore: discarded_futures
-    IAPService.instance.initialize();
+    // Initialize subscription/premium system
+    unawaited(_initializeSubscriptionSystem());
     // Privacy service (consent toggles)
     // ignore: discarded_futures
     PrivacyService.instance.initialize();
@@ -114,6 +122,22 @@ class _MiraAppState extends State<MiraApp> {
     } catch (e) {
       if (kDebugMode) debugPrint('❌ Error initializing notifications: $e');
       // ignore failures so they do not block app launch
+    }
+  }
+
+  /// Initialize subscription/premium system.
+  /// Loads premium status from storage and sets up purchase listeners.
+  Future<void> _initializeSubscriptionSystem() async {
+    try {
+      debugPrint('🔄 Initializing subscription system...');
+      // Initialize premium manager (loads from SharedPreferences)
+      await PremiumManager.instance.init();
+      // Initialize IAP service (sets up Google Play billing)
+      await IAPService.instance.init();
+      debugPrint('✅ Subscription system initialized');
+    } catch (e) {
+      debugPrint('❌ Error initializing subscription system: $e');
+      // Continue app launch even if subscription init fails
     }
   }
 
@@ -227,18 +251,28 @@ class OnboardingCheckWrapper extends StatefulWidget {
 class _OnboardingCheckWrapperState extends State<OnboardingCheckWrapper> {
   bool _showSplash = true;
   bool? _isOnboardingCompleted;
+  bool _authInitialized = false;
+  bool _isSignedIn = false;
 
   @override
   void initState() {
     super.initState();
     _initializeApp();
+    // Listen to auth changes to update UI after sign-in
+    AuthRepository.instance.addListener(_onAuthChanged);
   }
 
   Future<void> _initializeApp() async {
-    // Start checking onboarding status immediately, in parallel with splash
+    // Initialize auth (silent sign-in) and check onboarding status in parallel
+    try {
+      await AuthRepository.instance.initialize();
+    } catch (_) {}
     final isCompleted = await OnboardingRepository().isOnboardingCompleted();
+    if (!mounted) return;
     setState(() {
       _isOnboardingCompleted = isCompleted;
+      _authInitialized = true;
+      _isSignedIn = AuthRepository.instance.isSignedIn;
     });
   }
 
@@ -248,6 +282,19 @@ class _OnboardingCheckWrapperState extends State<OnboardingCheckWrapper> {
     });
   }
 
+  void _onAuthChanged() {
+    if (!mounted) return;
+    setState(() {
+      _isSignedIn = AuthRepository.instance.isSignedIn;
+    });
+  }
+
+  @override
+  void dispose() {
+    AuthRepository.instance.removeListener(_onAuthChanged);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Show splash screen first
@@ -255,15 +302,35 @@ class _OnboardingCheckWrapperState extends State<OnboardingCheckWrapper> {
       return SplashScreen(onInitializationComplete: _onSplashComplete);
     }
 
-    // If onboarding check is still loading after splash, show splash again
-    // (this should rarely happen as splash gives enough time)
-    if (_isOnboardingCompleted == null) {
+    // If checks are still loading after splash, keep showing splash briefly
+    if (_isOnboardingCompleted == null || !_authInitialized) {
       return SplashScreen(onInitializationComplete: _onSplashComplete);
     }
 
-    // Show onboarding if not completed
+    // If onboarding is not completed, require Google sign-in first
     if (!_isOnboardingCompleted!) {
-      return const OnboardingScreen();
+      if (!_isSignedIn) {
+        return const SignInScreen();
+      }
+      // Show test choice screen with callbacks to update wrapper state
+      return TestChoiceScreen(
+        onSkip: () async {
+          final isCompleted = await OnboardingRepository()
+              .isOnboardingCompleted();
+          if (!mounted) return;
+          setState(() => _isOnboardingCompleted = isCompleted);
+        },
+        onStart: () async {
+          // when returning from onboarding, refresh flag
+          // We attach a post-frame callback to check later
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final isCompleted = await OnboardingRepository()
+                .isOnboardingCompleted();
+            if (!mounted) return;
+            setState(() => _isOnboardingCompleted = isCompleted);
+          });
+        },
+      );
     }
 
     // Show main home page if completed
@@ -297,6 +364,7 @@ class PrototypeHomePage extends StatefulWidget {
 
 class _PrototypeHomePageState extends State<PrototypeHomePage> {
   int _currentIndex = 0;
+  late final PageController _pageController;
   final GlobalKey<HabitScreenState> _habitKey = GlobalKey<HabitScreenState>();
   final GlobalKey<FinanceScreenState> _financeKey =
       GlobalKey<FinanceScreenState>();
@@ -307,9 +375,17 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
   late final StreamSubscription<int> _xpSub;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void _onNavTap(int i) => setState(() => _currentIndex = i);
+  void _onNavTap(int i) {
+    _pageController.animateToPage(
+      i,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
-  Widget _buildBody() => switch (_currentIndex) {
+  void _onPageChanged(int i) => setState(() => _currentIndex = i);
+
+  Widget _buildPage(int index) => switch (index) {
     0 => DashboardScreen(variant: widget.currentVariant),
     1 => HabitScreen(key: _habitKey),
     2 => FinanceScreen(key: _financeKey, variant: widget.currentVariant),
@@ -330,6 +406,13 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
     ),
     _ => const SizedBox.shrink(),
   };
+
+  Widget _buildBody() => PageView.builder(
+    controller: _pageController,
+    onPageChanged: _onPageChanged,
+    itemCount: 5,
+    itemBuilder: (context, index) => _buildPage(index),
+  );
 
   String _titleFor(int i, AppLocalizations l10n) => switch (i) {
     0 => l10n.dashboard,
@@ -409,13 +492,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
                 );
               },
             ),
-          IconButton(
-            tooltip: 'Premium',
-            icon: const Icon(Icons.workspace_premium),
-            onPressed: () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const SubscriptionPage())),
-          ),
+          // Premium navigation removed — subscriptions cleaned from project.
         ],
       ),
       body: _buildBody(),
@@ -458,6 +535,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
     // Listen to XP gains and show a small animated toast
     GamificationRepository.instance.initialize();
     _xpSub = GamificationRepository.instance.xpGains.listen((gain) {
@@ -469,6 +547,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
 
   @override
   void dispose() {
+    _pageController.dispose();
     _xpSub.cancel();
     super.dispose();
   }

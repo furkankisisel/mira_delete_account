@@ -547,6 +547,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get finish => '完成';
 
   @override
+  String get historyTitle => 'Geçmiş';
+
+  @override
   String get fitness => '健身';
 
   @override
@@ -1217,6 +1220,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get timerSaveSessionTitle => '保存会话';
+
+  @override
+  String get timerQuickPresets => 'Hızlı Ayarlar';
 
   @override
   String get timerSessionAlreadySaved => '此会话已保存';
@@ -2143,5 +2149,345 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String habitAddError(Object error) {
     return 'Error adding habits: $error';
+  }
+
+  @override
+  String get unlistedItems => 'Listelenmemiş';
+
+  @override
+  String get unknownList => 'Bilinmeyen Liste';
+
+  @override
+  String get signInWithGoogle => 'Google ile giriş yap';
+
+  @override
+  String get backupNow => 'Hemen yedekle';
+
+  @override
+  String get restoreLatest => 'Son yeдеği geri yükle';
+
+  @override
+  String backupSuccess(Object id) {
+    return '已备份: $id';
+  }
+
+  @override
+  String get backupError => 'Yedekleme hatası';
+
+  @override
+  String restoreSuccess(Object content) {
+    return '已下载: $content';
+  }
+
+  @override
+  String get restoreError => 'Geri yükleme hatası';
+
+  @override
+  String get manageSubscription => 'Aboneliği yönet';
+
+  @override
+  String get manageSubscriptionSubtitle =>
+      'Mira Plus aboneliğini Google Play üzerinden düzenle';
+
+  @override
+  String get deleteMyAccount => 'Hesabımı sil';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Hesabınızın ve verilerinizin silinmesini talep edin';
+
+  @override
+  String get confirmDeleteAccount => 'Hesabı silmeyi onayla';
+
+  @override
+  String get deleteAccountWarning =>
+      'Bu işlem geri alınamaz. Lütfen hesabınızla ilişkili e-posta adresini onaylayın.';
+
+  @override
+  String get yourEmail => 'E-posta adresiniz';
+
+  @override
+  String get pleaseEnterEmail => 'Lütfen e-posta girin';
+
+  @override
+  String get deleteAccountRequestSuccess =>
+      'Hesap silme talebiniz başarıyla alındı';
+
+  @override
+  String get deleteAccountFailed => 'Hesap silme başarısız';
+
+  @override
+  String get resetOnboarding => 'Tanıtımı sıfırla';
+
+  @override
+  String get retakePersonalityTest => 'Kişilik testini tekrar yap';
+
+  @override
+  String get processingWait => 'İşlem başlatılıyor, lütfen bekleyin...';
+
+  @override
+  String get checkingPurchases => 'Satın almalar kontrol ediliyor...';
+
+  @override
+  String get premiumPlans => 'Premium Planlar';
+
+  @override
+  String get restorePurchases => 'Satın Almaları Geri Yükle';
+
+  @override
+  String get noPlansAvailable => 'Şu anda görüntülenecek plan yok.';
+
+  @override
+  String get cannotOpenPlayStore => 'Play Store açılamıyor';
+
+  @override
+  String get subscriptionDetails => 'Abonelik Detayları';
+
+  @override
+  String get goToPlayStore => 'Play Store\'a Git';
+
+  @override
+  String get becomePremium => 'Premium Olun';
+
+  @override
+  String get premiumFeature => 'Premium Özellik';
+
+  @override
+  String get premiumBenefits => 'Premium avantajları:';
+
+  @override
+  String get later => 'Daha Sonra';
+
+  @override
+  String get becomePremiumShort => 'Premium Ol';
+
+  @override
+  String get shareDashboard => 'Panoyu paylaş';
+
+  @override
+  String get roundCorners => 'Köşeleri yuvarlat';
+
+  @override
+  String get customUnit => 'Özel Birim';
+
+  @override
+  String get pastelColors => '柔和色彩';
+
+  @override
+  String get habitNameHintTimer => '例如：冥想，运动...';
+
+  @override
+  String get habitNameHintNumerical => '例如：喝水，阅读...';
+
+  @override
+  String get habitDescriptionHint => '添加简短描述...';
+
+  @override
+  String get target => '目标';
+
+  @override
+  String get amount => '数量';
+
+  @override
+  String get custom => '自定义';
+
+  @override
+  String get customUnitHint => '例如：份，组，公里...';
+
+  @override
+  String get unitAdet => '个';
+
+  @override
+  String get unitBardak => '杯';
+
+  @override
+  String get unitSayfa => '页';
+
+  @override
+  String get unitKm => '公里';
+
+  @override
+  String get unitLitre => '升';
+
+  @override
+  String get unitKalori => '卡路里';
+
+  @override
+  String get unitAdim => '步';
+
+  @override
+  String get unitKez => '次';
+
+  @override
+  String get premiumFeatures => 'Premium Özellikler';
+
+  @override
+  String get featureDetailedAnalysis => 'Detaylı Kişilik Analizleri';
+
+  @override
+  String get featureUnlimitedPalmReading => 'Sınırsız El Okuma Hakkı';
+
+  @override
+  String get featureAIInsights => 'Yapay Zeka Destekli Öngörüler';
+
+  @override
+  String get featureAdFree => 'Reklamsız Kullanım';
+
+  @override
+  String get featurePrioritySupport => 'Öncelikli Destek';
+
+  @override
+  String get perMonth => '/ay';
+
+  @override
+  String get perYear => '/yıl';
+
+  @override
+  String get unlockAllFeatures => 'Tüm özellikleri açın ve sınırları kaldırın.';
+
+  @override
+  String get flexiblePlan => 'Esnek plan, istediğin zaman iptal et';
+
+  @override
+  String get annualPlanDesc => '12 ay boyunca kesintisiz erişim';
+
+  @override
+  String get trialInfo => '14 gün ücretsiz deneme, istediğin zaman iptal et.';
+
+  @override
+  String get miraPlusActive => 'Mira Plus Aktif';
+
+  @override
+  String get miraPlusInactive => 'Mira Plus Aktif Değil';
+
+  @override
+  String get validity => 'Geçerlilik';
+
+  @override
+  String get daysLeft => 'gün kaldı';
+
+  @override
+  String get subscribeToEnjoyPremium =>
+      'Premium özelliklerin keyfini çıkarmak için abone olun';
+
+  @override
+  String get advancedAnalysis => 'İleri Seviye Analiz';
+
+  @override
+  String get detailedCharts => 'Detaylı grafikler ve istatistikler';
+
+  @override
+  String get cloudBackup => 'Bulut Yedekleme';
+
+  @override
+  String get backupToDrive => 'Verilerinizi Google Drive\'da yedekleyin';
+
+  @override
+  String get adFreeExperience => 'Reklamsız Deneyim';
+
+  @override
+  String get uninterruptedUsage => 'Kesintisiz kullanım';
+
+  @override
+  String get advancedTimer => 'Gelişmiş Timer';
+
+  @override
+  String get pomodoroAndCustomTimers => 'Pomodoro ve özel zamanlayıcılar';
+
+  @override
+  String get personalizedInsights => 'Kişiselleştirilmiş İçgörüler';
+
+  @override
+  String get aiPoweredRecommendations => 'AI destekli öneriler';
+
+  @override
+  String get buyPremium => 'Premium Satın Al';
+
+  @override
+  String get manageOnGooglePlay => 'Aboneliği Google Play\'de Yönet';
+
+  @override
+  String get manageSubscriptionDesc =>
+      'Plan değiştir, iptal et veya fatura bilgilerini gör';
+
+  @override
+  String get billingHistory => 'Fatura Geçmişi';
+
+  @override
+  String get viewInvoicesOnPlayStore =>
+      'Google Play Store\'dan faturalarınızı görüntüleyin';
+
+  @override
+  String get seeFullSubscriptionInfo => 'Tam abonelik bilgilerinizi görün';
+
+  @override
+  String get helpAndSupport => 'Yardım ve Destek';
+
+  @override
+  String get howToCancel => 'Nasıl iptal ederim?';
+
+  @override
+  String get cancelInstructions =>
+      'Google Play Store → Abonelikler → Mira Plus → İptal Et';
+
+  @override
+  String get whatHappensIfCancel => 'İptal edersem ne olur?';
+
+  @override
+  String get cancelEffect =>
+      'Abonelik süreniz bitene kadar premium özelliklerden faydalanmaya devam edersiniz.';
+
+  @override
+  String get ifTrialCancelled => 'Ücretsiz deneme iptal edilirse?';
+
+  @override
+  String get trialCancelEffect =>
+      'Ücretsiz deneme sırasında iptal ederseniz hemen ücretlendirilmezsiniz.';
+
+  @override
+  String get canIGetRefund => 'Geri ödeme alabilir miyim?';
+
+  @override
+  String get refundPolicy =>
+      'Geri ödeme talepleri Google Play politikalarına tabidir. Play Store\'dan başvurabilirsiniz.';
+
+  @override
+  String get active => 'Aktif';
+
+  @override
+  String get inactive => 'İnaktif';
+
+  @override
+  String get daysRemaining => 'Kalan Gün';
+
+  @override
+  String get usePlayStoreToManage =>
+      'Aboneliğinizi yönetmek için Google Play Store\'u kullanın.';
+
+  @override
+  String get thisFeatureIsPremium => 'Bu özellik Premium\'da';
+
+  @override
+  String get mustBePremiumToUse =>
+      'Bu özelliği kullanmak için Premium abonesi olmalısınız.';
+
+  @override
+  String get advancedAnalysisAndReports => 'İleri seviye analiz ve raporlar';
+
+  @override
+  String get unlimitedDataStorage => 'Sınırsız veri depolama';
+
+  @override
+  String get freeTrial14Days => '14 gün ücretsiz deneme';
+
+  @override
+  String get backupFailed => '备份失败';
+
+  @override
+  String get restoreFailed => '恢复失败';
+
+  @override
+  String plansLoadError(Object error) {
+    return '加载计划错误: $error';
   }
 }

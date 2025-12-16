@@ -660,7 +660,7 @@ class VisionRepository {
               .toList()
             ..sort();
       return offs
-          .map((o) => _dateKey(base.add(Duration(days: o - 1))))
+          .map<String>((o) => _dateKey(base.add(Duration(days: o - 1))))
           .toList(growable: false);
     }
     final String? freq = (tpl['frequencyType'] as String?);
@@ -1250,5 +1250,138 @@ class VisionRepository {
     if (icon.codePoint == Icons.icecream.codePoint) return 'icecream';
     if (icon.codePoint == Icons.no_food.codePoint) return 'no_food';
     return 'check_circle';
+  }
+
+  /// Calculates vision progress based on linked habits' completion rates.
+  /// Returns a value between 0.0 and 1.0 representing overall completion percentage.
+  Future<double> calculateVisionProgress(String visionId) async {
+    final vision = _items.firstWhere(
+      (v) => v.id == visionId,
+      orElse: () => throw Exception('Vision not found'),
+    );
+
+    if (vision.linkedHabitIds.isEmpty) return 0.0;
+
+    final habitRepo = HabitRepository.instance;
+    await habitRepo.initialize();
+
+    double totalProgress = 0.0;
+    int validHabitsCount = 0;
+
+    for (final habitId in vision.linkedHabitIds) {
+      final habit = habitRepo.findById(habitId);
+      if (habit == null) continue;
+
+      final habitProgress = _calculateHabitProgress(habit, vision);
+      if (habitProgress >= 0) {
+        totalProgress += habitProgress;
+        validHabitsCount++;
+      }
+    }
+
+    if (validHabitsCount == 0) return 0.0;
+    return totalProgress / validHabitsCount;
+  }
+
+  /// Calculates individual habit progress within the vision timeframe.
+  /// Returns value between 0.0 and 1.0, or -1 if habit is invalid.
+  double _calculateHabitProgress(Habit habit, Vision vision) {
+    // Parse habit dates
+    final DateTime? habitStart = _tryParseDay(habit.startDate);
+    final DateTime? habitEnd =
+        habit.endDate != null && habit.endDate!.isNotEmpty
+        ? _tryParseDay(habit.endDate!)
+        : null;
+
+    if (habitStart == null) return -1;
+
+    // Determine evaluation period
+    final DateTime evaluationStart = habitStart;
+    final DateTime today = DateTime.now();
+    final DateTime evaluationEnd = habitEnd ?? today;
+
+    // If habit hasn't started yet, progress is 0
+    if (evaluationStart.isAfter(today)) return 0.0;
+
+    // Calculate scheduled days within the period
+    int scheduledDaysCount = 0;
+    int completedDaysCount = 0;
+
+    // If habit has explicit schedule, use it
+    if (habit.scheduledDates != null && habit.scheduledDates!.isNotEmpty) {
+      for (final dateStr in habit.scheduledDates!) {
+        final date = _tryParseDay(dateStr);
+        if (date == null) continue;
+
+        // Only count days within the evaluation period and up to today
+        if (date.isBefore(evaluationStart) || date.isAfter(evaluationEnd)) {
+          continue;
+        }
+        if (date.isAfter(today)) continue;
+
+        scheduledDaysCount++;
+
+        // Check if completed on that day
+        if (habit.dailyLog.containsKey(dateStr)) {
+          final loggedValue = habit.dailyLog[dateStr] ?? 0;
+          if (_isDayCompleted(habit, loggedValue)) {
+            completedDaysCount++;
+          }
+        }
+      }
+    } else {
+      // Daily habit - count all days from start to end
+      DateTime currentDay = DateTime(
+        evaluationStart.year,
+        evaluationStart.month,
+        evaluationStart.day,
+      );
+      final endDay = evaluationEnd.isBefore(today) ? evaluationEnd : today;
+
+      while (!currentDay.isAfter(endDay)) {
+        scheduledDaysCount++;
+        final dayKey = _dateKey(currentDay);
+
+        if (habit.dailyLog.containsKey(dayKey)) {
+          final loggedValue = habit.dailyLog[dayKey] ?? 0;
+          if (_isDayCompleted(habit, loggedValue)) {
+            completedDaysCount++;
+          }
+        }
+
+        currentDay = currentDay.add(const Duration(days: 1));
+      }
+    }
+
+    if (scheduledDaysCount == 0) return 0.0;
+    return completedDaysCount / scheduledDaysCount;
+  }
+
+  /// Checks if a habit day is completed based on habit type and target.
+  bool _isDayCompleted(Habit habit, int loggedValue) {
+    switch (habit.habitType) {
+      case HabitType.simple:
+        return loggedValue >= habit.targetCount;
+
+      case HabitType.numerical:
+        switch (habit.numericalTargetType) {
+          case NumericalTargetType.exact:
+            return loggedValue == habit.targetCount;
+          case NumericalTargetType.minimum:
+            return loggedValue >= habit.targetCount;
+          case NumericalTargetType.maximum:
+            return loggedValue <= habit.targetCount;
+        }
+
+      case HabitType.timer:
+        switch (habit.timerTargetType) {
+          case TimerTargetType.exact:
+            return loggedValue == habit.targetCount;
+          case TimerTargetType.minimum:
+            return loggedValue >= habit.targetCount;
+          case TimerTargetType.maximum:
+            return loggedValue <= habit.targetCount;
+        }
+    }
   }
 }

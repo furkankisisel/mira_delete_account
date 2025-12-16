@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../data/vision_template.dart';
 import '../data/vision_template_repository.dart';
 import '../data/vision_repository.dart';
-import '../../habit/presentation/advanced_habit_wizard_screen.dart';
+import '../../habit/presentation/advanced_habit_screen.dart';
 import '../../habit/domain/habit_types.dart';
 
 class VisionTemplateBuilderScreen extends StatefulWidget {
@@ -49,9 +49,9 @@ class _VisionTemplateBuilderScreenState
   void _addHabit() async {
     final map = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
-        builder: (_) => const AdvancedHabitWizardScreen(
-          scheduleBeforeFrequency: true,
+        builder: (_) => const AdvancedHabitScreen(
           useVisionDayOffsets: true,
+          returnAsMap: true,
         ),
       ),
     );
@@ -65,11 +65,10 @@ class _VisionTemplateBuilderScreenState
     final initialMap = _advancedMapFromVisionHabit(_habits[index]);
     final map = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
-        builder: (_) => AdvancedHabitWizardScreen(
-          isEditing: true,
-          editingHabit: initialMap,
-          scheduleBeforeFrequency: true,
+        builder: (_) => AdvancedHabitScreen(
+          editingHabitMap: initialMap,
           useVisionDayOffsets: true,
+          returnAsMap: true,
         ),
       ),
     );
@@ -406,7 +405,7 @@ class _VisionTemplateBuilderScreenState
                   subtitle: Text(
                     h.endDay != null
                         ? '${h.type.toUpperCase()} • '
-                              '${AppLocalizations.of(context).dayRangeShort(h.startDay, h.endDay!)}'
+                              '${AppLocalizations.of(context).dayRangeShort(h.endDay!, h.startDay)}'
                         : '${h.type.toUpperCase()} • '
                               '${AppLocalizations.of(context).dayShort(h.startDay)}',
                   ),

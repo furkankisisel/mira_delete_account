@@ -8,8 +8,6 @@
     <!-- Exact alarm permissions for Android 12+ -->
     <!-- Removed: this app does not provide calendar/alarm core functionality; exact alarm permission not required. -->
     <!-- Explicitly remove any injected exact-alarm permissions from libraries/plugins -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" tools:node="remove" />
     <!-- Foreground service permission for Android 9+ -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- For Android 14+ (API 34+) we need specific foreground service type -->

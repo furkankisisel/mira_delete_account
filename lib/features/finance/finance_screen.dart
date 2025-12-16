@@ -491,7 +491,7 @@ class _DayDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final localeName = Localizations.localeOf(context).toString();
-    final dateLabel = DateFormat.yMMMd(localeName).format(day);
+    final dateLabel = DateFormat.E(localeName).format(day);
     final isPositive = totalText.trim().startsWith('+');
     final isNegative = totalText.trim().startsWith('-');
     // Slightly smaller and more subdued styles

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/habit/domain/habit_repository.dart';
 import '../../features/habit/domain/habit_types.dart';
 import '../../features/notifications/services/notification_service.dart';
@@ -26,6 +28,30 @@ class TimerSession {
   final String? label;
   final bool completed;
   bool assigned;
+
+  /// JSON'a serialize et
+  Map<String, dynamic> toJson() => {
+    'mode': mode.index,
+    'durationMs': duration.inMilliseconds,
+    'startedAt': startedAt.toIso8601String(),
+    'endedAt': endedAt.toIso8601String(),
+    'label': label,
+    'completed': completed,
+    'assigned': assigned,
+  };
+
+  /// JSON'dan deserialize et
+  factory TimerSession.fromJson(Map<String, dynamic> json) {
+    return TimerSession(
+      mode: TimerMode.values[json['mode'] as int],
+      duration: Duration(milliseconds: json['durationMs'] as int),
+      startedAt: DateTime.parse(json['startedAt'] as String),
+      endedAt: DateTime.parse(json['endedAt'] as String),
+      label: json['label'] as String?,
+      completed: json['completed'] as bool? ?? true,
+      assigned: json['assigned'] as bool? ?? false,
+    );
+  }
 }
 
 /// Paneldeki mini widget ve tam ekran zamanlayıcı arasında paylaşılan denetleyici.
@@ -39,8 +65,13 @@ class TimerController extends ChangeNotifier {
     _initializeBackgroundService();
     // Setup MethodChannel for native timer actions
     _setupMethodChannel();
+    // Session'ları yükle
+    _loadSessions();
   }
   static final TimerController instance = TimerController._();
+
+  static const String _sessionsKey = 'timer_sessions';
+  static const int _maxSessionAgeDays = 7; // 1 hafta
 
   Timer? _timer;
   DateTime? _currentStart; // aktif çalışma başlangıç zamanı
@@ -60,6 +91,49 @@ class TimerController extends ChangeNotifier {
         }
       }
     });
+  }
+
+  /// Session'ları SharedPreferences'tan yükle ve eski olanları temizle
+  Future<void> _loadSessions() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final sessionsJson = prefs.getString(_sessionsKey);
+      if (sessionsJson != null) {
+        final List<dynamic> sessionsList = jsonDecode(sessionsJson);
+        final now = DateTime.now();
+        final cutoffDate = now.subtract(const Duration(days: _maxSessionAgeDays));
+        
+        _sessions.clear();
+        for (final item in sessionsList) {
+          try {
+            final session = TimerSession.fromJson(item as Map<String, dynamic>);
+            // 1 haftadan eski olmayan session'ları ekle
+            if (session.endedAt.isAfter(cutoffDate)) {
+              _sessions.add(session);
+            }
+          } catch (e) {
+            print('Error parsing session: $e');
+          }
+        }
+        
+        // Eski session'lar temizlendiyse kaydet
+        await _saveSessions();
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error loading timer sessions: $e');
+    }
+  }
+
+  /// Session'ları SharedPreferences'a kaydet
+  Future<void> _saveSessions() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final sessionsList = _sessions.map((s) => s.toJson()).toList();
+      await prefs.setString(_sessionsKey, jsonEncode(sessionsList));
+    } catch (e) {
+      print('Error saving timer sessions: $e');
+    }
   }
 
   // Stopwatch (kronometre)
@@ -400,12 +474,12 @@ class TimerController extends ChangeNotifier {
     );
   }
 
-  /// Bitir: O anki süreyi oturum olarak kaydet ve pending'e ekle
+  /// Bitir: O anki süreyi oturum olarak kaydet (pending'e eklemeyen)
   void finish() {
     switch (_activeMode) {
       case TimerMode.stopwatch:
         if (_elapsed > Duration.zero) {
-          _recordSession(TimerMode.stopwatch, _elapsed, completed: true);
+          _recordSession(TimerMode.stopwatch, _elapsed, completed: true, addToPending: false);
         }
         _elapsed = Duration.zero;
         _stopwatchRunning = false;
@@ -414,7 +488,7 @@ class TimerController extends ChangeNotifier {
       case TimerMode.countdown:
         final done = _countdownTotal - _countdownRemaining;
         if (done > Duration.zero) {
-          _recordSession(TimerMode.countdown, done, completed: true);
+          _recordSession(TimerMode.countdown, done, completed: true, addToPending: false);
         }
         _countdownRunning = false;
         _countdownRemaining = _countdownTotal;
@@ -428,6 +502,7 @@ class TimerController extends ChangeNotifier {
               done,
               label: 'Çalışma',
               completed: true,
+              addToPending: false,
             );
           }
         }
@@ -446,6 +521,7 @@ class TimerController extends ChangeNotifier {
     Duration duration, {
     String? label,
     bool completed = true,
+    bool addToPending = true,
   }) {
     if (duration <= Duration.zero) return;
     final end = DateTime.now();
@@ -466,13 +542,18 @@ class TimerController extends ChangeNotifier {
       _sessions.removeRange(200, _sessions.length);
     }
     _currentStart = null;
-    // Artık otomatik habit güncellemesi yok; pending'e ekle
-    _pending += duration;
+    // Opsiyonel: pending'e ekle (finish için false gönderilir)
+    if (addToPending) {
+      _pending += duration;
+    }
+    // Session'ları kalıcı olarak kaydet
+    _saveSessions();
     notifyListeners();
   }
 
   void clearHistory() {
     _sessions.clear();
+    _saveSessions();
     notifyListeners();
   }
 
@@ -481,6 +562,7 @@ class TimerController extends ChangeNotifier {
   void removeSessionAt(int index) {
     if (index < 0 || index >= _sessions.length) return;
     _sessions.removeAt(index);
+    _saveSessions();
     notifyListeners();
   }
 
@@ -500,16 +582,44 @@ class TimerController extends ChangeNotifier {
     } else {
       _pending = Duration.zero;
     }
+    // Session güncellemesini kaydet
+    _saveSessions();
     notifyListeners();
     return true;
   }
 
   Future<void> savePendingToHabit(String habitId) async {
-    if (_pending <= Duration.zero) return;
     final repo = HabitRepository.instance;
     final habit = repo.findById(habitId);
     if (habit == null || habit.habitType != HabitType.timer) return;
-    repo.addTimerProgress(habitId, _pending);
+
+    // Include any elapsed time from current stopwatch session that hasn't been finished yet
+    Duration totalToSave = _pending;
+    if (_activeMode == TimerMode.stopwatch && _elapsed > Duration.zero) {
+      totalToSave += _elapsed;
+      // Reset elapsed since we're saving it
+      _elapsed = Duration.zero;
+      _stopwatchRunning = false;
+      _currentStart = null;
+      _timer?.cancel();
+      NotificationService.instance.cancelTimerNotification();
+      _stopBackgroundService();
+    } else if (_activeMode == TimerMode.countdown) {
+      // For countdown, save the time that has passed
+      final done = _countdownTotal - _countdownRemaining;
+      if (done > Duration.zero) {
+        totalToSave += done;
+        _countdownRemaining = _countdownTotal;
+        _countdownRunning = false;
+        _timer?.cancel();
+        NotificationService.instance.cancelTimerNotification();
+        _stopBackgroundService();
+      }
+    }
+
+    if (totalToSave <= Duration.zero) return;
+
+    repo.addTimerProgress(habitId, totalToSave);
     _pending = Duration.zero;
     notifyListeners();
   }

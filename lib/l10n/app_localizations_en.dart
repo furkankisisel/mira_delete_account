@@ -550,6 +550,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get finish => 'Finish';
 
   @override
+  String get historyTitle => 'History';
+
+  @override
   String get fitness => 'Fitness';
 
   @override
@@ -1223,6 +1226,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get timerSaveSessionTitle => 'Save Session';
+
+  @override
+  String get timerQuickPresets => 'Quick Presets';
 
   @override
   String get timerSessionAlreadySaved => 'This session is already saved';
@@ -2170,5 +2176,344 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String habitAddError(Object error) {
     return 'Error adding habits: $error';
+  }
+
+  @override
+  String get unlistedItems => 'Unlisted Items';
+
+  @override
+  String get unknownList => 'Unknown List';
+
+  @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get backupNow => 'Backup Now';
+
+  @override
+  String get restoreLatest => 'Restore Latest';
+
+  @override
+  String backupSuccess(Object id) {
+    return 'Backed up: $id';
+  }
+
+  @override
+  String get backupError => 'Backup Error';
+
+  @override
+  String restoreSuccess(Object content) {
+    return 'Downloaded: $content';
+  }
+
+  @override
+  String get restoreError => 'Restore Error';
+
+  @override
+  String get manageSubscription => 'Manage Subscription';
+
+  @override
+  String get manageSubscriptionSubtitle =>
+      'Manage Mira Plus subscription via Google Play';
+
+  @override
+  String get deleteMyAccount => 'Delete My Account';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Request deletion of your account and data';
+
+  @override
+  String get confirmDeleteAccount => 'Confirm Account Deletion';
+
+  @override
+  String get deleteAccountWarning =>
+      'This action cannot be undone. Please confirm the email associated with your account.';
+
+  @override
+  String get yourEmail => 'Your Email';
+
+  @override
+  String get pleaseEnterEmail => 'Please enter email';
+
+  @override
+  String get deleteAccountRequestSuccess =>
+      'Your account deletion request has been successfully received';
+
+  @override
+  String get deleteAccountFailed => 'Account deletion failed';
+
+  @override
+  String get resetOnboarding => 'Reset Onboarding';
+
+  @override
+  String get retakePersonalityTest => 'Retake Personality Test';
+
+  @override
+  String get processingWait => 'Processing, please wait...';
+
+  @override
+  String get checkingPurchases => 'Checking purchases...';
+
+  @override
+  String get premiumPlans => 'Premium Plans';
+
+  @override
+  String get restorePurchases => 'Restore Purchases';
+
+  @override
+  String get noPlansAvailable => 'No plans available at the moment.';
+
+  @override
+  String get cannotOpenPlayStore => 'Cannot open Play Store';
+
+  @override
+  String get subscriptionDetails => 'Subscription Details';
+
+  @override
+  String get goToPlayStore => 'Go to Play Store';
+
+  @override
+  String get becomePremium => 'Become Premium';
+
+  @override
+  String get premiumFeature => 'Premium Feature';
+
+  @override
+  String get premiumBenefits => 'Premium benefits:';
+
+  @override
+  String get later => 'Later';
+
+  @override
+  String get becomePremiumShort => 'Get Premium';
+
+  @override
+  String get shareDashboard => 'Share Dashboard';
+
+  @override
+  String get roundCorners => 'Round Corners';
+
+  @override
+  String get customUnit => 'Custom Unit';
+
+  @override
+  String get pastelColors => 'Pastel Colors';
+
+  @override
+  String get habitNameHintTimer => 'Ex: Meditation, Exercise...';
+
+  @override
+  String get habitNameHintNumerical => 'Ex: Drink water, Read pages...';
+
+  @override
+  String get habitDescriptionHint => 'Add a short description...';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get customUnitHint => 'Ex: portion, set, km...';
+
+  @override
+  String get unitAdet => 'pcs';
+
+  @override
+  String get unitBardak => 'glass';
+
+  @override
+  String get unitSayfa => 'page';
+
+  @override
+  String get unitKm => 'km';
+
+  @override
+  String get unitLitre => 'liter';
+
+  @override
+  String get unitKalori => 'cal';
+
+  @override
+  String get unitAdim => 'step';
+
+  @override
+  String get unitKez => 'times';
+
+  @override
+  String get premiumFeatures => 'Premium Features';
+
+  @override
+  String get featureDetailedAnalysis => 'Detailed Personality Analysis';
+
+  @override
+  String get featureUnlimitedPalmReading => 'Unlimited Palm Reading';
+
+  @override
+  String get featureAIInsights => 'AI Powered Insights';
+
+  @override
+  String get featureAdFree => 'Ad-Free Experience';
+
+  @override
+  String get featurePrioritySupport => 'Priority Support';
+
+  @override
+  String get perMonth => '/mo';
+
+  @override
+  String get perYear => '/yr';
+
+  @override
+  String get unlockAllFeatures => 'Unlock all features and remove limits.';
+
+  @override
+  String get flexiblePlan => 'Flexible plan, cancel anytime';
+
+  @override
+  String get annualPlanDesc => 'Uninterrupted access for 12 months';
+
+  @override
+  String get trialInfo => '14-day free trial, cancel anytime.';
+
+  @override
+  String get miraPlusActive => 'Mira Plus Active';
+
+  @override
+  String get miraPlusInactive => 'Mira Plus Inactive';
+
+  @override
+  String get validity => 'Validity';
+
+  @override
+  String get daysLeft => 'days left';
+
+  @override
+  String get subscribeToEnjoyPremium => 'Subscribe to enjoy premium features';
+
+  @override
+  String get advancedAnalysis => 'Advanced Analysis';
+
+  @override
+  String get detailedCharts => 'Detailed charts and statistics';
+
+  @override
+  String get cloudBackup => 'Cloud Backup';
+
+  @override
+  String get backupToDrive => 'Backup your data to Google Drive';
+
+  @override
+  String get adFreeExperience => 'Ad-Free Experience';
+
+  @override
+  String get uninterruptedUsage => 'Uninterrupted usage';
+
+  @override
+  String get advancedTimer => 'Advanced Timer';
+
+  @override
+  String get pomodoroAndCustomTimers => 'Pomodoro and custom timers';
+
+  @override
+  String get personalizedInsights => 'Personalized Insights';
+
+  @override
+  String get aiPoweredRecommendations => 'AI powered recommendations';
+
+  @override
+  String get buyPremium => 'Buy Premium';
+
+  @override
+  String get manageOnGooglePlay => 'Manage on Google Play';
+
+  @override
+  String get manageSubscriptionDesc =>
+      'Change plan, cancel or view billing info';
+
+  @override
+  String get billingHistory => 'Billing History';
+
+  @override
+  String get viewInvoicesOnPlayStore =>
+      'View your invoices on Google Play Store';
+
+  @override
+  String get seeFullSubscriptionInfo => 'See full subscription info';
+
+  @override
+  String get helpAndSupport => 'Help & Support';
+
+  @override
+  String get howToCancel => 'How to cancel?';
+
+  @override
+  String get cancelInstructions =>
+      'Google Play Store → Subscriptions → Mira Plus → Cancel';
+
+  @override
+  String get whatHappensIfCancel => 'What happens if I cancel?';
+
+  @override
+  String get cancelEffect =>
+      'You continue to enjoy premium features until your subscription ends.';
+
+  @override
+  String get ifTrialCancelled => 'If free trial is cancelled?';
+
+  @override
+  String get trialCancelEffect =>
+      'If you cancel during the free trial, you won\'t be charged immediately.';
+
+  @override
+  String get canIGetRefund => 'Can I get a refund?';
+
+  @override
+  String get refundPolicy =>
+      'Refund requests are subject to Google Play policies. You can apply from Play Store.';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get inactive => 'Inactive';
+
+  @override
+  String get daysRemaining => 'Days Remaining';
+
+  @override
+  String get usePlayStoreToManage =>
+      'Use Google Play Store to manage your subscription.';
+
+  @override
+  String get thisFeatureIsPremium => 'This feature is Premium';
+
+  @override
+  String get mustBePremiumToUse =>
+      'You must be a Premium subscriber to use this feature.';
+
+  @override
+  String get advancedAnalysisAndReports => 'Advanced analysis and reports';
+
+  @override
+  String get unlimitedDataStorage => 'Unlimited data storage';
+
+  @override
+  String get freeTrial14Days => '14-day free trial';
+
+  @override
+  String get backupFailed => 'Backup failed';
+
+  @override
+  String get restoreFailed => 'Restore failed';
+
+  @override
+  String plansLoadError(Object error) {
+    return 'Error loading plans: $error';
   }
 }
