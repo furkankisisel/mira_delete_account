@@ -334,11 +334,14 @@ class HabitRepository extends ChangeNotifier {
     _persistAndNotify();
   }
 
-  /// Basit (checkbox) alışkanlık toggle
+  /// Basit (checkbox) alışkanlık toggle - simple ve checkbox türleri için
   void toggleSimple(String habitId) {
     _ensureToday();
     final habit = findById(habitId);
-    if (habit == null || habit.habitType != HabitType.simple) return;
+    if (habit == null ||
+        (habit.habitType != HabitType.simple &&
+            habit.habitType != HabitType.checkbox))
+      return;
     habit.applyDailyReset(DateTime.now());
     final beforeCompleted = habit.isCompleted;
     habit.isCompleted = !habit.isCompleted;
@@ -394,10 +397,13 @@ class HabitRepository extends ChangeNotifier {
     _persistAndNotify();
   }
 
-  /// Geçmiş (veya bugün) belirli bir tarih için simple toggle (global currentStreak'i sadece bugün için değiştirir)
+  /// Geçmiş (veya bugün) belirli bir tarih için simple/checkbox toggle
   void toggleSimpleForDate(String habitId, DateTime date) {
     final habit = findById(habitId);
-    if (habit == null || habit.habitType != HabitType.simple) return;
+    if (habit == null ||
+        (habit.habitType != HabitType.simple &&
+            habit.habitType != HabitType.checkbox))
+      return;
     final dateKey = _dateStr(date);
     // Başlangıç tarihinden önceye yazma
     if (dateKey.compareTo(habit.startDate) < 0) return;
@@ -414,6 +420,93 @@ class HabitRepository extends ChangeNotifier {
     final nowCompleted = !wasCompleted;
     habit.dailyLog[dateKey] = nowCompleted ? habit.targetCount : 0;
     // currentStreak ve isCompleted alanları bugünün durumunu temsil eder, değiştirmiyoruz.
+    _persistAndNotify();
+  }
+
+  /// Alt görev toggle (bugün için)
+  void toggleSubtask(String habitId, String subtaskId, bool completed) {
+    _ensureToday();
+    final habit = findById(habitId);
+    if (habit == null || habit.habitType != HabitType.subtasks) return;
+    habit.applyDailyReset(DateTime.now());
+
+    final subtask = habit.subtasks.firstWhere(
+      (s) => s.id == subtaskId,
+      orElse: () => throw StateError('Subtask not found'),
+    );
+    final beforeCompleted = habit.isCompleted;
+    subtask.isCompleted = completed;
+
+    // Tüm alt görevler tamamlandı mı kontrol et
+    final allCompleted = habit.subtasks.every((s) => s.isCompleted);
+    habit.isCompleted = allCompleted;
+    habit.currentStreak = allCompleted ? 1 : 0;
+
+    final today = habit.progressDate;
+    habit.dailyLog[today] = habit.currentStreak;
+
+    // Alt görevlerin durumunu kaydet
+    habit.subtasksLog[today] = habit.subtasks.map((s) => s.toJson()).toList();
+
+    if (!beforeCompleted && habit.isCompleted) {
+      // ignore: unawaited_futures
+      GamificationRepository.instance.onHabitCompleted(
+        habitId: habit.id,
+        when: DateTime.now(),
+      );
+    } else if (beforeCompleted && !habit.isCompleted) {
+      // ignore: unawaited_futures
+      GamificationRepository.instance.onHabitCompletionUndone(
+        habitId: habit.id,
+        when: DateTime.now(),
+      );
+    }
+    _persistAndNotify();
+  }
+
+  /// Belirli bir tarih için alt görev toggle
+  void toggleSubtaskForDate(
+    String habitId,
+    String subtaskId,
+    bool completed,
+    DateTime date,
+  ) {
+    final habit = findById(habitId);
+    if (habit == null || habit.habitType != HabitType.subtasks) return;
+    final dateKey = _dateStr(date);
+
+    if (dateKey.compareTo(habit.startDate) < 0) return;
+    if (habit.endDate != null && dateKey.compareTo(habit.endDate!) > 0) return;
+
+    final todayKey = _dateStr(DateTime.now());
+    if (dateKey == todayKey) {
+      toggleSubtask(habitId, subtaskId, completed);
+      return;
+    }
+
+    // Geçmiş gün: subtasksLog'dan yükle veya mevcut subtasks'dan kopyala
+    List<Map<String, dynamic>> subtasksState;
+    if (habit.subtasksLog.containsKey(dateKey)) {
+      subtasksState = List<Map<String, dynamic>>.from(
+        habit.subtasksLog[dateKey]!,
+      );
+    } else {
+      subtasksState = habit.subtasks
+          .map((s) => {'id': s.id, 'title': s.title, 'isCompleted': false})
+          .toList();
+    }
+
+    // İlgili subtask'ı güncelle
+    final subtaskIndex = subtasksState.indexWhere((s) => s['id'] == subtaskId);
+    if (subtaskIndex != -1) {
+      subtasksState[subtaskIndex]['isCompleted'] = completed;
+    }
+
+    // Tümü tamamlandı mı kontrol et
+    final allCompleted = subtasksState.every((s) => s['isCompleted'] == true);
+    habit.dailyLog[dateKey] = allCompleted ? 1 : 0;
+    habit.subtasksLog[dateKey] = subtasksState;
+
     _persistAndNotify();
   }
 
@@ -482,7 +575,11 @@ class HabitRepository extends ChangeNotifier {
   static bool evaluateCompletionForProgress(Habit habit, int progress) {
     switch (habit.habitType) {
       case HabitType.simple:
+      case HabitType.checkbox:
         return progress >= habit.targetCount;
+      case HabitType.subtasks:
+        // Subtasks için progress 1 ise (tümü tamamlanmış) tamamlandı
+        return progress >= 1;
       case HabitType.numerical:
         switch (habit.numericalTargetType) {
           case NumericalTargetType.minimum:

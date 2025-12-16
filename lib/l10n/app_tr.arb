@@ -401,6 +401,8 @@
     "timerTabPomodoro": "Pomodoro",
     "timerTabStopwatch": "Kronometre",
     "timerType": "Zamanlayıcı",
+    "checkboxType": "Onay Kutusu",
+    "subtasksType": "Alt Görevler",
     "times": "Kere",
     "titleHint": "Örn: Market, Serbest Çalışma, vb.",
     "titleOptional": "Başlık (isteğe bağlı)",
@@ -496,6 +498,102 @@
     "daysCount": "{count} gün",
     "success": "Başarı",
     "successfulDayLegend": "Başarılı gün",
+    "privacySecuritySubtitle": "Ayarları ve veri silme seçeneklerini yönetin",
+    "googleDrive": "Google Drive",
+    "reportBug": "Hata Bildir",
+    "reportBugSubtitle": "Karşılaştığınız sorunları bildirin",
+    "reportBugDescription": "Karşılaştığınız sorunu aşağıya detaylı olarak yazın.",
+    "yourEmailAddress": "E-posta Adresiniz",
+    "issueDescription": "Sorun Açıklaması",
+    "issueDescriptionHint": "Sorunu detaylı olarak açıklayın...",
+    "send": "Gönder",
+    "pleaseFillAllFields": "Lütfen tüm alanları doldurun",
+    "bugReportSentSuccess": "Hata raporunuz başarıyla gönderildi. Teşekkür ederiz!",
+    "bugReportFailedStatus": "Hata raporu gönderilemedi: {statusCode}",
+    "@bugReportFailedStatus": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "bugReportFailedError": "Hata raporu gönderilemedi: {error}",
+    "@bugReportFailedError": {
+        "placeholders": {
+            "error": {}
+        }
+    },
+    "resetOnboardingTitle": "Tanıtımı Sıfırla?",
+    "resetOnboardingDescription": "Bu işlem mevcut kişilik testi sonuçlarınızı silecek ve testi tekrar yapmanızı sağlayacaktır.",
+    "resetAction": "Sıfırla",
+    "deleteAllDataConfirmContent": "Tüm uygulama verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "deleteAction": "Sil",
+    "allDataDeleted": "Tüm veriler silindi",
+    "diagnosticsData": "Tanılama verileri",
+    "diagnosticsDataSubtitle": "Uygulama kullanımına dair anonim istatistikleri paylaş",
+    "crashReports": "Çökme raporları",
+    "crashReportsSubtitle": "Uygulama çökmelerinde anonim rapor gönder",
+    "privacyPolicy": "Gizlilik Politikası",
+    "deleteAllData": "Tüm verileri sil",
+    "stopwatchLabel": "KRONOMETRE",
+    "runningLabel": "ÇALIŞIYOR",
+    "countdownLabel": "GERİ SAYIM",
+    "focusLabel": "ODAK",
+    "breakLabel": "MOLA",
+    "minLabel": "dk",
+    "emojiCategoryPopular": "Popüler",
+    "emojiCategoryHealth": "Sağlık",
+    "emojiCategorySport": "Spor",
+    "emojiCategoryLife": "Yaşam",
+    "emojiCategoryProductivity": "Üretkenlik",
+    "emojiCategoryFood": "Yiyecek",
+    "emojiCategoryNature": "Doğa",
+    "emojiCategoryAnimals": "Hayvanlar",
+    "emojiCategoryCare": "Bakım",
+    "habitTypeLabel": "Alışkanlık Tipi",
+    "nameLabel": "İsim",
+    "descriptionLabel": "Açıklama",
+    "optionalLabel": "opsiyonel",
+    "frequencyLabel": "Sıklık",
+    "dateRangeLabel": "Tarih Aralığı",
+    "reminderLabel": "Hatırlatıcı",
+    "advancedHabitTitle": "Gelişmiş Alışkanlık",
+    "habitNamePlaceholder": "Alışkanlık Adı",
+    "numericTypeDesc": "Sayı takibi",
+    "checkboxTypeDesc": "Basit işaretle",
+    "subtasksTypeDesc": "Çoklu görev",
+    "selectEmoji": "Emoji seç",
+    "customEmoji": "Özel Emoji",
+    "typeEmojiHint": "Klavyeden bir emoji yazın",
+    "everyDay": "Her gün",
+    "periodic": "Periyodik",
+    "everyLabel": "Her",
+    "daysIntervalLabel": "günde bir",
+    "offLabel": "Kapalı",
+    "completeAllSubtasksToFinish": "tümünü tamamlayınca alışkanlık tamamlanır",
+    "subtaskIndex": "Alt görev {index}",
+    "@subtaskIndex": {
+        "placeholders": {
+            "index": {}
+        }
+    },
+    "addSubtask": "Alt Görev Ekle",
+    "saveChanges": "Değişiklikleri Kaydet",
+    "createHabitAction": "Alışkanlık Oluştur",
+    "selectDuration": "Süre Seç",
+    "selectedDaysOfMonth": "Ayın {sorted}. günleri",
+    "@selectedDaysOfMonth": {
+        "placeholders": {
+            "sorted": {}
+        }
+    },
+    "everyXDays": "Her {periodicDays} günde bir",
+    "@everyXDays": {
+        "placeholders": {
+            "periodicDays": {}
+        }
+    },
+    "startDateLabel": "Başlangıç",
+    "endDateLabel": "Bitiş",
+    "notSelected": "Seçilmedi",
     "motivation": "Motivasyon",
     "motivationBody": "Tebrikler! {period} içinde başarı oranınız {percent}%. Harika bir ilerleme kaydettiniz.",
     "weeklyProgress": "Haftalık ilerleme",
@@ -819,5 +917,37 @@
     "backupSuccess": "Yedeklendi: {id}",
     "restoreFailed": "Geri yükleme başarısız",
     "restoreSuccess": "İndirildi: {content}",
-    "plansLoadError": "Planlar yüklenirken hata oluştu: {error}"
+    "plansLoadError": "Planlar yüklenirken hata oluştu: {error}",
+    "optional": "opsiyonel",
+    "newHabit": "Yeni Alışkanlık",
+    "typeEmoji": "Klavyeden bir emoji yazın",
+    "habitNameHint": "Örn: Su içmek, Kitap okumak...",
+    "weekDaysShort": "Pzt,Sal,Çar,Per,Cum,Cmt,Paz",
+    "every": "Her",
+    "daysInterval": "günde bir",
+    "today": "Bugün",
+    "monthsShort": "Oca,Şub,Mar,Nis,May,Haz,Tem,Ağu,Eyl,Eki,Kas,Ara",
+    "tomorrow": "Yarın",
+    "yesterday": "Dün",
+    "daysLater": "{days} gün sonra",
+    "@daysLater": {
+        "placeholders": {
+            "days": {}
+        }
+    },
+    "daysAgo": "{days} gün önce",
+    "@daysAgo": {
+        "placeholders": {
+            "days": {}
+        }
+    },
+    "off": "Kapalı",
+    "createHabit": "Alışkanlık Oluştur",
+    "pickTime": "Saat Seç",
+    "monthlyDays": "Ayın {days}. günleri",
+    "@monthlyDays": {
+        "placeholders": {
+            "days": {}
+        }
+    }
 }

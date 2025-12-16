@@ -1,6 +1,7 @@
 // HabitCard (clean) - adjusted margin + gesture behavior to avoid "panning" gap on swipe/scale
 import 'package:flutter/material.dart';
 import '../../domain/habit_types.dart';
+import '../../domain/subtask_model.dart';
 import '../../../../core/settings/settings_repository.dart' as app_settings;
 import '../../../../l10n/app_localizations.dart';
 
@@ -37,6 +38,10 @@ class HabitCard extends StatefulWidget {
   // NEW: optional margin so parent can override spacing (keeps default aesthetic)
   final EdgeInsets? margin;
 
+  // Subtasks (for subtasks habit type)
+  final List<Subtask>? subtasks;
+  final Function(String, bool)? onSubtaskToggle;
+
   const HabitCard({
     super.key,
     required this.title,
@@ -65,6 +70,8 @@ class HabitCard extends StatefulWidget {
     this.margin,
     this.showStreakIndicator = true,
     this.onToggleStreakIndicator,
+    this.subtasks,
+    this.onSubtaskToggle,
   });
 
   @override
@@ -129,7 +136,9 @@ class _HabitCardState extends State<HabitCard>
 
   void _handleTapUp(TapUpDetails d) {
     if (!widget.readOnly) {
-      if (widget.habitType == HabitType.simple) {
+      // Simple ve checkbox: doğrudan toggle
+      if (widget.habitType == HabitType.simple ||
+          widget.habitType == HabitType.checkbox) {
         final need = widget.iceEnabled && !widget.isCompleted
             ? widget.requiredBreakTaps.clamp(0, 7)
             : 0;
@@ -145,7 +154,13 @@ class _HabitCardState extends State<HabitCard>
           widget.onTap();
           if (_brokenTaps != 0) setState(() => _brokenTaps = 0);
         }
-      } else {
+      }
+      // Subtasks: diyalog gösterme, alt görevlerden tıklama gerekiyor
+      else if (widget.habitType == HabitType.subtasks) {
+        // Alt görevler kartın içinde gösterilecek, buradan bir şey yapmaya gerek yok
+      }
+      // Numerical ve timer: manuel değer girişi
+      else {
         _showManualValueDialog();
       }
     }
@@ -425,7 +440,7 @@ class _HabitCardState extends State<HabitCard>
                   ),
                   onTap: () {
                     Navigator.pop(ctx);
-                    _confirmDelete();
+                    widget.onDelete?.call();
                   },
                 ),
                 const SizedBox(height: 6),
@@ -434,32 +449,6 @@ class _HabitCardState extends State<HabitCard>
           ),
         );
       },
-    );
-  }
-
-  void _confirmDelete() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(ctx).delete),
-        content: Text(
-          AppLocalizations.of(ctx).deleteHabitConfirm(widget.title),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(ctx).cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red[600]),
-            onPressed: () {
-              Navigator.pop(ctx);
-              widget.onDelete?.call();
-            },
-            child: Text(AppLocalizations.of(ctx).delete),
-          ),
-        ],
-      ),
     );
   }
 
@@ -701,6 +690,76 @@ class _HabitCardState extends State<HabitCard>
                             ),
                         ],
                       ),
+                      // Subtasks listesi (sadece subtasks habit type için)
+                      if (widget.habitType == HabitType.subtasks &&
+                          widget.subtasks != null &&
+                          widget.subtasks!.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 150),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: widget.subtasks!.length,
+                            itemBuilder: (context, index) {
+                              final subtask = widget.subtasks![index];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Checkbox(
+                                        value: subtask.isCompleted,
+                                        onChanged: widget.readOnly
+                                            ? null
+                                            : (val) {
+                                                if (widget.onSubtaskToggle !=
+                                                    null) {
+                                                  widget.onSubtaskToggle!(
+                                                    subtask.id,
+                                                    val ?? false,
+                                                  );
+                                                }
+                                              },
+                                        activeColor: done
+                                            ? onCompleted.withValues(alpha: 0.8)
+                                            : widget.color,
+                                        checkColor: Colors.white,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: VisualDensity.compact,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        subtask.title,
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              color: done
+                                                  ? onCompleted.withValues(
+                                                      alpha: 0.9,
+                                                    )
+                                                  : cs.onSurface.withValues(
+                                                      alpha: 0.8,
+                                                    ),
+                                              decoration: subtask.isCompleted
+                                                  ? TextDecoration.lineThrough
+                                                  : null,
+                                            ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

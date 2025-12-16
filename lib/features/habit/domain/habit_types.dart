@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/icons/icon_mapping.dart' as icmap;
 
-enum HabitType { simple, numerical, timer }
+enum HabitType { simple, numerical, timer, checkbox, subtasks }
 
 enum FrequencyType {
   daily,

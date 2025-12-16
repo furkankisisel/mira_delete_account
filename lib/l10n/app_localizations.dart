@@ -2492,6 +2492,18 @@ abstract class AppLocalizations {
   /// **'Zamanlayıcı'**
   String get timerType;
 
+  /// No description provided for @checkboxType.
+  ///
+  /// In tr, this message translates to:
+  /// **'Onay Kutusu'**
+  String get checkboxType;
+
+  /// No description provided for @subtasksType.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alt Görevler'**
+  String get subtasksType;
+
   /// No description provided for @times.
   ///
   /// In tr, this message translates to:
@@ -3020,6 +3032,432 @@ abstract class AppLocalizations {
   /// **'Başarılı gün'**
   String get successfulDayLegend;
 
+  /// No description provided for @privacySecuritySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayarları ve veri silme seçeneklerini yönetin'**
+  String get privacySecuritySubtitle;
+
+  /// No description provided for @googleDrive.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google Drive'**
+  String get googleDrive;
+
+  /// No description provided for @reportBug.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata Bildir'**
+  String get reportBug;
+
+  /// No description provided for @reportBugSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Karşılaştığınız sorunları bildirin'**
+  String get reportBugSubtitle;
+
+  /// No description provided for @reportBugDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Karşılaştığınız sorunu aşağıya detaylı olarak yazın.'**
+  String get reportBugDescription;
+
+  /// No description provided for @yourEmailAddress.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta Adresiniz'**
+  String get yourEmailAddress;
+
+  /// No description provided for @issueDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorun Açıklaması'**
+  String get issueDescription;
+
+  /// No description provided for @issueDescriptionHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorunu detaylı olarak açıklayın...'**
+  String get issueDescriptionHint;
+
+  /// No description provided for @send.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönder'**
+  String get send;
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen tüm alanları doldurun'**
+  String get pleaseFillAllFields;
+
+  /// No description provided for @bugReportSentSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata raporunuz başarıyla gönderildi. Teşekkür ederiz!'**
+  String get bugReportSentSuccess;
+
+  /// No description provided for @bugReportFailedStatus.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata raporu gönderilemedi: {statusCode}'**
+  String bugReportFailedStatus(Object statusCode);
+
+  /// No description provided for @bugReportFailedError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata raporu gönderilemedi: {error}'**
+  String bugReportFailedError(Object error);
+
+  /// No description provided for @resetOnboardingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tanıtımı Sıfırla?'**
+  String get resetOnboardingTitle;
+
+  /// No description provided for @resetOnboardingDescription.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu işlem mevcut kişilik testi sonuçlarınızı silecek ve testi tekrar yapmanızı sağlayacaktır.'**
+  String get resetOnboardingDescription;
+
+  /// No description provided for @resetAction.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıfırla'**
+  String get resetAction;
+
+  /// No description provided for @deleteAllDataConfirmContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm uygulama verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'**
+  String get deleteAllDataConfirmContent;
+
+  /// No description provided for @deleteAction.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sil'**
+  String get deleteAction;
+
+  /// No description provided for @allDataDeleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm veriler silindi'**
+  String get allDataDeleted;
+
+  /// No description provided for @diagnosticsData.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tanılama verileri'**
+  String get diagnosticsData;
+
+  /// No description provided for @diagnosticsDataSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama kullanımına dair anonim istatistikleri paylaş'**
+  String get diagnosticsDataSubtitle;
+
+  /// No description provided for @crashReports.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çökme raporları'**
+  String get crashReports;
+
+  /// No description provided for @crashReportsSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama çökmelerinde anonim rapor gönder'**
+  String get crashReportsSubtitle;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gizlilik Politikası'**
+  String get privacyPolicy;
+
+  /// No description provided for @deleteAllData.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm verileri sil'**
+  String get deleteAllData;
+
+  /// No description provided for @stopwatchLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'KRONOMETRE'**
+  String get stopwatchLabel;
+
+  /// No description provided for @runningLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'ÇALIŞIYOR'**
+  String get runningLabel;
+
+  /// No description provided for @countdownLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'GERİ SAYIM'**
+  String get countdownLabel;
+
+  /// No description provided for @focusLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'ODAK'**
+  String get focusLabel;
+
+  /// No description provided for @breakLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'MOLA'**
+  String get breakLabel;
+
+  /// No description provided for @minLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'dk'**
+  String get minLabel;
+
+  /// No description provided for @emojiCategoryPopular.
+  ///
+  /// In tr, this message translates to:
+  /// **'Popüler'**
+  String get emojiCategoryPopular;
+
+  /// No description provided for @emojiCategoryHealth.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sağlık'**
+  String get emojiCategoryHealth;
+
+  /// No description provided for @emojiCategorySport.
+  ///
+  /// In tr, this message translates to:
+  /// **'Spor'**
+  String get emojiCategorySport;
+
+  /// No description provided for @emojiCategoryLife.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yaşam'**
+  String get emojiCategoryLife;
+
+  /// No description provided for @emojiCategoryProductivity.
+  ///
+  /// In tr, this message translates to:
+  /// **'Üretkenlik'**
+  String get emojiCategoryProductivity;
+
+  /// No description provided for @emojiCategoryFood.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yiyecek'**
+  String get emojiCategoryFood;
+
+  /// No description provided for @emojiCategoryNature.
+  ///
+  /// In tr, this message translates to:
+  /// **'Doğa'**
+  String get emojiCategoryNature;
+
+  /// No description provided for @emojiCategoryAnimals.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hayvanlar'**
+  String get emojiCategoryAnimals;
+
+  /// No description provided for @emojiCategoryCare.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bakım'**
+  String get emojiCategoryCare;
+
+  /// No description provided for @habitTypeLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlık Tipi'**
+  String get habitTypeLabel;
+
+  /// No description provided for @nameLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'İsim'**
+  String get nameLabel;
+
+  /// No description provided for @descriptionLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açıklama'**
+  String get descriptionLabel;
+
+  /// No description provided for @optionalLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'opsiyonel'**
+  String get optionalLabel;
+
+  /// No description provided for @frequencyLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıklık'**
+  String get frequencyLabel;
+
+  /// No description provided for @dateRangeLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tarih Aralığı'**
+  String get dateRangeLabel;
+
+  /// No description provided for @reminderLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hatırlatıcı'**
+  String get reminderLabel;
+
+  /// No description provided for @advancedHabitTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gelişmiş Alışkanlık'**
+  String get advancedHabitTitle;
+
+  /// No description provided for @habitNamePlaceholder.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlık Adı'**
+  String get habitNamePlaceholder;
+
+  /// No description provided for @numericTypeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sayı takibi'**
+  String get numericTypeDesc;
+
+  /// No description provided for @checkboxTypeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Basit işaretle'**
+  String get checkboxTypeDesc;
+
+  /// No description provided for @subtasksTypeDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çoklu görev'**
+  String get subtasksTypeDesc;
+
+  /// No description provided for @selectEmoji.
+  ///
+  /// In tr, this message translates to:
+  /// **'Emoji seç'**
+  String get selectEmoji;
+
+  /// No description provided for @customEmoji.
+  ///
+  /// In tr, this message translates to:
+  /// **'Özel Emoji'**
+  String get customEmoji;
+
+  /// No description provided for @typeEmojiHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Klavyeden bir emoji yazın'**
+  String get typeEmojiHint;
+
+  /// No description provided for @everyDay.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her gün'**
+  String get everyDay;
+
+  /// No description provided for @periodic.
+  ///
+  /// In tr, this message translates to:
+  /// **'Periyodik'**
+  String get periodic;
+
+  /// No description provided for @everyLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her'**
+  String get everyLabel;
+
+  /// No description provided for @daysIntervalLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'günde bir'**
+  String get daysIntervalLabel;
+
+  /// No description provided for @offLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapalı'**
+  String get offLabel;
+
+  /// No description provided for @completeAllSubtasksToFinish.
+  ///
+  /// In tr, this message translates to:
+  /// **'tümünü tamamlayınca alışkanlık tamamlanır'**
+  String get completeAllSubtasksToFinish;
+
+  /// No description provided for @subtaskIndex.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alt görev {index}'**
+  String subtaskIndex(Object index);
+
+  /// No description provided for @addSubtask.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alt Görev Ekle'**
+  String get addSubtask;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In tr, this message translates to:
+  /// **'Değişiklikleri Kaydet'**
+  String get saveChanges;
+
+  /// No description provided for @createHabitAction.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlık Oluştur'**
+  String get createHabitAction;
+
+  /// No description provided for @selectDuration.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süre Seç'**
+  String get selectDuration;
+
+  /// No description provided for @selectedDaysOfMonth.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayın {sorted}. günleri'**
+  String selectedDaysOfMonth(Object sorted);
+
+  /// No description provided for @everyXDays.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her {periodicDays} günde bir'**
+  String everyXDays(Object periodicDays);
+
+  /// No description provided for @startDateLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlangıç'**
+  String get startDateLabel;
+
+  /// No description provided for @endDateLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitiş'**
+  String get endDateLabel;
+
+  /// No description provided for @notSelected.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçilmedi'**
+  String get notSelected;
+
   /// No description provided for @motivation.
   ///
   /// In tr, this message translates to:
@@ -3121,12 +3559,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Temizle'**
   String get clear;
-
-  /// No description provided for @periodic.
-  ///
-  /// In tr, this message translates to:
-  /// **'Periyodik'**
-  String get periodic;
 
   /// No description provided for @createHabitTitle.
   ///
@@ -4819,6 +5251,108 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Planlar yüklenirken hata oluştu: {error}'**
   String plansLoadError(Object error);
+
+  /// No description provided for @optional.
+  ///
+  /// In tr, this message translates to:
+  /// **'opsiyonel'**
+  String get optional;
+
+  /// No description provided for @newHabit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni Alışkanlık'**
+  String get newHabit;
+
+  /// No description provided for @typeEmoji.
+  ///
+  /// In tr, this message translates to:
+  /// **'Klavyeden bir emoji yazın'**
+  String get typeEmoji;
+
+  /// No description provided for @habitNameHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn: Su içmek, Kitap okumak...'**
+  String get habitNameHint;
+
+  /// No description provided for @weekDaysShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pzt,Sal,Çar,Per,Cum,Cmt,Paz'**
+  String get weekDaysShort;
+
+  /// No description provided for @every.
+  ///
+  /// In tr, this message translates to:
+  /// **'Her'**
+  String get every;
+
+  /// No description provided for @daysInterval.
+  ///
+  /// In tr, this message translates to:
+  /// **'günde bir'**
+  String get daysInterval;
+
+  /// No description provided for @today.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün'**
+  String get today;
+
+  /// No description provided for @monthsShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oca,Şub,Mar,Nis,May,Haz,Tem,Ağu,Eyl,Eki,Kas,Ara'**
+  String get monthsShort;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yarın'**
+  String get tomorrow;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dün'**
+  String get yesterday;
+
+  /// No description provided for @daysLater.
+  ///
+  /// In tr, this message translates to:
+  /// **'{days} gün sonra'**
+  String daysLater(Object days);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In tr, this message translates to:
+  /// **'{days} gün önce'**
+  String daysAgo(Object days);
+
+  /// No description provided for @off.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kapalı'**
+  String get off;
+
+  /// No description provided for @createHabit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlık Oluştur'**
+  String get createHabit;
+
+  /// No description provided for @pickTime.
+  ///
+  /// In tr, this message translates to:
+  /// **'Saat Seç'**
+  String get pickTime;
+
+  /// No description provided for @monthlyDays.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayın {days}. günleri'**
+  String monthlyDays(Object days);
 }
 
 class _AppLocalizationsDelegate

@@ -1052,6 +1052,10 @@ class _VisionScreenState extends State<VisionScreen> {
     switch (h.habitType) {
       case HabitType.simple:
         return l10n.dailyCheck;
+      case HabitType.checkbox:
+        return l10n.dailyCheck;
+      case HabitType.subtasks:
+        return '${h.subtasks.length} alt görev';
       case HabitType.numerical:
         return l10n.targetShort('${h.targetCount} ${h.unit ?? ''}'.trim());
       case HabitType.timer:

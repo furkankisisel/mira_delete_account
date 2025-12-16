@@ -1580,6 +1580,12 @@ class _ManualTabState extends State<_ManualTab> {
         case HabitType.timer:
           type = 'timer';
           break;
+        case HabitType.checkbox:
+          type = 'checkbox';
+          break;
+        case HabitType.subtasks:
+          type = 'subtasks';
+          break;
         case HabitType.simple:
           type = 'simple';
           break;

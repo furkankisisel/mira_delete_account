@@ -1566,6 +1566,11 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
   double _percentFor(Habit habit, String dateKey, int raw) {
     switch (habit.habitType) {
       case HabitType.simple:
+      case HabitType.checkbox:
+        return HabitRepository.evaluateCompletionForProgress(habit, raw)
+            ? 100
+            : 0;
+      case HabitType.subtasks:
         return HabitRepository.evaluateCompletionForProgress(habit, raw)
             ? 100
             : 0;

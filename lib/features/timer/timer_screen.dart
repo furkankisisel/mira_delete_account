@@ -246,6 +246,7 @@ class _TimerScreenState extends State<TimerScreen>
     String? subtitle,
     Color? progressColor,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final accent = progressColor ?? _getAccentColor(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -340,7 +341,7 @@ class _TimerScreenState extends State<TimerScreen>
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'RUNNING',
+                                  l10n.runningLabel,
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -788,6 +789,7 @@ class _TimerScreenState extends State<TimerScreen>
   }
 
   Widget _buildStopwatch(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isRunning =
         controller.isRunning && controller.activeMode == TimerMode.stopwatch;
     final elapsed = controller.elapsed;
@@ -803,7 +805,7 @@ class _TimerScreenState extends State<TimerScreen>
               timeText: controller.formatDuration(elapsed),
               progress: progress,
               isRunning: isRunning,
-              subtitle: 'STOPWATCH',
+              subtitle: l10n.stopwatchLabel,
             ),
           ),
         ),
@@ -829,6 +831,7 @@ class _TimerScreenState extends State<TimerScreen>
   }
 
   Widget _buildCountdown(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final rem = controller.countdownRemaining;
     final total = controller.countdownTotal;
     final hasDuration = controller.hasCountdown;
@@ -849,7 +852,7 @@ class _TimerScreenState extends State<TimerScreen>
                     timeText: controller.formatDuration(rem),
                     progress: progress,
                     isRunning: isRunning,
-                    subtitle: 'COUNTDOWN',
+                    subtitle: l10n.countdownLabel,
                     progressColor: rem.inSeconds <= 10 ? Colors.red : null,
                   )
                 : _buildSetDurationPrompt(context),
@@ -1033,7 +1036,7 @@ class _TimerScreenState extends State<TimerScreen>
               timeText: controller.formatDuration(remaining),
               progress: progress,
               isRunning: isRunning,
-              subtitle: isWorkPhase ? 'FOCUS' : 'BREAK',
+              subtitle: isWorkPhase ? l10n.focusLabel : l10n.breakLabel,
               progressColor: phaseColor,
             ),
           ),
@@ -1937,6 +1940,7 @@ class _TimerScreenState extends State<TimerScreen>
     required IconData icon,
     required Color accent,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -2013,7 +2017,7 @@ class _TimerScreenState extends State<TimerScreen>
             ),
           ),
           Text(
-            'min',
+            l10n.minLabel,
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey[500],

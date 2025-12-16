@@ -11,6 +11,7 @@ import 'package:mira/l10n/app_localizations.dart';
 import '../domain/habit_types.dart';
 import '../domain/habit_repository.dart';
 import '../domain/habit_model.dart';
+import '../domain/subtask_model.dart';
 import '../domain/category_repository.dart';
 import '../domain/list_repository.dart';
 import '../domain/list_model.dart';
@@ -68,6 +69,8 @@ class HabitScreenState extends State<HabitScreen> {
     HabitType.simple,
     HabitType.numerical,
     HabitType.timer,
+    HabitType.checkbox,
+    HabitType.subtasks,
   };
   CompletionFilter _completionFilter = CompletionFilter.all;
   String? _selectedListId; // null = all lists
@@ -320,6 +323,16 @@ class HabitScreenState extends State<HabitScreen> {
                         HabitType.timer,
                         AppLocalizations.of(context).timerType,
                         Icons.timer,
+                      ),
+                      typeChip(
+                        HabitType.checkbox,
+                        AppLocalizations.of(context).checkboxType,
+                        Icons.check_box,
+                      ),
+                      typeChip(
+                        HabitType.subtasks,
+                        AppLocalizations.of(context).subtasksType,
+                        Icons.checklist,
                       ),
                     ],
                   ),
@@ -1033,11 +1046,15 @@ class HabitScreenState extends State<HabitScreen> {
       unit: habit.unit,
       readOnly: isFuture || isBeforeStart,
       iceEnabled:
-          !isFuture && !isBeforeStart && habit.habitType == HabitType.simple,
+          !isFuture &&
+          !isBeforeStart &&
+          (habit.habitType == HabitType.simple ||
+              habit.habitType == HabitType.checkbox),
       requiredBreakTaps: missedBefore,
       onTap: () {
         if (isFuture || isBeforeStart) return;
-        if (habit.habitType == HabitType.simple) {
+        if (habit.habitType == HabitType.simple ||
+            habit.habitType == HabitType.checkbox) {
           if (isToday) {
             _repo.toggleSimple(habit.id);
           } else {
@@ -1079,6 +1096,15 @@ class HabitScreenState extends State<HabitScreen> {
       },
       onEdit: () => _editHabit(habit),
       onDelete: () => _deleteHabit(habit),
+      subtasks: habit.habitType == HabitType.subtasks ? habit.subtasks : null,
+      onSubtaskToggle: (subtaskId, completed) {
+        if (isFuture || isBeforeStart) return;
+        if (isToday) {
+          _repo.toggleSubtask(habit.id, subtaskId, completed);
+        } else {
+          _repo.toggleSubtaskForDate(habit.id, subtaskId, completed, _selected);
+        }
+      },
     );
   }
 
@@ -1185,6 +1211,8 @@ class HabitScreenState extends State<HabitScreen> {
       habit.scheduledDates = editedHabit.scheduledDates;
       habit.reminderEnabled = editedHabit.reminderEnabled;
       habit.reminderTime = editedHabit.reminderTime;
+      habit.subtasks = editedHabit.subtasks;
+      habit.subtasksLog = editedHabit.subtasksLog;
       await _repo.updateHabit(habit);
     }
   }
@@ -1233,6 +1261,16 @@ class HabitScreenState extends State<HabitScreen> {
     }
     if (result['endDate'] is String?) {
       habit.endDate = result['endDate'] as String?;
+    }
+    if (result['subtasks'] is List) {
+      habit.subtasks = (result['subtasks'] as List)
+          .map((e) => Subtask.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    if (result['subtasksLog'] is Map) {
+      habit.subtasksLog = Map<String, List<Map<String, dynamic>>>.from(
+        result['subtasksLog'] as Map,
+      );
     }
 
     _repo.updateHabit(habit);

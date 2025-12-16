@@ -4,6 +4,7 @@ import 'package:mira/l10n/app_localizations.dart';
 
 import '../domain/habit_model.dart';
 import '../domain/habit_types.dart';
+import '../domain/subtask_model.dart';
 
 /// Minimalist gelişmiş alışkanlık oluşturma ekranı.
 /// Sayısal ve zamanlayıcı destekli alışkanlıklar için.
@@ -76,6 +77,10 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   bool _emojiExpanded = false;
   final _customEmojiController = TextEditingController();
 
+  // Subtasks state
+  final List<TextEditingController> _subtaskControllers = [];
+  final List<String> _subtaskIds = [];
+
   // Renk paleti - Canlı renkler
   static const List<Color> _colors = [
     Color(0xFF6366F1),
@@ -118,17 +123,117 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     '🍎',
   ];
 
-  static const Map<String, List<String>> _emojiCategories = {
-    'Popüler': ['🎯', '💪', '⏱️', '📚', '💧', '🏃', '🧘', '🍎', '🔥', '⭐'],
-    'Sağlık': ['💊', '🏥', '🩺', '💉', '🧬', '🦷', '👁️', '🫀', '🧠', '🦴'],
-    'Spor': ['🏋️', '🚴', '🏊', '⚽', '🎾', '🏀', '🥊', '🧗', '🎿', '🏌️'],
-    'Yaşam': ['🏠', '🌱', '☀️', '🌙', '❤️', '⚡', '🎉', '🎂', '🎁', '💤'],
-    'Üretkenlik': ['✍️', '💻', '📱', '📝', '📖', '🎨', '🎵', '💰', '📊', '⏰'],
-    'Yiyecek': ['🥗', '🥤', '🍵', '☕', '🥛', '🍎', '🥑', '🥕', '🍳', '🥪'],
-    'Doğa': ['🌿', '🌸', '🌺', '🌻', '🍀', '🌲', '🌊', '⛰️', '🌈', '🦋'],
-    'Hayvanlar': ['🐕', '🐈', '🐦', '🐠', '🐢', '🦔', '🐰', '🦁', '🐼', '🦊'],
-    'Bakım': ['🚿', '🧴', '🧼', '🧹', '🧺', '🧷', '💅', '💇', '🧔', '🧍'],
-  };
+  static Map<String, List<String>> _getEmojiCategories(AppLocalizations l10n) =>
+      {
+        l10n.emojiCategoryPopular: [
+          '🎯',
+          '💪',
+          '⏱️',
+          '📚',
+          '💧',
+          '🏃',
+          '🧘',
+          '🍎',
+          '🔥',
+          '⭐',
+        ],
+        l10n.emojiCategoryHealth: [
+          '💊',
+          '🏥',
+          '🩺',
+          '💉',
+          '🧬',
+          '🦷',
+          '👁️',
+          '🫀',
+          '🧠',
+          '🦴',
+        ],
+        l10n.emojiCategorySport: [
+          '🏋️',
+          '🚴',
+          '🏊',
+          '⚽',
+          '🎾',
+          '🏀',
+          '🥊',
+          '🧗',
+          '🎿',
+          '🏌️',
+        ],
+        l10n.emojiCategoryLife: [
+          '🏠',
+          '🌱',
+          '☀️',
+          '🌙',
+          '❤️',
+          '⚡',
+          '🎉',
+          '🎂',
+          '🎁',
+          '💤',
+        ],
+        l10n.emojiCategoryProductivity: [
+          '✍️',
+          '💻',
+          '📱',
+          '📝',
+          '📖',
+          '🎨',
+          '🎵',
+          '💰',
+          '📊',
+          '⏰',
+        ],
+        l10n.emojiCategoryFood: [
+          '🥗',
+          '🥤',
+          '🍵',
+          '☕',
+          '🥛',
+          '🍎',
+          '🥑',
+          '🥕',
+          '🍳',
+          '🥪',
+        ],
+        l10n.emojiCategoryNature: [
+          '🌿',
+          '🌸',
+          '🌺',
+          '🌻',
+          '🍀',
+          '🌲',
+          '🌊',
+          '⛰️',
+          '🌈',
+          '🦋',
+        ],
+        l10n.emojiCategoryAnimals: [
+          '🐕',
+          '🐈',
+          '🐦',
+          '🐠',
+          '🐢',
+          '🦔',
+          '🐰',
+          '🦁',
+          '🐼',
+          '🦊',
+        ],
+        l10n.emojiCategoryCare: [
+          '🚿',
+          '🧴',
+          '🧼',
+          '🧹',
+          '🧺',
+          '🧷',
+          '💅',
+          '💇',
+          '🧔',
+          '🧍',
+        ],
+      };
 
   @override
   void initState() {
@@ -202,6 +307,15 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     if (h.selectedYearDays != null) _yearDays.addAll(h.selectedYearDays!);
     if (h.periodicDays != null && h.periodicDays! > 0) {
       _periodicDays = h.periodicDays!;
+    }
+
+    // Subtasks yükle
+    if (h.subtasks.isNotEmpty) {
+      for (final subtask in h.subtasks) {
+        final controller = TextEditingController(text: subtask.title);
+        _subtaskControllers.add(controller);
+        _subtaskIds.add(subtask.id);
+      }
     }
   }
 
@@ -381,36 +495,36 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
                     // Alışkanlık Tipi
                     _buildSection(
-                      title: 'Alışkanlık Tipi',
+                      title: AppLocalizations.of(context)!.habitTypeLabel,
                       child: _buildHabitTypeSelector(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Emoji Seçici
                     _buildSection(
-                      title: 'Emoji',
+                      title: AppLocalizations.of(context)!.emojiLabel,
                       child: _buildEmojiPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Renk Seçici
                     _buildSection(
-                      title: 'Renk',
+                      title: AppLocalizations.of(context)!.colorLabel,
                       child: _buildColorPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // İsim
                     _buildSection(
-                      title: 'İsim',
+                      title: AppLocalizations.of(context)!.nameLabel,
                       child: _buildNameField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Açıklama
                     _buildSection(
-                      title: 'Açıklama',
-                      subtitle: 'opsiyonel',
+                      title: AppLocalizations.of(context)!.descriptionLabel,
+                      subtitle: AppLocalizations.of(context)!.optionalLabel,
                       child: _buildDescriptionField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
@@ -419,16 +533,22 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                     _buildTargetSection(theme, colorScheme),
                     const SizedBox(height: 28),
 
+                    // Alt Görevler (sadece subtasks türü için)
+                    if (_habitType == HabitType.subtasks) ...[
+                      _buildSubtasksSection(theme, colorScheme),
+                      const SizedBox(height: 28),
+                    ],
+
                     // Sıklık
                     _buildSection(
-                      title: 'Sıklık',
+                      title: AppLocalizations.of(context)!.frequencyLabel,
                       child: _buildFrequencySelector(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Tarih Aralığı
                     _buildSection(
-                      title: 'Tarih Aralığı',
+                      title: AppLocalizations.of(context)!.dateRangeLabel,
                       child: _buildDateRangeSection(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
@@ -474,7 +594,9 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
         title: Text(
-          widget.isEditing ? 'Düzenle' : 'Gelişmiş Alışkanlık',
+          widget.isEditing
+              ? AppLocalizations.of(context)!.edit
+              : AppLocalizations.of(context)!.advancedHabitTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
@@ -486,7 +608,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
   Widget _buildPreviewCard(ThemeData theme, ColorScheme colorScheme) {
     final name = _nameController.text.isEmpty
-        ? 'Alışkanlık Adı'
+        ? AppLocalizations.of(context)!.habitNamePlaceholder
         : _nameController.text;
     final desc = _descriptionController.text.isEmpty
         ? null
@@ -609,10 +731,14 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             ),
             if (subtitle != null) ...[
               const SizedBox(width: 8),
-              Text(
-                '($subtitle)',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+              Flexible(
+                child: Text(
+                  '($subtitle)',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
               ),
             ],
@@ -625,76 +751,101 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildHabitTypeSelector(ThemeData theme, ColorScheme colorScheme) {
+    final l10n = AppLocalizations.of(context)!;
     final types = [
-      (HabitType.numerical, 'Sayısal', Icons.numbers_rounded, 'Sayı takibi'),
-      (HabitType.timer, 'Zamanlayıcı', Icons.timer_outlined, 'Süre takibi'),
+      (
+        HabitType.numerical,
+        l10n.numericalType,
+        Icons.numbers_rounded,
+        l10n.numericalDescription,
+      ),
+      (
+        HabitType.timer,
+        l10n.timerType,
+        Icons.timer_outlined,
+        l10n.timerDescription,
+      ),
+      (
+        HabitType.checkbox,
+        l10n.checkboxType,
+        Icons.check_box_outlined,
+        l10n.checkboxTypeDesc,
+      ),
+      (
+        HabitType.subtasks,
+        l10n.subtasksType,
+        Icons.checklist_rounded,
+        l10n.subtasksTypeDesc,
+      ),
     ];
 
-    return Row(
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      childAspectRatio: 1.1,
       children: types.map((t) {
         final isSelected = _habitType == t.$1;
-        return Expanded(
-          child: GestureDetector(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              setState(() => _habitType = t.$1);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: EdgeInsets.only(
-                right: t.$1 == HabitType.numerical ? 8 : 0,
-              ),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? _selectedColor.withOpacity(0.12)
-                    : colorScheme.surfaceContainerHighest.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(16),
-                border: isSelected
-                    ? Border.all(color: _selectedColor, width: 2)
-                    : null,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? _selectedColor.withOpacity(0.15)
-                          : colorScheme.surfaceContainerHighest.withOpacity(
-                              0.5,
-                            ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      t.$3,
-                      color: isSelected
-                          ? _selectedColor
-                          : colorScheme.onSurface.withOpacity(0.5),
-                      size: 24,
-                    ),
+        return GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            setState(() => _habitType = t.$1);
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? _selectedColor.withOpacity(0.12)
+                  : colorScheme.surfaceContainerHighest.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(16),
+              border: isSelected
+                  ? Border.all(color: _selectedColor, width: 2)
+                  : null,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? _selectedColor.withOpacity(0.15)
+                        : colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    t.$2,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                      color: isSelected
-                          ? _selectedColor
-                          : colorScheme.onSurface,
-                    ),
+                  child: Icon(
+                    t.$3,
+                    color: isSelected
+                        ? _selectedColor
+                        : colorScheme.onSurface.withOpacity(0.5),
+                    size: 24,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    t.$4,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.5),
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  t.$2,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? _selectedColor : colorScheme.onSurface,
                   ),
-                ],
-              ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  t.$4,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         );
@@ -742,7 +893,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Emoji seç',
+                    AppLocalizations.of(context)!.selectEmoji,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.7),
                     ),
@@ -826,7 +977,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
           const SizedBox(height: 16),
 
           // Kategoriler
-          ..._emojiCategories.entries.map(
+          ..._getEmojiCategories(AppLocalizations.of(context)!).entries.map(
             (entry) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -900,7 +1051,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            'Özel Emoji',
+            AppLocalizations.of(context)!.customEmoji,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -909,7 +1060,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Klavyeden bir emoji yazın',
+                AppLocalizations.of(context)!.typeEmojiHint,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -946,7 +1097,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
-                'İptal',
+                AppLocalizations.of(context)!.cancel,
                 style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
               ),
             ),
@@ -1135,6 +1286,17 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
   Widget _buildTargetSection(ThemeData theme, ColorScheme colorScheme) {
     final l10n = AppLocalizations.of(context)!;
+
+    // Checkbox türü için hedef gerekmiyor
+    if (_habitType == HabitType.checkbox) {
+      return const SizedBox.shrink();
+    }
+
+    // Subtasks türü için hedef gerekmiyor (alt görevler tamamlanma kriteri)
+    if (_habitType == HabitType.subtasks) {
+      return const SizedBox.shrink();
+    }
+
     return _buildSection(
       title: l10n.target,
       child: _habitType == HabitType.timer
@@ -1364,10 +1526,11 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildTargetTypeRow(ThemeData theme, ColorScheme colorScheme) {
+    final l10n = AppLocalizations.of(context)!;
     final types = [
-      (NumericalTargetType.minimum, 'En az', Icons.trending_up_rounded),
-      (NumericalTargetType.exact, 'Tam', Icons.check_circle_outline),
-      (NumericalTargetType.maximum, 'En fazla', Icons.trending_down_rounded),
+      (NumericalTargetType.minimum, l10n.atLeast, Icons.trending_up_rounded),
+      (NumericalTargetType.exact, l10n.exact, Icons.check_circle_outline),
+      (NumericalTargetType.maximum, l10n.atMost, Icons.trending_down_rounded),
     ];
 
     return Row(
@@ -1464,10 +1627,11 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildTimerTargetTypeRow(ThemeData theme, ColorScheme colorScheme) {
+    final l10n = AppLocalizations.of(context)!;
     final types = [
-      (TimerTargetType.minimum, 'En az', Icons.trending_up_rounded),
-      (TimerTargetType.exact, 'Tam', Icons.check_circle_outline),
-      (TimerTargetType.maximum, 'En fazla', Icons.trending_down_rounded),
+      (TimerTargetType.minimum, l10n.atLeast, Icons.trending_up_rounded),
+      (TimerTargetType.exact, l10n.exact, Icons.check_circle_outline),
+      (TimerTargetType.maximum, l10n.atMost, Icons.trending_down_rounded),
     ];
 
     return Row(
@@ -1526,11 +1690,12 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildFrequencySelector(ThemeData theme, ColorScheme colorScheme) {
+    final l10n = AppLocalizations.of(context)!;
     final frequencies = [
-      ('daily', 'Her gün', Icons.wb_sunny_outlined),
-      ('weekly', 'Haftalık', Icons.view_week_outlined),
-      ('monthly', 'Aylık', Icons.calendar_month_outlined),
-      ('periodic', 'Periyodik', Icons.loop_rounded),
+      ('daily', l10n.everyDay, Icons.wb_sunny_outlined),
+      ('weekly', l10n.weekly, Icons.view_week_outlined),
+      ('monthly', l10n.monthly, Icons.calendar_month_outlined),
+      ('periodic', l10n.periodic, Icons.loop_rounded),
     ];
 
     return Column(
@@ -1615,7 +1780,16 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildWeekdaySelector(ThemeData theme, ColorScheme colorScheme) {
-    final days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+    final l10n = AppLocalizations.of(context)!;
+    final days = [
+      l10n.weekdaysShortMon,
+      l10n.weekdaysShortTue,
+      l10n.weekdaysShortWed,
+      l10n.weekdaysShortThu,
+      l10n.weekdaysShortFri,
+      l10n.weekdaysShortSat,
+      l10n.weekdaysShortSun,
+    ];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1721,7 +1895,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Her',
+            AppLocalizations.of(context)!.everyLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1756,7 +1930,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
           ),
           const SizedBox(width: 12),
           Text(
-            'günde bir',
+            AppLocalizations.of(context)!.daysIntervalLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1797,7 +1971,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hatırlatıcı',
+                        AppLocalizations.of(context)!.reminderLabel,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -1805,7 +1979,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                       Text(
                         _reminderEnabled
                             ? _reminderTime.format(context)
-                            : 'Kapalı',
+                            : AppLocalizations.of(context)!.offLabel,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -1858,6 +2032,124 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubtasksSection(ThemeData theme, ColorScheme colorScheme) {
+    return _buildSection(
+      title: AppLocalizations.of(context)!.subtasksType,
+      subtitle: AppLocalizations.of(context)!.completeAllSubtasksToFinish,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Mevcut alt görevler - maksimum yükseklik ile sınırlı
+          if (_subtaskControllers.isNotEmpty)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemCount: _subtaskControllers.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _subtaskControllers[index],
+                            style: theme.textTheme.bodyLarge,
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(
+                                context,
+                              )!.subtaskIndex(index + 1),
+                              hintStyle: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.4),
+                              ),
+                              filled: true,
+                              fillColor: colorScheme.surfaceContainerHighest
+                                  .withOpacity(0.4),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(
+                                  color: _selectedColor,
+                                  width: 2,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _subtaskControllers[index].dispose();
+                              _subtaskControllers.removeAt(index);
+                              _subtaskIds.removeAt(index);
+                            });
+                          },
+                          icon: Icon(
+                            Icons.remove_circle_outline,
+                            color: colorScheme.error,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          if (_subtaskControllers.isNotEmpty) const SizedBox(height: 12),
+          // Yeni alt görev ekle butonu
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _subtaskControllers.add(TextEditingController());
+                _subtaskIds.add(
+                  DateTime.now().millisecondsSinceEpoch.toString(),
+                );
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: _selectedColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: _selectedColor.withOpacity(0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_circle_outline,
+                    color: _selectedColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalizations.of(context)!.addSubtask,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: _selectedColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -2330,6 +2622,10 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
         'habitType': _habitType,
         'targetCount': _habitType == HabitType.timer
             ? _timerDuration.inMinutes
+            : _habitType == HabitType.checkbox
+            ? 1
+            : _habitType == HabitType.subtasks
+            ? 1
             : (int.tryParse(_targetController.text) ?? 1),
         if (_habitType == HabitType.numerical &&
             _unitController.text.isNotEmpty)
@@ -2351,6 +2647,21 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             'hour': _reminderTime.hour,
             'minute': _reminderTime.minute,
           },
+        // Subtasks
+        if (_habitType == HabitType.subtasks)
+          'subtasks': _subtaskControllers
+              .asMap()
+              .entries
+              .where((e) => e.value.text.trim().isNotEmpty)
+              .map(
+                (e) => {
+                  'id': _subtaskIds[e.key],
+                  'title': e.value.text.trim(),
+                  'isCompleted': false,
+                },
+              )
+              .toList(),
+        'isAdvanced': true,
         // Mevcut verileri koru
         if (widget.editingHabitMap?['currentStreak'] != null)
           'currentStreak': widget.editingHabitMap!['currentStreak'],
@@ -2379,8 +2690,13 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
       color: _selectedColor,
       habitType: _habitType,
       // Timer için targetCount dakika cinsinden
+      // Checkbox ve subtasks için targetCount 1
       targetCount: _habitType == HabitType.timer
           ? _timerDuration.inMinutes
+          : _habitType == HabitType.checkbox
+          ? 1
+          : _habitType == HabitType.subtasks
+          ? 1
           : (int.tryParse(_targetController.text) ?? 1),
       unit: _habitType == HabitType.numerical
           ? (_unitController.text.isEmpty ? null : _unitController.text)
@@ -2401,7 +2717,21 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
       endDate: endDateStr,
       reminderEnabled: _reminderEnabled,
       reminderTime: _reminderEnabled ? _reminderTime : null,
-    );
+      subtasks: _habitType == HabitType.subtasks
+          ? _subtaskControllers
+                .asMap()
+                .entries
+                .where((e) => e.value.text.trim().isNotEmpty)
+                .map(
+                  (e) => Subtask(
+                    id: _subtaskIds[e.key],
+                    title: e.value.text.trim(),
+                    isCompleted: false,
+                  ),
+                )
+                .toList()
+          : [],
+    )..isAdvanced = true;
 
     Navigator.of(context).pop(habit);
   }

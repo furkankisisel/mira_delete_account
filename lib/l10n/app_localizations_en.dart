@@ -1255,6 +1255,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timerType => 'Timer';
 
   @override
+  String get checkboxType => 'Checkbox';
+
+  @override
+  String get subtasksType => 'Subtasks';
+
+  @override
   String get times => 'Times';
 
   @override
@@ -1544,6 +1550,234 @@ class AppLocalizationsEn extends AppLocalizations {
   String get successfulDayLegend => 'Successful day';
 
   @override
+  String get privacySecuritySubtitle =>
+      'Manage settings and data deletion options';
+
+  @override
+  String get googleDrive => 'Google Drive';
+
+  @override
+  String get reportBug => 'Report Bug';
+
+  @override
+  String get reportBugSubtitle => 'Report issues you encounter';
+
+  @override
+  String get reportBugDescription =>
+      'Describe the issue you encountered in detail below.';
+
+  @override
+  String get yourEmailAddress => 'Your Email Address';
+
+  @override
+  String get issueDescription => 'Issue Description';
+
+  @override
+  String get issueDescriptionHint => 'Describe the issue in detail...';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill all fields';
+
+  @override
+  String get bugReportSentSuccess =>
+      'Your bug report has been sent successfully. Thank you!';
+
+  @override
+  String bugReportFailedStatus(Object statusCode) {
+    return 'Failed to send bug report: $statusCode';
+  }
+
+  @override
+  String bugReportFailedError(Object error) {
+    return 'Failed to send bug report: $error';
+  }
+
+  @override
+  String get resetOnboardingTitle => 'Reset Onboarding?';
+
+  @override
+  String get resetOnboardingDescription =>
+      'This will clear your current personality results and let you retake the quiz.';
+
+  @override
+  String get resetAction => 'Reset';
+
+  @override
+  String get deleteAllDataConfirmContent =>
+      'Are you sure you want to delete all your app data? This action cannot be undone.';
+
+  @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get allDataDeleted => 'All data deleted';
+
+  @override
+  String get diagnosticsData => 'Diagnostics data';
+
+  @override
+  String get diagnosticsDataSubtitle => 'Share anonymous usage statistics';
+
+  @override
+  String get crashReports => 'Crash reports';
+
+  @override
+  String get crashReportsSubtitle => 'Send anonymous reports on app crashes';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get deleteAllData => 'Delete all data';
+
+  @override
+  String get stopwatchLabel => 'STOPWATCH';
+
+  @override
+  String get runningLabel => 'RUNNING';
+
+  @override
+  String get countdownLabel => 'COUNTDOWN';
+
+  @override
+  String get focusLabel => 'FOCUS';
+
+  @override
+  String get breakLabel => 'BREAK';
+
+  @override
+  String get minLabel => 'min';
+
+  @override
+  String get emojiCategoryPopular => 'Popular';
+
+  @override
+  String get emojiCategoryHealth => 'Health';
+
+  @override
+  String get emojiCategorySport => 'Sport';
+
+  @override
+  String get emojiCategoryLife => 'Life';
+
+  @override
+  String get emojiCategoryProductivity => 'Productivity';
+
+  @override
+  String get emojiCategoryFood => 'Food';
+
+  @override
+  String get emojiCategoryNature => 'Nature';
+
+  @override
+  String get emojiCategoryAnimals => 'Animals';
+
+  @override
+  String get emojiCategoryCare => 'Care';
+
+  @override
+  String get habitTypeLabel => 'Habit Type';
+
+  @override
+  String get nameLabel => 'Name';
+
+  @override
+  String get descriptionLabel => 'Description';
+
+  @override
+  String get optionalLabel => 'optional';
+
+  @override
+  String get frequencyLabel => 'Frequency';
+
+  @override
+  String get dateRangeLabel => 'Date Range';
+
+  @override
+  String get reminderLabel => 'Reminder';
+
+  @override
+  String get advancedHabitTitle => 'Advanced Habit';
+
+  @override
+  String get habitNamePlaceholder => 'Habit Name';
+
+  @override
+  String get numericTypeDesc => 'Number tracking';
+
+  @override
+  String get checkboxTypeDesc => 'Simple check';
+
+  @override
+  String get subtasksTypeDesc => 'Multi-task';
+
+  @override
+  String get selectEmoji => 'Select Emoji';
+
+  @override
+  String get customEmoji => 'Custom Emoji';
+
+  @override
+  String get typeEmojiHint => 'Type an emoji from keyboard';
+
+  @override
+  String get everyDay => 'Every day';
+
+  @override
+  String get periodic => 'Periodic';
+
+  @override
+  String get everyLabel => 'Every';
+
+  @override
+  String get daysIntervalLabel => 'days';
+
+  @override
+  String get offLabel => 'Off';
+
+  @override
+  String get completeAllSubtasksToFinish => 'complete all to finish habit';
+
+  @override
+  String subtaskIndex(Object index) {
+    return 'Subtask $index';
+  }
+
+  @override
+  String get addSubtask => 'Add Subtask';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get createHabitAction => 'Create Habit';
+
+  @override
+  String get selectDuration => 'Select Duration';
+
+  @override
+  String selectedDaysOfMonth(Object sorted) {
+    return 'Days $sorted of the month';
+  }
+
+  @override
+  String everyXDays(Object periodicDays) {
+    return 'Every $periodicDays days';
+  }
+
+  @override
+  String get startDateLabel => 'Start';
+
+  @override
+  String get endDateLabel => 'End';
+
+  @override
+  String get notSelected => 'Not selected';
+
+  @override
   String get motivation => 'Motivation';
 
   @override
@@ -1597,9 +1831,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clear => 'Clear';
-
-  @override
-  String get periodic => 'Periodic';
 
   @override
   String get createHabitTitle => 'Create Habit';
@@ -2515,5 +2746,62 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String plansLoadError(Object error) {
     return 'Error loading plans: $error';
+  }
+
+  @override
+  String get optional => 'optional';
+
+  @override
+  String get newHabit => 'New Habit';
+
+  @override
+  String get typeEmoji => 'Type an emoji from keyboard';
+
+  @override
+  String get habitNameHint => 'Ex: Drink water, Read book...';
+
+  @override
+  String get weekDaysShort => 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
+
+  @override
+  String get every => 'Every';
+
+  @override
+  String get daysInterval => 'days';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get monthsShort => 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String daysLater(Object days) {
+    return '$days days later';
+  }
+
+  @override
+  String daysAgo(Object days) {
+    return '$days days ago';
+  }
+
+  @override
+  String get off => 'Off';
+
+  @override
+  String get createHabit => 'Create Habit';
+
+  @override
+  String get pickTime => 'Pick Time';
+
+  @override
+  String monthlyDays(Object days) {
+    return 'Days $days of the month';
   }
 }

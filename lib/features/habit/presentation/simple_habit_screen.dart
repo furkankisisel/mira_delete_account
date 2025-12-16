@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mira/l10n/app_localizations.dart';
 
 import '../domain/habit_model.dart';
 import '../domain/habit_types.dart';
@@ -69,17 +70,119 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
     '🧘',
   ];
 
-  static const Map<String, List<String>> _emojiCategories = {
-    'Popüler': ['✅', '⭐', '💪', '🎯', '📚', '💧', '🏃', '🧘', '💤', '🍎'],
-    'Sağlık': ['💊', '🏥', '🩺', '💉', '🧬', '🦷', '👁️', '🫀', '🧠', '🦴'],
-    'Spor': ['🏋️', '🚴', '🏊', '⚽', '🎾', '🏀', '🥊', '🧗', '🎿', '🏌️'],
-    'Yaşam': ['🏠', '🌱', '☀️', '🌙', '❤️', '🔥', '⚡', '🎉', '🎂', '🎁'],
-    'Üretkenlik': ['✍️', '💻', '📱', '📝', '📖', '🎨', '🎵', '💰', '📊', '⏰'],
-    'Yiyecek': ['🥗', '🥤', '🍵', '☕', '🥛', '🍎', '🥑', '🥕', '🍳', '🥪'],
-    'Doğa': ['🌿', '🌸', '🌺', '🌻', '🍀', '🌲', '🌊', '⛰️', '🌈', '🦋'],
-    'Hayvanlar': ['🐕', '🐈', '🐦', '🐠', '🐢', '🦔', '🐰', '🦁', '🐼', '🦊'],
-    'Bakım': ['🚿', '🧴', '🧼', '🧹', '🧺', '🧷', '💅', '💇', '🧔', '🧍'],
-  };
+  Map<String, List<String>> _getEmojiCategories(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return {
+      l10n.emojiCategoryPopular: [
+        '✅',
+        '⭐',
+        '💪',
+        '🎯',
+        '📚',
+        '💧',
+        '🏃',
+        '🧘',
+        '💤',
+        '🍎',
+      ],
+      l10n.emojiCategoryHealth: [
+        '💊',
+        '🏥',
+        '🩺',
+        '💉',
+        '🧬',
+        '🦷',
+        '👁️',
+        '🫀',
+        '🧠',
+        '🦴',
+      ],
+      l10n.emojiCategorySport: [
+        '🏋️',
+        '🚴',
+        '🏊',
+        '⚽',
+        '🎾',
+        '🏀',
+        '🥊',
+        '🧗',
+        '🎿',
+        '🏌️',
+      ],
+      l10n.emojiCategoryLife: [
+        '🏠',
+        '🌱',
+        '☀️',
+        '🌙',
+        '❤️',
+        '🔥',
+        '⚡',
+        '🎉',
+        '🎂',
+        '🎁',
+      ],
+      l10n.emojiCategoryProductivity: [
+        '✍️',
+        '💻',
+        '📱',
+        '📝',
+        '📖',
+        '🎨',
+        '🎵',
+        '💰',
+        '📊',
+        '⏰',
+      ],
+      l10n.emojiCategoryFood: [
+        '🥗',
+        '🥤',
+        '🍵',
+        '☕',
+        '🥛',
+        '🍎',
+        '🥑',
+        '🥕',
+        '🍳',
+        '🥪',
+      ],
+      l10n.emojiCategoryNature: [
+        '🌿',
+        '🌸',
+        '🌺',
+        '🌻',
+        '🍀',
+        '🌲',
+        '🌊',
+        '⛰️',
+        '🌈',
+        '🦋',
+      ],
+      l10n.emojiCategoryAnimals: [
+        '🐕',
+        '🐈',
+        '🐦',
+        '🐠',
+        '🐢',
+        '🦔',
+        '🐰',
+        '🦁',
+        '🐼',
+        '🦊',
+      ],
+      l10n.emojiCategoryCare: [
+        '🚿',
+        '🧴',
+        '🧼',
+        '🧹',
+        '🧺',
+        '🧷',
+        '💅',
+        '💇',
+        '🧔',
+        '🧍',
+      ],
+    };
+  }
 
   @override
   void initState() {
@@ -183,43 +286,43 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
 
                     // Emoji Seçici
                     _buildSection(
-                      title: 'Emoji',
+                      title: AppLocalizations.of(context)!.emojiLabel,
                       child: _buildEmojiPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Renk Seçici
                     _buildSection(
-                      title: 'Renk',
+                      title: AppLocalizations.of(context)!.colorLabel,
                       child: _buildColorPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // İsim
                     _buildSection(
-                      title: 'İsim',
+                      title: AppLocalizations.of(context)!.nameLabel,
                       child: _buildNameField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Açıklama
                     _buildSection(
-                      title: 'Açıklama',
-                      subtitle: 'opsiyonel',
+                      title: AppLocalizations.of(context)!.descriptionLabel,
+                      subtitle: AppLocalizations.of(context)!.optional,
                       child: _buildDescriptionField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Sıklık
                     _buildSection(
-                      title: 'Sıklık',
+                      title: AppLocalizations.of(context)!.frequencyLabel,
                       child: _buildFrequencySelector(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Başlangıç Tarihi
                     _buildSection(
-                      title: 'Başlangıç Tarihi',
+                      title: AppLocalizations.of(context)!.startDateLabel,
                       child: _buildStartDatePicker(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
@@ -267,7 +370,9 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
         title: Text(
-          widget.isEditing ? 'Düzenle' : 'Yeni Alışkanlık',
+          widget.isEditing
+              ? AppLocalizations.of(context)!.edit
+              : AppLocalizations.of(context)!.newHabit,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
@@ -279,7 +384,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
 
   Widget _buildPreviewCard(ThemeData theme, ColorScheme colorScheme) {
     final name = _nameController.text.isEmpty
-        ? 'Alışkanlık Adı'
+        ? AppLocalizations.of(context)!.habitName
         : _nameController.text;
     final desc = _descriptionController.text.isEmpty
         ? null
@@ -440,7 +545,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Emoji seç',
+                    AppLocalizations.of(context)!.selectEmoji,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.7),
                     ),
@@ -524,7 +629,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
           const SizedBox(height: 16),
 
           // Kategoriler
-          ..._emojiCategories.entries.map(
+          ..._getEmojiCategories(context).entries.map(
             (entry) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -598,7 +703,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            'Özel Emoji',
+            AppLocalizations.of(context)!.customEmoji,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -607,7 +712,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Klavyeden bir emoji yazın',
+                AppLocalizations.of(context)!.typeEmoji,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -644,7 +749,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
-                'İptal',
+                AppLocalizations.of(context)!.cancel,
                 style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
               ),
             ),
@@ -660,7 +765,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                 Navigator.pop(ctx);
               },
               style: FilledButton.styleFrom(backgroundColor: _selectedColor),
-              child: const Text('Ekle'),
+              child: Text(AppLocalizations.of(context)!.add),
             ),
           ],
         );
@@ -713,7 +818,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       onChanged: (_) => setState(() {}),
       style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       decoration: InputDecoration(
-        hintText: 'Örn: Su içmek, Kitap okumak...',
+        hintText: AppLocalizations.of(context)!.habitNameHint,
         hintStyle: TextStyle(
           color: colorScheme.onSurface.withOpacity(0.3),
           fontWeight: FontWeight.normal,
@@ -743,7 +848,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       onChanged: (_) => setState(() {}),
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
-        hintText: 'Kısa bir açıklama ekle...',
+        hintText: AppLocalizations.of(context)!.habitDescriptionHint,
         hintStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.3)),
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.4),
@@ -764,11 +869,12 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   }
 
   Widget _buildFrequencySelector(ThemeData theme, ColorScheme colorScheme) {
+    final l10n = AppLocalizations.of(context)!;
     final frequencies = [
-      ('daily', 'Her gün', Icons.wb_sunny_outlined),
-      ('weekly', 'Haftalık', Icons.view_week_outlined),
-      ('monthly', 'Aylık', Icons.calendar_month_outlined),
-      ('periodic', 'Periyodik', Icons.loop_rounded),
+      ('daily', l10n.everyDay, Icons.wb_sunny_outlined),
+      ('weekly', l10n.weekly, Icons.view_week_outlined),
+      ('monthly', l10n.monthly, Icons.calendar_month_outlined),
+      ('periodic', l10n.periodic, Icons.loop_rounded),
     ];
 
     return Column(
@@ -855,7 +961,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   }
 
   Widget _buildWeekdaySelector(ThemeData theme, ColorScheme colorScheme) {
-    final days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+    final days = AppLocalizations.of(context)!.weekDaysShort.split(',');
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -961,7 +1067,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Her',
+            AppLocalizations.of(context)!.every,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -996,7 +1102,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
           ),
           const SizedBox(width: 12),
           Text(
-            'günde bir',
+            AppLocalizations.of(context)!.daysInterval,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1057,7 +1163,9 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isToday ? 'Bugün' : _formatDate(_startDate),
+                    isToday
+                        ? AppLocalizations.of(context)!.today
+                        : _formatDate(_startDate),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -1086,34 +1194,22 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       a.year == b.year && a.month == b.month && a.day == b.day;
 
   String _formatDate(DateTime d) {
-    const months = [
-      'Oca',
-      'Şub',
-      'Mar',
-      'Nis',
-      'May',
-      'Haz',
-      'Tem',
-      'Ağu',
-      'Eyl',
-      'Eki',
-      'Kas',
-      'Ara',
-    ];
+    final months = AppLocalizations.of(context)!.monthsShort.split(',');
     return '${d.day} ${months[d.month - 1]} ${d.year}';
   }
 
   String _getDaysFromNow(DateTime d) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final target = DateTime(d.year, d.month, d.day);
     final diff = target.difference(today).inDays;
 
-    if (diff == 0) return 'Bugün';
-    if (diff == 1) return 'Yarın';
-    if (diff == -1) return 'Dün';
-    if (diff > 0) return '$diff gün sonra';
-    return '${-diff} gün önce';
+    if (diff == 0) return l10n.today;
+    if (diff == 1) return l10n.tomorrow;
+    if (diff == -1) return l10n.yesterday;
+    if (diff > 0) return l10n.daysLater(diff);
+    return l10n.daysAgo(-diff);
   }
 
   Widget _buildReminderSection(ThemeData theme, ColorScheme colorScheme) {
@@ -1147,7 +1243,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hatırlatıcı',
+                        AppLocalizations.of(context)!.reminder,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -1155,7 +1251,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                       Text(
                         _reminderEnabled
                             ? _reminderTime.format(context)
-                            : 'Kapalı',
+                            : AppLocalizations.of(context)!.off,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -1239,7 +1335,9 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
         ),
         child: Center(
           child: Text(
-            widget.isEditing ? 'Değişiklikleri Kaydet' : 'Alışkanlık Oluştur',
+            widget.isEditing
+                ? AppLocalizations.of(context)!.saveChanges
+                : AppLocalizations.of(context)!.createHabit,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: canSave
@@ -1297,7 +1395,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           child: Text(
-                            'İptal',
+                            AppLocalizations.of(context)!.cancel,
                             style: TextStyle(
                               color: colorScheme.onSurface.withOpacity(0.6),
                               fontWeight: FontWeight.w500,
@@ -1305,7 +1403,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                           ),
                         ),
                         Text(
-                          'Saat Seç',
+                          AppLocalizations.of(context)!.pickTime,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -1319,7 +1417,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                             ),
                           ),
                           child: Text(
-                            'Tamam',
+                            AppLocalizations.of(context)!.ok,
                             style: TextStyle(
                               color: _selectedColor,
                               fontWeight: FontWeight.w600,
@@ -1440,22 +1538,23 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   }
 
   String _getFrequencyText() {
+    final l10n = AppLocalizations.of(context)!;
     switch (_selectedFrequency) {
       case 'daily':
-        return 'Her gün';
+        return l10n.everyDay;
       case 'weekly':
-        if (_weeklyDays.isEmpty) return 'Haftalık';
-        final days = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+        if (_weeklyDays.isEmpty) return l10n.weekly;
+        final days = l10n.weekDaysShort.split(',');
         final selected = _weeklyDays.toList()..sort();
         return selected.map((d) => days[d - 1]).join(', ');
       case 'monthly':
-        if (_monthDays.isEmpty) return 'Aylık';
+        if (_monthDays.isEmpty) return l10n.monthly;
         final sorted = _monthDays.toList()..sort();
-        return 'Ayın ${sorted.join(", ")}. günleri';
+        return l10n.monthlyDays(sorted.join(", "));
       case 'periodic':
-        return 'Her $_periodicDays günde bir';
+        return l10n.everyXDays(_periodicDays);
       default:
-        return 'Her gün';
+        return l10n.everyDay;
     }
   }
 

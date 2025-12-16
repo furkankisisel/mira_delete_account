@@ -31,9 +31,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.clearHistory),
-        content: const Text(
-          'Tüm uygulama verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
-        ),
+        content: Text(l10n.deleteAllDataConfirmContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -41,7 +39,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Sil'),
+            child: Text(l10n.deleteAction),
           ),
         ],
       ),
@@ -56,7 +54,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Tüm veriler silindi')));
+    ).showSnackBar(SnackBar(content: Text(l10n.allDataDeleted)));
     Navigator.of(context).pop();
   }
 
@@ -74,10 +72,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
               child: SwitchListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 secondary: const Icon(Icons.analytics_outlined),
-                title: const Text('Tanılama verileri'),
-                subtitle: const Text(
-                  'Uygulama kullanımına dair anonim istatistikleri paylaş',
-                ),
+                title: Text(l10n.diagnosticsData),
+                subtitle: Text(l10n.diagnosticsDataSubtitle),
                 value: PrivacyService.instance.diagnosticsAllowed,
                 onChanged: (v) async {
                   await PrivacyService.instance.setDiagnosticsAllowed(v);
@@ -88,10 +84,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
               child: SwitchListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 secondary: const Icon(Icons.report_problem_outlined),
-                title: const Text('Çökme raporları'),
-                subtitle: const Text(
-                  'Uygulama çökmelerinde anonim rapor gönder',
-                ),
+                title: Text(l10n.crashReports),
+                subtitle: Text(l10n.crashReportsSubtitle),
                 value: PrivacyService.instance.crashReportsAllowed,
                 onChanged: (v) async {
                   await PrivacyService.instance.setCrashReportsAllowed(v);
@@ -102,7 +96,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
-                title: const Text('Gizlilik Politikası'),
+                title: Text(l10n.privacyPolicy),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   final uri = Uri.parse(
@@ -122,7 +116,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 Icons.delete_forever_outlined,
                 color: Colors.red,
               ),
-              title: const Text('Tüm verileri sil'),
+              title: Text(l10n.deleteAllData),
               textColor: Colors.red,
               iconColor: Colors.red,
               onTap: () => _confirmAndDeleteAll(context),

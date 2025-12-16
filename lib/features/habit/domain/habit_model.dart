@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'habit_types.dart';
+import 'subtask_model.dart';
 import '../../../core/icons/icon_mapping.dart';
 
 class Habit {
@@ -34,7 +35,11 @@ class Habit {
     this.reminderEnabled = false,
     this.reminderTime,
     this.linkedVisionId,
-  }) : dailyLog = dailyLog ?? <String, int>{};
+    List<Subtask>? subtasks,
+    Map<String, List<Map<String, dynamic>>>? subtasksLog,
+  }) : dailyLog = dailyLog ?? <String, int>{},
+       subtasks = subtasks ?? [],
+       subtasksLog = subtasksLog ?? <String, List<Map<String, dynamic>>>{};
 
   final String id;
   String title;
@@ -75,6 +80,10 @@ class Habit {
   TimeOfDay? reminderTime; // Hatırlatıcı saati (null = devre dışı)
   // Vision integration
   String? linkedVisionId; // Bu alışkanlık bir vision'a bağlıysa Vision ID'si
+  // Subtasks (for subtasks habit type)
+  List<Subtask> subtasks; // Alt görevler listesi
+  Map<String, List<Map<String, dynamic>>>
+  subtasksLog; // tarih -> alt görevlerin durumu
 
   void applyDailyReset(DateTime now) {
     final today = _dateStr(now);
@@ -83,6 +92,32 @@ class Habit {
       currentStreak = 0;
       isCompleted = false;
       leftoverSeconds = 0;
+
+      // Subtasks türü için: yeni güne geçerken alt görevleri sıfırla
+      if (habitType == HabitType.subtasks) {
+        // Eğer bugün için kaydedilmiş subtasksLog varsa yükle
+        if (subtasksLog.containsKey(today)) {
+          final savedSubtasks = subtasksLog[today]!;
+          for (
+            int i = 0;
+            i < subtasks.length && i < savedSubtasks.length;
+            i++
+          ) {
+            final saved = savedSubtasks[i];
+            if (subtasks[i].id == saved['id']) {
+              subtasks[i].isCompleted = saved['isCompleted'] as bool? ?? false;
+            }
+          }
+          // Tümü tamamlandı mı kontrol et
+          isCompleted = subtasks.every((s) => s.isCompleted);
+          currentStreak = isCompleted ? 1 : 0;
+        } else {
+          // Yeni gün: tüm alt görevleri sıfırla
+          for (final subtask in subtasks) {
+            subtask.isCompleted = false;
+          }
+        }
+      }
     }
   }
 
@@ -140,6 +175,8 @@ class Habit {
         'minute': reminderTime!.minute,
       },
     if (linkedVisionId != null) 'linkedVisionId': linkedVisionId,
+    'subtasks': subtasks.map((s) => s.toJson()).toList(),
+    'subtasksLog': subtasksLog,
   };
 
   static Habit fromJson(Map<String, dynamic> json) {
@@ -235,6 +272,19 @@ class Habit {
             )
           : null,
       linkedVisionId: json['linkedVisionId'] as String?,
+      subtasks:
+          (json['subtasks'] as List?)
+              ?.map((e) => Subtask.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      subtasksLog:
+          (json['subtasksLog'] as Map?)?.map(
+            (k, v) => MapEntry(
+              k.toString(),
+              (v as List).map((e) => e as Map<String, dynamic>).toList(),
+            ),
+          ) ??
+          {},
     )..isAdvanced = (json['isAdvanced'] as bool?) ?? false;
   }
 

@@ -89,6 +89,12 @@ class _VisionTemplateBuilderScreenState
         case HabitType.timer:
           type = 'timer';
           break;
+        case HabitType.checkbox:
+          type = 'checkbox';
+          break;
+        case HabitType.subtasks:
+          type = 'subtasks';
+          break;
         case HabitType.simple:
           type = 'simple';
           break;
@@ -99,6 +105,10 @@ class _VisionTemplateBuilderScreenState
         type = 'numerical';
       else if (s.contains('timer'))
         type = 'timer';
+      else if (s.contains('checkbox'))
+        type = 'checkbox';
+      else if (s.contains('subtasks'))
+        type = 'subtasks';
       else
         type = 'simple';
     }

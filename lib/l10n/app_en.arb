@@ -119,6 +119,8 @@
     "yesNoType": "Yes/No",
     "numericalType": "Numerical Value",
     "timerType": "Timer",
+    "checkboxType": "Checkbox",
+    "subtasksType": "Subtasks",
     "yesNoDescription": "Simple yes/no tracking",
     "numericalDescription": "Numerical goal tracking",
     "timerDescription": "Time-based tracking",
@@ -318,6 +320,102 @@
     },
     "success": "Success",
     "successfulDayLegend": "Successful day",
+    "privacySecuritySubtitle": "Manage settings and data deletion options",
+    "googleDrive": "Google Drive",
+    "reportBug": "Report Bug",
+    "reportBugSubtitle": "Report issues you encounter",
+    "reportBugDescription": "Describe the issue you encountered in detail below.",
+    "yourEmailAddress": "Your Email Address",
+    "issueDescription": "Issue Description",
+    "issueDescriptionHint": "Describe the issue in detail...",
+    "send": "Send",
+    "pleaseFillAllFields": "Please fill all fields",
+    "bugReportSentSuccess": "Your bug report has been sent successfully. Thank you!",
+    "bugReportFailedStatus": "Failed to send bug report: {statusCode}",
+    "@bugReportFailedStatus": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "bugReportFailedError": "Failed to send bug report: {error}",
+    "@bugReportFailedError": {
+        "placeholders": {
+            "error": {}
+        }
+    },
+    "resetOnboardingTitle": "Reset Onboarding?",
+    "resetOnboardingDescription": "This will clear your current personality results and let you retake the quiz.",
+    "resetAction": "Reset",
+    "deleteAllDataConfirmContent": "Are you sure you want to delete all your app data? This action cannot be undone.",
+    "deleteAction": "Delete",
+    "allDataDeleted": "All data deleted",
+    "diagnosticsData": "Diagnostics data",
+    "diagnosticsDataSubtitle": "Share anonymous usage statistics",
+    "crashReports": "Crash reports",
+    "crashReportsSubtitle": "Send anonymous reports on app crashes",
+    "privacyPolicy": "Privacy Policy",
+    "deleteAllData": "Delete all data",
+    "stopwatchLabel": "STOPWATCH",
+    "runningLabel": "RUNNING",
+    "countdownLabel": "COUNTDOWN",
+    "focusLabel": "FOCUS",
+    "breakLabel": "BREAK",
+    "minLabel": "min",
+    "emojiCategoryPopular": "Popular",
+    "emojiCategoryHealth": "Health",
+    "emojiCategorySport": "Sport",
+    "emojiCategoryLife": "Life",
+    "emojiCategoryProductivity": "Productivity",
+    "emojiCategoryFood": "Food",
+    "emojiCategoryNature": "Nature",
+    "emojiCategoryAnimals": "Animals",
+    "emojiCategoryCare": "Care",
+    "habitTypeLabel": "Habit Type",
+    "nameLabel": "Name",
+    "descriptionLabel": "Description",
+    "optionalLabel": "optional",
+    "frequencyLabel": "Frequency",
+    "dateRangeLabel": "Date Range",
+    "reminderLabel": "Reminder",
+    "advancedHabitTitle": "Advanced Habit",
+    "habitNamePlaceholder": "Habit Name",
+    "numericTypeDesc": "Number tracking",
+    "checkboxTypeDesc": "Simple check",
+    "subtasksTypeDesc": "Multi-task",
+    "selectEmoji": "Select Emoji",
+    "customEmoji": "Custom Emoji",
+    "typeEmojiHint": "Type an emoji from keyboard",
+    "everyDay": "Every day",
+    "periodic": "Periodic",
+    "everyLabel": "Every",
+    "daysIntervalLabel": "days",
+    "offLabel": "Off",
+    "completeAllSubtasksToFinish": "complete all to finish habit",
+    "subtaskIndex": "Subtask {index}",
+    "@subtaskIndex": {
+        "placeholders": {
+            "index": {}
+        }
+    },
+    "addSubtask": "Add Subtask",
+    "saveChanges": "Save Changes",
+    "createHabitAction": "Create Habit",
+    "selectDuration": "Select Duration",
+    "selectedDaysOfMonth": "Days {sorted} of the month",
+    "@selectedDaysOfMonth": {
+        "placeholders": {
+            "sorted": {}
+        }
+    },
+    "everyXDays": "Every {periodicDays} days",
+    "@everyXDays": {
+        "placeholders": {
+            "periodicDays": {}
+        }
+    },
+    "startDateLabel": "Start",
+    "endDateLabel": "End",
+    "notSelected": "Not selected",
     "motivation": "Motivation",
     "motivationBody": "Great! You achieved a {percent}% success rate over {period}.",
     "weeklyProgress": "Weekly progress",
@@ -963,5 +1061,37 @@
     "backupSuccess": "Backed up: {id}",
     "restoreFailed": "Restore failed",
     "restoreSuccess": "Downloaded: {content}",
-    "plansLoadError": "Error loading plans: {error}"
+    "plansLoadError": "Error loading plans: {error}",
+    "optional": "optional",
+    "newHabit": "New Habit",
+    "typeEmoji": "Type an emoji from keyboard",
+    "habitNameHint": "Ex: Drink water, Read book...",
+    "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+    "every": "Every",
+    "daysInterval": "days",
+    "today": "Today",
+    "monthsShort": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "daysLater": "{days} days later",
+    "@daysLater": {
+        "placeholders": {
+            "days": {}
+        }
+    },
+    "daysAgo": "{days} days ago",
+    "@daysAgo": {
+        "placeholders": {
+            "days": {}
+        }
+    },
+    "off": "Off",
+    "createHabit": "Create Habit",
+    "pickTime": "Pick Time",
+    "monthlyDays": "Days {days} of the month",
+    "@monthlyDays": {
+        "placeholders": {
+            "days": {}
+        }
+    }
 }

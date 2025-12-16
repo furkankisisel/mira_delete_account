@@ -1164,6 +1164,8 @@ class VisionRepository {
       // Type and policy fields
       final typeStr = switch (h.habitType) {
         HabitType.simple => 'simple',
+        HabitType.checkbox => 'checkbox',
+        HabitType.subtasks => 'subtasks',
         HabitType.numerical => 'numerical',
         HabitType.timer => 'timer',
       };
@@ -1361,7 +1363,11 @@ class VisionRepository {
   bool _isDayCompleted(Habit habit, int loggedValue) {
     switch (habit.habitType) {
       case HabitType.simple:
+      case HabitType.checkbox:
         return loggedValue >= habit.targetCount;
+
+      case HabitType.subtasks:
+        return loggedValue >= 1;
 
       case HabitType.numerical:
         switch (habit.numericalTargetType) {

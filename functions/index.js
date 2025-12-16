@@ -89,3 +89,47 @@ exports.deleteAccount = functions.https.onRequest((req, res) => {
         }
     });
 });
+
+/*
+  Cloud Function: sendBugReport
+  - Accepts JSON { email: string, message: string, deviceInfo?: string }
+  - Stores bug report in Firestore
+  - Returns success response
+*/
+exports.sendBugReport = functions.https.onRequest((req, res) => {
+    cors(req, res, async () => {
+        if (req.method !== 'POST') {
+            return res.status(405).json({ error: 'Method Not Allowed' });
+        }
+
+        try {
+            const { email, message, deviceInfo } = req.body || {};
+
+            if (!email || typeof email !== 'string') {
+                return res.status(400).json({ error: 'Missing or invalid email' });
+            }
+
+            if (!message || typeof message !== 'string' || message.trim().length === 0) {
+                return res.status(400).json({ error: 'Missing or invalid message' });
+            }
+
+            // Store bug report in Firestore
+            const bugReportRef = await db.collection('bug_reports').add({
+                email: email.trim(),
+                message: message.trim(),
+                deviceInfo: deviceInfo || 'Not provided',
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                status: 'new'
+            });
+
+            return res.status(200).json({
+                ok: true,
+                reportId: bugReportRef.id,
+                message: 'Bug report submitted successfully'
+            });
+        } catch (err) {
+            console.error('sendBugReport error:', err);
+            return res.status(500).json({ error: 'Internal error' });
+        }
+    });
+});

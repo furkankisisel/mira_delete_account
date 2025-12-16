@@ -1254,6 +1254,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get timerType => 'مؤقت';
 
   @override
+  String get checkboxType => 'Onay Kutusu';
+
+  @override
+  String get subtasksType => 'Alt Görevler';
+
+  @override
   String get times => 'مرات';
 
   @override
@@ -1544,6 +1550,237 @@ class AppLocalizationsAr extends AppLocalizations {
   String get successfulDayLegend => 'يوم ناجح';
 
   @override
+  String get privacySecuritySubtitle =>
+      'Ayarları ve veri silme seçeneklerini yönetin';
+
+  @override
+  String get googleDrive => 'Google Drive';
+
+  @override
+  String get reportBug => 'Hata Bildir';
+
+  @override
+  String get reportBugSubtitle => 'Karşılaştığınız sorunları bildirin';
+
+  @override
+  String get reportBugDescription =>
+      'Karşılaştığınız sorunu aşağıya detaylı olarak yazın.';
+
+  @override
+  String get yourEmailAddress => 'E-posta Adresiniz';
+
+  @override
+  String get issueDescription => 'Sorun Açıklaması';
+
+  @override
+  String get issueDescriptionHint => 'Sorunu detaylı olarak açıklayın...';
+
+  @override
+  String get send => 'Gönder';
+
+  @override
+  String get pleaseFillAllFields => 'Lütfen tüm alanları doldurun';
+
+  @override
+  String get bugReportSentSuccess =>
+      'Hata raporunuz başarıyla gönderildi. Teşekkür ederiz!';
+
+  @override
+  String bugReportFailedStatus(Object statusCode) {
+    return 'Hata raporu gönderilemedi: $statusCode';
+  }
+
+  @override
+  String bugReportFailedError(Object error) {
+    return 'Hata raporu gönderilemedi: $error';
+  }
+
+  @override
+  String get resetOnboardingTitle => 'Tanıtımı Sıfırla?';
+
+  @override
+  String get resetOnboardingDescription =>
+      'Bu işlem mevcut kişilik testi sonuçlarınızı silecek ve testi tekrar yapmanızı sağlayacaktır.';
+
+  @override
+  String get resetAction => 'Sıfırla';
+
+  @override
+  String get deleteAllDataConfirmContent =>
+      'Tüm uygulama verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.';
+
+  @override
+  String get deleteAction => 'Sil';
+
+  @override
+  String get allDataDeleted => 'Tüm veriler silindi';
+
+  @override
+  String get diagnosticsData => 'Tanılama verileri';
+
+  @override
+  String get diagnosticsDataSubtitle =>
+      'Uygulama kullanımına dair anonim istatistikleri paylaş';
+
+  @override
+  String get crashReports => 'Çökme raporları';
+
+  @override
+  String get crashReportsSubtitle =>
+      'Uygulama çökmelerinde anonim rapor gönder';
+
+  @override
+  String get privacyPolicy => 'Gizlilik Politikası';
+
+  @override
+  String get deleteAllData => 'Tüm verileri sil';
+
+  @override
+  String get stopwatchLabel => 'KRONOMETRE';
+
+  @override
+  String get runningLabel => 'ÇALIŞIYOR';
+
+  @override
+  String get countdownLabel => 'GERİ SAYIM';
+
+  @override
+  String get focusLabel => 'ODAK';
+
+  @override
+  String get breakLabel => 'MOLA';
+
+  @override
+  String get minLabel => 'dk';
+
+  @override
+  String get emojiCategoryPopular => 'Popüler';
+
+  @override
+  String get emojiCategoryHealth => 'Sağlık';
+
+  @override
+  String get emojiCategorySport => 'Spor';
+
+  @override
+  String get emojiCategoryLife => 'Yaşam';
+
+  @override
+  String get emojiCategoryProductivity => 'Üretkenlik';
+
+  @override
+  String get emojiCategoryFood => 'Yiyecek';
+
+  @override
+  String get emojiCategoryNature => 'Doğa';
+
+  @override
+  String get emojiCategoryAnimals => 'Hayvanlar';
+
+  @override
+  String get emojiCategoryCare => 'Bakım';
+
+  @override
+  String get habitTypeLabel => 'Alışkanlık Tipi';
+
+  @override
+  String get nameLabel => 'İsim';
+
+  @override
+  String get descriptionLabel => 'Açıklama';
+
+  @override
+  String get optionalLabel => 'opsiyonel';
+
+  @override
+  String get frequencyLabel => 'Sıklık';
+
+  @override
+  String get dateRangeLabel => 'Tarih Aralığı';
+
+  @override
+  String get reminderLabel => 'Hatırlatıcı';
+
+  @override
+  String get advancedHabitTitle => 'Gelişmiş Alışkanlık';
+
+  @override
+  String get habitNamePlaceholder => 'Alışkanlık Adı';
+
+  @override
+  String get numericTypeDesc => 'Sayı takibi';
+
+  @override
+  String get checkboxTypeDesc => 'Basit işaretle';
+
+  @override
+  String get subtasksTypeDesc => 'Çoklu görev';
+
+  @override
+  String get selectEmoji => 'Emoji seç';
+
+  @override
+  String get customEmoji => 'Özel Emoji';
+
+  @override
+  String get typeEmojiHint => 'Klavyeden bir emoji yazın';
+
+  @override
+  String get everyDay => 'Her gün';
+
+  @override
+  String get periodic => 'دوري';
+
+  @override
+  String get everyLabel => 'Her';
+
+  @override
+  String get daysIntervalLabel => 'günde bir';
+
+  @override
+  String get offLabel => 'Kapalı';
+
+  @override
+  String get completeAllSubtasksToFinish =>
+      'tümünü tamamlayınca alışkanlık tamamlanır';
+
+  @override
+  String subtaskIndex(Object index) {
+    return 'Alt görev $index';
+  }
+
+  @override
+  String get addSubtask => 'Alt Görev Ekle';
+
+  @override
+  String get saveChanges => 'Değişiklikleri Kaydet';
+
+  @override
+  String get createHabitAction => 'Alışkanlık Oluştur';
+
+  @override
+  String get selectDuration => 'Süre Seç';
+
+  @override
+  String selectedDaysOfMonth(Object sorted) {
+    return 'Ayın $sorted. günleri';
+  }
+
+  @override
+  String everyXDays(Object periodicDays) {
+    return 'Her $periodicDays günde bir';
+  }
+
+  @override
+  String get startDateLabel => 'Başlangıç';
+
+  @override
+  String get endDateLabel => 'Bitiş';
+
+  @override
+  String get notSelected => 'Seçilmedi';
+
+  @override
   String get motivation => 'الدافع';
 
   @override
@@ -1597,9 +1834,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get clear => 'مسح';
-
-  @override
-  String get periodic => 'دوري';
 
   @override
   String get createHabitTitle => 'إنشاء عادة';
@@ -2512,5 +2746,62 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String plansLoadError(Object error) {
     return 'خطأ في تحميل الخطط: $error';
+  }
+
+  @override
+  String get optional => 'opsiyonel';
+
+  @override
+  String get newHabit => 'Yeni Alışkanlık';
+
+  @override
+  String get typeEmoji => 'Klavyeden bir emoji yazın';
+
+  @override
+  String get habitNameHint => 'Örn: Su içmek, Kitap okumak...';
+
+  @override
+  String get weekDaysShort => 'Pzt,Sal,Çar,Per,Cum,Cmt,Paz';
+
+  @override
+  String get every => 'Her';
+
+  @override
+  String get daysInterval => 'günde bir';
+
+  @override
+  String get today => 'Bugün';
+
+  @override
+  String get monthsShort => 'Oca,Şub,Mar,Nis,May,Haz,Tem,Ağu,Eyl,Eki,Kas,Ara';
+
+  @override
+  String get tomorrow => 'Yarın';
+
+  @override
+  String get yesterday => 'Dün';
+
+  @override
+  String daysLater(Object days) {
+    return '$days gün sonra';
+  }
+
+  @override
+  String daysAgo(Object days) {
+    return '$days gün önce';
+  }
+
+  @override
+  String get off => 'Kapalı';
+
+  @override
+  String get createHabit => 'Alışkanlık Oluştur';
+
+  @override
+  String get pickTime => 'Saat Seç';
+
+  @override
+  String monthlyDays(Object days) {
+    return 'Ayın $days. günleri';
   }
 }

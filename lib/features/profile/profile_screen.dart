@@ -20,6 +20,7 @@ import '../../ui/premium_gate.dart';
 import '../../ui/manage_subscription_screen.dart';
 import 'package:http/http.dart' as http;
 import '../../config/constants.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -776,9 +777,7 @@ class _SettingsTabState extends State<_SettingsTab> {
             ListTile(
               leading: const Icon(Icons.privacy_tip_outlined),
               title: Text(l10n.privacySecurity),
-              subtitle: const Text(
-                'Ayarları ve veri silme seçeneklerini yönetin',
-              ),
+              subtitle: Text(l10n.privacySecuritySubtitle),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.of(context).push(
@@ -869,7 +868,9 @@ class _SettingsTabState extends State<_SettingsTab> {
                           );
                           messenger.showSnackBar(
                             SnackBar(
-                              content: Text(l10n.backupSuccess('Google Drive')),
+                              content: Text(
+                                l10n.backupSuccess(l10n.googleDrive),
+                              ),
                             ),
                           );
                         } catch (e) {
@@ -1013,7 +1014,7 @@ class _SettingsTabState extends State<_SettingsTab> {
                   );
                   try {
                     final uri = Uri.parse(
-                      '${AppConstants.backendBaseUrl}/delete-account',
+                      '${AppConstants.backendBaseUrl}/deleteAccount',
                     );
                     final res = await http.post(
                       uri,
@@ -1055,6 +1056,151 @@ class _SettingsTabState extends State<_SettingsTab> {
         _SettingsSection(
           title: l10n.other,
           children: [
+            // Bug Report
+            Builder(
+              builder: (ctx) => ListTile(
+                leading: const Icon(Icons.bug_report_outlined),
+                title: Text(l10n.reportBug),
+                subtitle: Text(l10n.reportBugSubtitle),
+                onTap: () async {
+                  final auth = AuthRepository.instance;
+                  final emailController = TextEditingController(
+                    text: auth.isSignedIn ? auth.account!.email : '',
+                  );
+                  final messageController = TextEditingController();
+
+                  final confirmed = await showDialog<bool>(
+                    context: ctx,
+                    builder: (dCtx) => AlertDialog(
+                      title: Text(l10n.reportBug),
+                      content: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.reportBugDescription),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                labelText: l10n.yourEmailAddress,
+                                prefixIcon: const Icon(Icons.email_outlined),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: messageController,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                labelText: l10n.issueDescription,
+                                hintText: l10n.issueDescriptionHint,
+                                border: const OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(dCtx, false),
+                          child: Text(l10n.cancel),
+                        ),
+                        FilledButton(
+                          onPressed: () => Navigator.pop(dCtx, true),
+                          child: Text(l10n.send),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed != true) {
+                    emailController.dispose();
+                    messageController.dispose();
+                    return;
+                  }
+
+                  final email = emailController.text.trim();
+                  final message = messageController.text.trim();
+
+                  if (email.isEmpty || message.isEmpty) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(content: Text(l10n.pleaseFillAllFields)),
+                    );
+                    emailController.dispose();
+                    messageController.dispose();
+                    return;
+                  }
+
+                  // Show loading
+                  showDialog<void>(
+                    context: ctx,
+                    barrierDismissible: false,
+                    builder: (_) =>
+                        const Center(child: CircularProgressIndicator()),
+                  );
+
+                  try {
+                    // Get device info
+                    String deviceInfo = 'Unknown';
+                    try {
+                      final deviceInfoPlugin = DeviceInfoPlugin();
+                      if (io.Platform.isAndroid) {
+                        final androidInfo = await deviceInfoPlugin.androidInfo;
+                        deviceInfo =
+                            'Android ${androidInfo.version.release} (SDK ${androidInfo.version.sdkInt}), ${androidInfo.brand} ${androidInfo.model}';
+                      } else if (io.Platform.isIOS) {
+                        final iosInfo = await deviceInfoPlugin.iosInfo;
+                        deviceInfo =
+                            'iOS ${iosInfo.systemVersion}, ${iosInfo.model}';
+                      }
+                    } catch (e) {
+                      deviceInfo = 'Error getting device info: $e';
+                    }
+
+                    final uri = Uri.parse(
+                      '${AppConstants.backendBaseUrl}/sendBugReport',
+                    );
+                    final res = await http.post(
+                      uri,
+                      headers: {'Content-Type': 'application/json'},
+                      body: jsonEncode({
+                        'email': email,
+                        'message': message,
+                        'deviceInfo': deviceInfo,
+                      }),
+                    );
+
+                    Navigator.of(ctx, rootNavigator: true).pop();
+
+                    if (res.statusCode == 200) {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.bugReportSentSuccess),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            l10n.bugReportFailedStatus(res.statusCode),
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    Navigator.of(ctx, rootNavigator: true).pop();
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(content: Text(l10n.bugReportFailedError(e))),
+                    );
+                  } finally {
+                    emailController.dispose();
+                    messageController.dispose();
+                  }
+                },
+              ),
+            ),
             ListTile(
               leading: const Icon(Icons.psychology_outlined),
               title: Text(l10n.resetOnboarding),
@@ -1064,10 +1210,8 @@ class _SettingsTabState extends State<_SettingsTab> {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Reset Onboarding?'),
-                    content: const Text(
-                      'This will clear your current personality results and let you retake the quiz.',
-                    ),
+                    title: Text(l10n.resetOnboardingTitle),
+                    content: Text(l10n.resetOnboardingDescription),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
@@ -1075,7 +1219,7 @@ class _SettingsTabState extends State<_SettingsTab> {
                       ),
                       FilledButton(
                         onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Reset'),
+                        child: Text(l10n.resetAction),
                       ),
                     ],
                   ),
