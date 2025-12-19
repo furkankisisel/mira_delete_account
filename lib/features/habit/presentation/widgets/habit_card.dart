@@ -181,7 +181,7 @@ class _HabitCardState extends State<HabitCard>
     final double progress = widget.targetCount > 0
         ? (widget.currentStreak / widget.targetCount).clamp(0.0, 1.0)
         : 0.0;
-    String? _ruleHint() {
+    String? ruleHint() {
       String unitLabel = '';
       if (widget.unit != null && widget.unit!.isNotEmpty) {
         unitLabel = ' ${widget.unit}';
@@ -233,14 +233,14 @@ class _HabitCardState extends State<HabitCard>
               onSubmitted: (_) => _submitManual(c),
             ),
             const SizedBox(height: 8),
-            if (_ruleHint() != null)
+            if (ruleHint() != null)
               Row(
                 children: [
                   const Icon(Icons.info_outline, size: 14),
                   const SizedBox(width: 6),
                   Flexible(
                     child: Text(
-                      _ruleHint()!,
+                      ruleHint()!,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                       ),

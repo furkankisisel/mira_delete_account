@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../design_system/theme/theme_variations.dart';
 import 'package:intl/intl.dart';
-import 'dart:math' as math;
 import '../../l10n/app_localizations.dart';
 import 'data/transaction_repository.dart';
 import 'data/transaction_model.dart';
@@ -186,7 +185,7 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
                   ),
                   const SizedBox(height: 8),
                   _StatTile(
-                    label: 'Net',
+                    label: AppLocalizations.of(context).financeNet,
                     value: _formatCurrency(context, net),
                     color: net >= 0 ? Colors.green : Colors.redAccent,
                   ),

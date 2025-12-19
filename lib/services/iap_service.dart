@@ -16,7 +16,7 @@ class IAPService {
   final InAppPurchase _iap = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _purchaseStreamSubscription;
 
-  List<MiraPlan> _plans = [];
+  final List<MiraPlan> _plans = [];
   List<MiraPlan> get plans => _plans;
 
   bool _isReady = false;
@@ -78,9 +78,7 @@ class IAPService {
 
         final plan = MiraPlan(
           id: product.id,
-          label: isMonthly
-              ? 'Aylık Premium (14 gün ücretsiz)'
-              : 'Yıllık Premium (14 gün ücretsiz)',
+          label: isMonthly ? 'Monthly Premium' : 'Yearly Premium',
           billingPeriod: isMonthly ? 'monthly' : 'yearly',
           trial: const Duration(days: AppConstants.trialDays),
           productDetails: product,

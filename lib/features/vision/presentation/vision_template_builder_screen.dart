@@ -101,9 +101,9 @@ class _VisionTemplateBuilderScreenState
       }
     } else if (selType is String) {
       final s = selType.toLowerCase();
-      if (s.contains('numerical'))
+      if (s.contains('numerical')) {
         type = 'numerical';
-      else if (s.contains('timer'))
+      } else if (s.contains('timer'))
         type = 'timer';
       else if (s.contains('checkbox'))
         type = 'checkbox';
@@ -128,7 +128,7 @@ class _VisionTemplateBuilderScreenState
       target =
           (m['timerTargetMinutes'] as num?)?.toInt() ??
           (m['targetCount'] as num?)?.toInt();
-      unit = 'dakika';
+      unit = AppLocalizations.of(context).minutesSuffixShort;
       final p = m['timerTargetType']?.toString();
       if (p != null) timerPolicy = p;
     }
@@ -137,9 +137,9 @@ class _VisionTemplateBuilderScreenState
     final f = m['frequencyType'];
     if (f != null) {
       final s = f.toString();
-      if (s.contains('daily'))
+      if (s.contains('daily')) {
         freqType = 'daily';
-      else if (s.contains('specificWeekdays'))
+      } else if (s.contains('specificWeekdays'))
         freqType = 'specificWeekdays';
       else if (s.contains('specificMonthDays'))
         freqType = 'specificMonthDays';

@@ -71,7 +71,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   ];
 
   Map<String, List<String>> _getEmojiCategories(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return {
       l10n.emojiCategoryPopular: [
         '✅',
@@ -211,15 +211,13 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
     _reminderTime = h.reminderTime ?? const TimeOfDay(hour: 9, minute: 0);
 
     // Load start date from existing habit
-    if (h.startDate != null) {
-      final parts = h.startDate!.split('-');
-      if (parts.length == 3) {
-        _startDate = DateTime(
-          int.parse(parts[0]),
-          int.parse(parts[1]),
-          int.parse(parts[2]),
-        );
-      }
+    final parts = h.startDate.split('-');
+    if (parts.length == 3) {
+      _startDate = DateTime(
+        int.parse(parts[0]),
+        int.parse(parts[1]),
+        int.parse(parts[2]),
+      );
     }
 
     final ft = h.frequencyType?.toLowerCase() ?? h.frequency?.toLowerCase();
@@ -286,43 +284,43 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
 
                     // Emoji Seçici
                     _buildSection(
-                      title: AppLocalizations.of(context)!.emojiLabel,
+                      title: AppLocalizations.of(context).emojiLabel,
                       child: _buildEmojiPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Renk Seçici
                     _buildSection(
-                      title: AppLocalizations.of(context)!.colorLabel,
+                      title: AppLocalizations.of(context).colorLabel,
                       child: _buildColorPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // İsim
                     _buildSection(
-                      title: AppLocalizations.of(context)!.nameLabel,
+                      title: AppLocalizations.of(context).nameLabel,
                       child: _buildNameField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Açıklama
                     _buildSection(
-                      title: AppLocalizations.of(context)!.descriptionLabel,
-                      subtitle: AppLocalizations.of(context)!.optional,
+                      title: AppLocalizations.of(context).descriptionLabel,
+                      subtitle: AppLocalizations.of(context).optional,
                       child: _buildDescriptionField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Sıklık
                     _buildSection(
-                      title: AppLocalizations.of(context)!.frequencyLabel,
+                      title: AppLocalizations.of(context).frequencyLabel,
                       child: _buildFrequencySelector(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Başlangıç Tarihi
                     _buildSection(
-                      title: AppLocalizations.of(context)!.startDateLabel,
+                      title: AppLocalizations.of(context).startDateLabel,
                       child: _buildStartDatePicker(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
@@ -371,8 +369,8 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
         centerTitle: true,
         title: Text(
           widget.isEditing
-              ? AppLocalizations.of(context)!.edit
-              : AppLocalizations.of(context)!.newHabit,
+              ? AppLocalizations.of(context).edit
+              : AppLocalizations.of(context).newHabit,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
@@ -384,7 +382,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
 
   Widget _buildPreviewCard(ThemeData theme, ColorScheme colorScheme) {
     final name = _nameController.text.isEmpty
-        ? AppLocalizations.of(context)!.habitName
+        ? AppLocalizations.of(context).habitName
         : _nameController.text;
     final desc = _descriptionController.text.isEmpty
         ? null
@@ -545,7 +543,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!.selectEmoji,
+                    AppLocalizations.of(context).selectEmoji,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.7),
                     ),
@@ -703,7 +701,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            AppLocalizations.of(context)!.customEmoji,
+            AppLocalizations.of(context).customEmoji,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -712,7 +710,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                AppLocalizations.of(context)!.typeEmoji,
+                AppLocalizations.of(context).typeEmoji,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -749,7 +747,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
-                AppLocalizations.of(context)!.cancel,
+                AppLocalizations.of(context).cancel,
                 style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
               ),
             ),
@@ -765,7 +763,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                 Navigator.pop(ctx);
               },
               style: FilledButton.styleFrom(backgroundColor: _selectedColor),
-              child: Text(AppLocalizations.of(context)!.add),
+              child: Text(AppLocalizations.of(context).add),
             ),
           ],
         );
@@ -818,7 +816,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       onChanged: (_) => setState(() {}),
       style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.habitNameHint,
+        hintText: AppLocalizations.of(context).habitNameHint,
         hintStyle: TextStyle(
           color: colorScheme.onSurface.withOpacity(0.3),
           fontWeight: FontWeight.normal,
@@ -848,7 +846,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       onChanged: (_) => setState(() {}),
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
-        hintText: AppLocalizations.of(context)!.habitDescriptionHint,
+        hintText: AppLocalizations.of(context).habitDescriptionHint,
         hintStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.3)),
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.4),
@@ -869,7 +867,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   }
 
   Widget _buildFrequencySelector(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final frequencies = [
       ('daily', l10n.everyDay, Icons.wb_sunny_outlined),
       ('weekly', l10n.weekly, Icons.view_week_outlined),
@@ -961,7 +959,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   }
 
   Widget _buildWeekdaySelector(ThemeData theme, ColorScheme colorScheme) {
-    final days = AppLocalizations.of(context)!.weekDaysShort.split(',');
+    final days = AppLocalizations.of(context).weekDaysShort.split(',');
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1067,7 +1065,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            AppLocalizations.of(context)!.every,
+            AppLocalizations.of(context).every,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1102,7 +1100,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
           ),
           const SizedBox(width: 12),
           Text(
-            AppLocalizations.of(context)!.daysInterval,
+            AppLocalizations.of(context).daysInterval,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1164,7 +1162,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                 children: [
                   Text(
                     isToday
-                        ? AppLocalizations.of(context)!.today
+                        ? AppLocalizations.of(context).today
                         : _formatDate(_startDate),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -1194,12 +1192,12 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       a.year == b.year && a.month == b.month && a.day == b.day;
 
   String _formatDate(DateTime d) {
-    final months = AppLocalizations.of(context)!.monthsShort.split(',');
+    final months = AppLocalizations.of(context).monthsShort.split(',');
     return '${d.day} ${months[d.month - 1]} ${d.year}';
   }
 
   String _getDaysFromNow(DateTime d) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final target = DateTime(d.year, d.month, d.day);
@@ -1243,7 +1241,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.reminder,
+                        AppLocalizations.of(context).reminder,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -1251,7 +1249,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                       Text(
                         _reminderEnabled
                             ? _reminderTime.format(context)
-                            : AppLocalizations.of(context)!.off,
+                            : AppLocalizations.of(context).off,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -1336,8 +1334,8 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
         child: Center(
           child: Text(
             widget.isEditing
-                ? AppLocalizations.of(context)!.saveChanges
-                : AppLocalizations.of(context)!.createHabit,
+                ? AppLocalizations.of(context).saveChanges
+                : AppLocalizations.of(context).createHabit,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: canSave
@@ -1395,7 +1393,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                         TextButton(
                           onPressed: () => Navigator.pop(context),
                           child: Text(
-                            AppLocalizations.of(context)!.cancel,
+                            AppLocalizations.of(context).cancel,
                             style: TextStyle(
                               color: colorScheme.onSurface.withOpacity(0.6),
                               fontWeight: FontWeight.w500,
@@ -1403,7 +1401,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                           ),
                         ),
                         Text(
-                          AppLocalizations.of(context)!.pickTime,
+                          AppLocalizations.of(context).pickTime,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -1417,7 +1415,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
                             ),
                           ),
                           child: Text(
-                            AppLocalizations.of(context)!.ok,
+                            AppLocalizations.of(context).ok,
                             style: TextStyle(
                               color: _selectedColor,
                               fontWeight: FontWeight.w600,
@@ -1538,7 +1536,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
   }
 
   String _getFrequencyText() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     switch (_selectedFrequency) {
       case 'daily':
         return l10n.everyDay;
@@ -1614,7 +1612,7 @@ class _SimpleHabitScreenState extends State<SimpleHabitScreen>
       currentStreak: widget.existingHabit?.currentStreak ?? 0,
       isCompleted: widget.existingHabit?.isCompleted ?? false,
       progressDate: startDateStr,
-      startDate: widget.existingHabit?.startDate ?? startDateStr,
+      startDate: startDateStr,
       reminderEnabled: _reminderEnabled,
       reminderTime: _reminderEnabled ? _reminderTime : null,
     );

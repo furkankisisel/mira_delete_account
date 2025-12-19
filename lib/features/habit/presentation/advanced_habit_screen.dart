@@ -276,12 +276,10 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     _numericalTargetType = h.numericalTargetType;
     _timerTargetType = h.timerTargetType;
 
-    if (h.startDate != null) {
-      try {
-        _startDate = DateTime.parse(h.startDate!);
-      } catch (_) {}
-    }
-    if (h.endDate != null) {
+    try {
+      _startDate = DateTime.parse(h.startDate);
+    } catch (_) {}
+      if (h.endDate != null) {
       try {
         _endDate = DateTime.parse(h.endDate!);
       } catch (_) {}
@@ -495,36 +493,36 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
                     // Alışkanlık Tipi
                     _buildSection(
-                      title: AppLocalizations.of(context)!.habitTypeLabel,
+                      title: AppLocalizations.of(context).habitTypeLabel,
                       child: _buildHabitTypeSelector(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Emoji Seçici
                     _buildSection(
-                      title: AppLocalizations.of(context)!.emojiLabel,
+                      title: AppLocalizations.of(context).emojiLabel,
                       child: _buildEmojiPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Renk Seçici
                     _buildSection(
-                      title: AppLocalizations.of(context)!.colorLabel,
+                      title: AppLocalizations.of(context).colorLabel,
                       child: _buildColorPicker(colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // İsim
                     _buildSection(
-                      title: AppLocalizations.of(context)!.nameLabel,
+                      title: AppLocalizations.of(context).nameLabel,
                       child: _buildNameField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Açıklama
                     _buildSection(
-                      title: AppLocalizations.of(context)!.descriptionLabel,
-                      subtitle: AppLocalizations.of(context)!.optionalLabel,
+                      title: AppLocalizations.of(context).descriptionLabel,
+                      subtitle: AppLocalizations.of(context).optionalLabel,
                       child: _buildDescriptionField(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
@@ -541,14 +539,14 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
                     // Sıklık
                     _buildSection(
-                      title: AppLocalizations.of(context)!.frequencyLabel,
+                      title: AppLocalizations.of(context).frequencyLabel,
                       child: _buildFrequencySelector(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
 
                     // Tarih Aralığı
                     _buildSection(
-                      title: AppLocalizations.of(context)!.dateRangeLabel,
+                      title: AppLocalizations.of(context).dateRangeLabel,
                       child: _buildDateRangeSection(theme, colorScheme),
                     ),
                     const SizedBox(height: 28),
@@ -595,8 +593,8 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
         centerTitle: true,
         title: Text(
           widget.isEditing
-              ? AppLocalizations.of(context)!.edit
-              : AppLocalizations.of(context)!.advancedHabitTitle,
+              ? AppLocalizations.of(context).edit
+              : AppLocalizations.of(context).advancedHabitTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSurface,
@@ -608,7 +606,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
   Widget _buildPreviewCard(ThemeData theme, ColorScheme colorScheme) {
     final name = _nameController.text.isEmpty
-        ? AppLocalizations.of(context)!.habitNamePlaceholder
+        ? AppLocalizations.of(context).habitNamePlaceholder
         : _nameController.text;
     final desc = _descriptionController.text.isEmpty
         ? null
@@ -751,7 +749,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildHabitTypeSelector(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final types = [
       (
         HabitType.numerical,
@@ -893,7 +891,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!.selectEmoji,
+                    AppLocalizations.of(context).selectEmoji,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.7),
                     ),
@@ -977,7 +975,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
           const SizedBox(height: 16),
 
           // Kategoriler
-          ..._getEmojiCategories(AppLocalizations.of(context)!).entries.map(
+          ..._getEmojiCategories(AppLocalizations.of(context)).entries.map(
             (entry) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1051,7 +1049,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            AppLocalizations.of(context)!.customEmoji,
+            AppLocalizations.of(context).customEmoji,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -1060,7 +1058,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                AppLocalizations.of(context)!.typeEmojiHint,
+                AppLocalizations.of(context).typeEmojiHint,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -1097,7 +1095,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(
-                AppLocalizations.of(context)!.cancel,
+                AppLocalizations.of(context).cancel,
                 style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
               ),
             ),
@@ -1113,7 +1111,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                 Navigator.pop(ctx);
               },
               style: FilledButton.styleFrom(backgroundColor: _selectedColor),
-              child: Text(AppLocalizations.of(context)!.add),
+              child: Text(AppLocalizations.of(context).add),
             ),
           ],
         );
@@ -1123,7 +1121,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
   Widget _buildColorPicker(ColorScheme colorScheme) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1211,7 +1209,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildNameField(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return TextField(
       controller: _nameController,
       onChanged: (_) => setState(() {}),
@@ -1243,7 +1241,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildDescriptionField(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return TextField(
       controller: _descriptionController,
       maxLines: 2,
@@ -1285,7 +1283,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildTargetSection(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // Checkbox türü için hedef gerekmiyor
     if (_habitType == HabitType.checkbox) {
@@ -1309,7 +1307,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     ThemeData theme,
     ColorScheme colorScheme,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final predefinedUnits = _getPredefinedUnits(l10n);
     final currentUnit = _unitController.text.isNotEmpty
         ? _unitController.text
@@ -1471,7 +1469,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   void _showCustomUnitDialog() {
     final customController = TextEditingController(text: _unitController.text);
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -1526,7 +1524,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildTargetTypeRow(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final types = [
       (NumericalTargetType.minimum, l10n.atLeast, Icons.trending_up_rounded),
       (NumericalTargetType.exact, l10n.exact, Icons.check_circle_outline),
@@ -1627,7 +1625,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildTimerTargetTypeRow(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final types = [
       (TimerTargetType.minimum, l10n.atLeast, Icons.trending_up_rounded),
       (TimerTargetType.exact, l10n.exact, Icons.check_circle_outline),
@@ -1690,7 +1688,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildFrequencySelector(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final frequencies = [
       ('daily', l10n.everyDay, Icons.wb_sunny_outlined),
       ('weekly', l10n.weekly, Icons.view_week_outlined),
@@ -1780,7 +1778,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
   }
 
   Widget _buildWeekdaySelector(ThemeData theme, ColorScheme colorScheme) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final days = [
       l10n.weekdaysShortMon,
       l10n.weekdaysShortTue,
@@ -1895,7 +1893,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            AppLocalizations.of(context)!.everyLabel,
+            AppLocalizations.of(context).everyLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1930,7 +1928,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
           ),
           const SizedBox(width: 12),
           Text(
-            AppLocalizations.of(context)!.daysIntervalLabel,
+            AppLocalizations.of(context).daysIntervalLabel,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -1971,7 +1969,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.reminderLabel,
+                        AppLocalizations.of(context).reminderLabel,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -1979,7 +1977,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                       Text(
                         _reminderEnabled
                             ? _reminderTime.format(context)
-                            : AppLocalizations.of(context)!.offLabel,
+                            : AppLocalizations.of(context).offLabel,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurface.withOpacity(0.5),
                         ),
@@ -2039,8 +2037,8 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
 
   Widget _buildSubtasksSection(ThemeData theme, ColorScheme colorScheme) {
     return _buildSection(
-      title: AppLocalizations.of(context)!.subtasksType,
-      subtitle: AppLocalizations.of(context)!.completeAllSubtasksToFinish,
+      title: AppLocalizations.of(context).subtasksType,
+      subtitle: AppLocalizations.of(context).completeAllSubtasksToFinish,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -2060,11 +2058,12 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                         Expanded(
                           child: TextField(
                             controller: _subtaskControllers[index],
+                            onChanged: (_) => setState(() {}),
                             style: theme.textTheme.bodyLarge,
                             decoration: InputDecoration(
                               hintText: AppLocalizations.of(
                                 context,
-                              )!.subtaskIndex(index + 1),
+                              ).subtaskIndex(index + 1),
                               hintStyle: TextStyle(
                                 color: colorScheme.onSurface.withOpacity(0.4),
                               ),
@@ -2140,7 +2139,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    AppLocalizations.of(context)!.addSubtask,
+                    AppLocalizations.of(context).addSubtask,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: _selectedColor,
                       fontWeight: FontWeight.w600,
@@ -2155,8 +2154,18 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     );
   }
 
+  // Alt görevler için validasyon: en az bir dolu alt görev olmalı
+  bool _hasValidSubtasks() {
+    return _subtaskControllers.any(
+      (controller) => controller.text.trim().isNotEmpty,
+    );
+  }
+
   Widget _buildSaveButton(ThemeData theme, ColorScheme colorScheme) {
-    final canSave = _nameController.text.trim().isNotEmpty;
+    // Subtasks türünde en az bir alt görev zorunlu
+    final bool canSave =
+        _nameController.text.trim().isNotEmpty &&
+        (_habitType != HabitType.subtasks || _hasValidSubtasks());
 
     return GestureDetector(
       onTap: canSave ? _saveHabit : null,

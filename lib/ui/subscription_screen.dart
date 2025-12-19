@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:mira/l10n/app_localizations.dart';
 
 import '../config/constants.dart'; // constants.dart dosyasının güncel olduğundan emin olun
@@ -82,7 +81,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       debugPrint('[SubscriptionScreen] Error loading plans: $e');
       if (mounted) {
         setState(() {
-          _error = AppLocalizations.of(context)!.plansLoadError(e.toString());
+          _error = AppLocalizations.of(context).plansLoadError(e.toString());
           _loading = false;
         });
       }
@@ -99,7 +98,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.processingWait),
+            content: Text(AppLocalizations.of(context).processingWait),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -112,7 +111,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)!.failedToLoad(e.toString()),
+              AppLocalizations.of(context).failedToLoad(e.toString()),
             ),
           ),
         );
@@ -126,7 +125,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.checkingPurchases),
+            content: Text(AppLocalizations.of(context).checkingPurchases),
           ),
         );
       }
@@ -134,7 +133,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppLocalizations.of(context)!.restoreError}: $e'),
+            content: Text('${AppLocalizations.of(context).restoreError}: $e'),
           ),
         );
       }
@@ -145,7 +144,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final code = _promoCodeController.text.trim();
     if (code.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen bir promosyon kodu girin')),
+        SnackBar(content: Text(AppLocalizations.of(context).enterPromoCode)),
       );
       return;
     }
@@ -158,10 +157,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                '🎉 Promosyon kodu başarıyla uygulandı! Premium erişiminiz aktifleştirildi.',
-              ),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).promoCodeSuccess),
               backgroundColor: Colors.green,
               duration: Duration(seconds: 3),
             ),
@@ -177,8 +174,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             SnackBar(
               content: Text(
                 hasUsed
-                    ? 'Bu hesapta daha önce bir promosyon kodu kullanılmış.'
-                    : 'Geçersiz promosyon kodu. Lütfen kontrol edip tekrar deneyin.',
+                    ? AppLocalizations.of(context).promoCodeAlreadyUsed
+                    : AppLocalizations.of(context).promoCodeInvalid,
               ),
               backgroundColor: Colors.red,
             ),
@@ -188,7 +185,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('${AppLocalizations.of(context).errorPrefix}$e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -208,7 +208,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.premiumPlans),
+        title: Text(AppLocalizations.of(context).premiumPlans),
         elevation: 0,
       ),
       body: _loading
@@ -230,11 +230,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               TextButton.icon(
                 onPressed: _restorePurchases,
                 icon: const Icon(Icons.restore),
-                label: Text(AppLocalizations.of(context)!.restorePurchases),
+                label: Text(AppLocalizations.of(context).restorePurchases),
               ),
               const SizedBox(height: 8),
               Text(
-                AppLocalizations.of(context)!.trialInfo,
+                AppLocalizations.of(context).trialInfo,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -251,9 +251,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (_yearlyPlan != null) available.add(_yearlyPlan!);
 
     if (available.isEmpty) {
-      return Center(
-        child: Text(AppLocalizations.of(context)!.noPlansAvailable),
-      );
+      return Center(child: Text(AppLocalizations.of(context).noPlansAvailable));
     }
 
     if (_selectedPlanIndex < 0 || _selectedPlanIndex >= available.length) {
@@ -300,7 +298,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          AppLocalizations.of(context)!.unlockAllFeatures,
+          AppLocalizations.of(context).unlockAllFeatures,
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
@@ -383,16 +381,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        plan.label,
+                        isMonthly
+                            ? '${AppLocalizations.of(context).monthly} Premium'
+                            : '${AppLocalizations.of(context).yearly} Premium',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        AppLocalizations.of(context).freeTrial14Days,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         isMonthly
-                            ? AppLocalizations.of(context)!.flexiblePlan
-                            : AppLocalizations.of(context)!.annualPlanDesc,
+                            ? AppLocalizations.of(context).flexiblePlan
+                            : AppLocalizations.of(context).annualPlanDesc,
                         style: theme.textTheme.bodySmall,
                       ),
                     ],
@@ -410,8 +418,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                     Text(
                       isMonthly
-                          ? AppLocalizations.of(context)!.perMonth
-                          : AppLocalizations.of(context)!.perYear,
+                          ? AppLocalizations.of(context).perMonth
+                          : AppLocalizations.of(context).perYear,
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -431,7 +439,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
                   child: Text(
-                    AppLocalizations.of(context)!.continueButton,
+                    AppLocalizations.of(context).continueButton,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -444,7 +452,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildFeaturesList() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -463,11 +471,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _featureItem(l10n.featureDetailedAnalysis),
-          _featureItem(l10n.featureUnlimitedPalmReading),
-          _featureItem(l10n.featureAIInsights),
-          _featureItem(l10n.featureAdFree),
-          _featureItem(l10n.featurePrioritySupport),
+          _featureItem(l10n.featureAdvancedHabits),
+          _featureItem(l10n.featureVisionCreation),
+          _featureItem(l10n.featureAdvancedFinance),
+          _featureItem(l10n.featurePremiumThemes),
+          _featureItem(l10n.featureBackup),
         ],
       ),
     );
@@ -520,7 +528,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Promosyon Kodu',
+                AppLocalizations.of(context).promoCodeLabel,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -542,7 +550,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Premium erişiminiz promosyon kodu ile aktifleştirildi ✨',
+                      AppLocalizations.of(context).promoCodeActiveMessage,
                       style: TextStyle(
                         color: Colors.green[800],
                         fontWeight: FontWeight.w500,
@@ -556,7 +564,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             TextField(
               controller: _promoCodeController,
               decoration: InputDecoration(
-                hintText: 'Promosyon kodunuzu girin',
+                hintText: AppLocalizations.of(context).promoCodeHint,
                 filled: true,
                 fillColor: theme.colorScheme.surface,
                 border: OutlineInputBorder(
@@ -586,7 +594,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       )
                     : const Icon(Icons.redeem_rounded),
                 label: Text(
-                  _isApplyingPromoCode ? 'Uygulanıyor...' : 'Kodu Uygula',
+                  _isApplyingPromoCode
+                      ? AppLocalizations.of(context).applying
+                      : AppLocalizations.of(context).applyCode,
                 ),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),

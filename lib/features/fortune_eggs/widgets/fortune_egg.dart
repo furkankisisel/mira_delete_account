@@ -581,7 +581,7 @@ class _GalaxyEggPainter extends CustomPainter {
       [0.15, 0.35, 0.018],
       [0.7, 0.4, 0.010],
     ]) {
-      starAt(data[0] as double, data[1] as double, data[2] as double);
+      starAt(data[0], data[1], data[2]);
     }
 
     canvas.restore();

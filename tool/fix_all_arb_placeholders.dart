@@ -36,7 +36,7 @@ void main() async {
             if (value is Map && value.containsKey('placeholders')) {
               final placeholders = value['placeholders'] as Map;
 
-              placeholderNames.forEach((placeholderKey) {
+              for (var placeholderKey in placeholderNames) {
                 if (placeholders.containsKey(placeholderKey)) {
                   final placeholderValue = placeholders[placeholderKey];
                   if (placeholderValue is Map && placeholderValue.containsKey('type')) {
@@ -45,7 +45,7 @@ void main() async {
                     print('  - Removed "type" from "$placeholderKey" in "$key"');
                   }
                 }
-              });
+              }
             }
           }
         });
@@ -53,7 +53,7 @@ void main() async {
         if (modified) {
           final encoder = JsonEncoder.withIndent('  ');
           final newContent = encoder.convert(arbData);
-          await file.writeAsString(newContent + '\n');
+          await file.writeAsString('$newContent\n');
           print('  Updated file.');
         } else {
           print('  No modifications needed.');

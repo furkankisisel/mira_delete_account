@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../profile/auth_repository.dart';
+import 'package:mira/l10n/app_localizations.dart';
 
 /// First-run sign-in screen that requires Google account login
 class SignInScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _SignInScreenState extends State<SignInScreen> {
       setState(() {
         _error =
             AuthRepository.instance.lastError ??
-            'Giriş başarısız oldu. Lütfen tekrar deneyin.';
+            AppLocalizations.of(context).signInFailed;
         _loading = false;
       });
       return;
@@ -51,7 +52,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Google hesabınla giriş yap',
+                AppLocalizations.of(context).signInWithGoogleTitle,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -59,7 +60,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Devam etmek için Google hesabını bağla. Profil bilgilerin otomatik dolacak.',
+                AppLocalizations.of(context).signInWithGoogleDesc,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -80,7 +81,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: FilledButton.icon(
                   onPressed: _loading ? null : _handleSignIn,
                   icon: const Icon(Icons.login),
-                  label: const Text('Google ile giriş yap'),
+                  label: Text(
+                    AppLocalizations.of(context).signInWithGoogleButton,
+                  ),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),

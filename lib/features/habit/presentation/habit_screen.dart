@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/icons/icon_mapping.dart';
 import 'widgets/fab_menu.dart';
 import 'widgets/daily_task_dialog.dart';
 import 'widgets/list_creation_dialog.dart';
@@ -12,7 +11,6 @@ import '../domain/habit_types.dart';
 import '../domain/habit_repository.dart';
 import '../domain/habit_model.dart';
 import '../domain/subtask_model.dart';
-import '../domain/category_repository.dart';
 import '../domain/list_repository.dart';
 import '../domain/list_model.dart';
 import '../domain/daily_task_repository.dart';
@@ -54,10 +52,13 @@ class HabitScreenState extends State<HabitScreen> {
   );
   bool _isFabExpanded = false;
   final ScrollController _dateScrollController = ScrollController();
-  DateTime get _monthEnd => DateTime(_selected.year, _selected.month + 1, 0);
-  List<DateTime> get _monthDays => List.generate(
-    _monthEnd.day,
-    (i) => DateTime(_selected.year, _selected.month, i + 1),
+  // Bugünden 20 gün önce ve 20 gün sonrasını göster (toplam 41 gün)
+  static const int _dateRangeDays = 20;
+  DateTime get _today =>
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  List<DateTime> get _dateRange => List.generate(
+    _dateRangeDays * 2 + 1, // 20 gün önce + bugün + 20 gün sonra = 41 gün
+    (i) => _today.add(Duration(days: i - _dateRangeDays)),
   );
 
   final HabitRepository _repo = HabitRepository.instance;
@@ -138,8 +139,10 @@ class HabitScreenState extends State<HabitScreen> {
 
   void _scrollDateRowToSelected({bool animate = false}) {
     if (!_dateScrollController.hasClients) return;
+    // Find the index of selected date in _dateRange
+    final int index = _dateRange.indexWhere((d) => _isSameDay(d, _selected));
+    if (index < 0) return; // Selected date is not in range
     // Each item ~ width 40 + horizontal padding 4 = 44, plus list left padding 4
-    final int index = _selected.day - 1;
     final double base = 4 + index * 44.0;
     // Try to place selected near the center of the viewport
     final viewport = _dateScrollController.position.viewportDimension;
@@ -216,8 +219,9 @@ class HabitScreenState extends State<HabitScreen> {
       final dOnly = DateTime(cursor.year, cursor.month, cursor.day);
       if (dOnly.isBefore(
         DateTime(startDate.year, startDate.month, startDate.day),
-      ))
+      )) {
         break;
+      }
       // For future days relative to 'today', don't count as missed
       if (dOnly.isAfter(todayDate)) break;
       // If scheduledDates present and the day is not scheduled, skip counting it as missed
@@ -343,7 +347,7 @@ class HabitScreenState extends State<HabitScreen> {
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String?>(
-                    value: localListId,
+                    initialValue: localListId,
                     isExpanded: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -353,14 +357,12 @@ class HabitScreenState extends State<HabitScreen> {
                         value: null,
                         child: Text(AppLocalizations.of(context).allLabel),
                       ),
-                      ..._listRepo.lists
-                          .map(
-                            (l) => DropdownMenuItem<String?>(
-                              value: l.id,
-                              child: Text(l.title),
-                            ),
-                          )
-                          .toList(),
+                      ..._listRepo.lists.map(
+                        (l) => DropdownMenuItem<String?>(
+                          value: l.id,
+                          child: Text(l.title),
+                        ),
+                      ),
                     ],
                     onChanged: (v) => setModalState(() => localListId = v),
                   ),
@@ -1022,6 +1024,30 @@ class HabitScreenState extends State<HabitScreen> {
       cap: 7,
     );
 
+    // Subtasks için: geçmiş tarih ise subtasksLog'dan yükle, değilse mevcut subtasks kullan
+    List<Subtask>? displaySubtasks;
+    if (habit.habitType == HabitType.subtasks) {
+      if (isToday) {
+        displaySubtasks = habit.subtasks;
+      } else if (habit.subtasksLog.containsKey(dayKey)) {
+        // Geçmiş tarih için subtasksLog'dan yükle
+        displaySubtasks = habit.subtasksLog[dayKey]!
+            .map(
+              (s) => Subtask(
+                id: s['id'] as String,
+                title: s['title'] as String,
+                isCompleted: s['isCompleted'] as bool? ?? false,
+              ),
+            )
+            .toList();
+      } else {
+        // Henüz log yok, tüm subtasks'leri tamamlanmamış olarak göster
+        displaySubtasks = habit.subtasks
+            .map((s) => Subtask(id: s.id, title: s.title, isCompleted: false))
+            .toList();
+      }
+    }
+
     return HabitCard(
       title: habit.title,
       description: _buildHabitSubtitle(habit),
@@ -1096,7 +1122,7 @@ class HabitScreenState extends State<HabitScreen> {
       },
       onEdit: () => _editHabit(habit),
       onDelete: () => _deleteHabit(habit),
-      subtasks: habit.habitType == HabitType.subtasks ? habit.subtasks : null,
+      subtasks: displaySubtasks,
       onSubtaskToggle: (subtaskId, completed) {
         if (isFuture || isBeforeStart) return;
         if (isToday) {
@@ -1179,6 +1205,8 @@ class HabitScreenState extends State<HabitScreen> {
         habit.selectedYearDays = editedHabit.selectedYearDays;
         habit.periodicDays = editedHabit.periodicDays;
         habit.scheduledDates = editedHabit.scheduledDates;
+        habit.startDate = editedHabit.startDate;
+        habit.progressDate = editedHabit.progressDate;
         habit.reminderEnabled = editedHabit.reminderEnabled;
         habit.reminderTime = editedHabit.reminderTime;
         await _repo.updateHabit(habit);
@@ -1209,6 +1237,9 @@ class HabitScreenState extends State<HabitScreen> {
       habit.selectedYearDays = editedHabit.selectedYearDays;
       habit.periodicDays = editedHabit.periodicDays;
       habit.scheduledDates = editedHabit.scheduledDates;
+      habit.startDate = editedHabit.startDate;
+      habit.progressDate = editedHabit.progressDate;
+      habit.endDate = editedHabit.endDate;
       habit.reminderEnabled = editedHabit.reminderEnabled;
       habit.reminderTime = editedHabit.reminderTime;
       habit.subtasks = editedHabit.subtasks;
@@ -1631,7 +1662,7 @@ class HabitScreenState extends State<HabitScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Liste oluşturuldu: ${list.title}'),
+            content: Text(AppLocalizations.of(context).listCreated(list.title)),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
@@ -1655,9 +1686,9 @@ class HabitScreenState extends State<HabitScreen> {
                   controller: _dateScrollController,
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  itemCount: _monthDays.length,
+                  itemCount: _dateRange.length,
                   itemBuilder: (context, i) {
-                    final day = _monthDays[i];
+                    final day = _dateRange[i];
                     final bool selected = _isSameDay(day, _selected);
                     final bool today = _isSameDay(day, DateTime.now());
                     final scheme = Theme.of(context).colorScheme;
@@ -2452,8 +2483,9 @@ class _TaskCard extends StatelessWidget {
           onTap: () => onToggleDone(!isDone),
           onLongPress: () async {
             // show modal menu with Edit / Assign / Delete
-            if (onEdit == null && onAssignToList == null && onDelete == null)
+            if (onEdit == null && onAssignToList == null && onDelete == null) {
               return;
+            }
             final l10n = AppLocalizations.of(context);
             final selected = await showModalBottomSheet<String?>(
               context: context,

@@ -91,7 +91,7 @@ void main() {
     expect(dates, isNotEmpty);
 
     // All scheduled dates must fall on Monday or Wednesday
-    bool _isMonOrWed(String ymd) {
+    bool isMonOrWed(String ymd) {
       final parts = ymd.split('-');
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
@@ -100,7 +100,7 @@ void main() {
       return d.weekday == DateTime.monday || d.weekday == DateTime.wednesday;
     }
 
-    expect(dates.every(_isMonOrWed), isTrue);
+    expect(dates.every(isMonOrWed), isTrue);
 
     // Dates should be unique and sorted ascending
     final sorted = [...dates]..sort();

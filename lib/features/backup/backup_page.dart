@@ -28,8 +28,8 @@ class _BackupPageState extends State<BackupPage> {
     setState(() {
       _busy = false;
       _status = res == null
-          ? AppLocalizations.of(context)!.backupFailed
-          : AppLocalizations.of(context)!.backupSuccess(res);
+          ? AppLocalizations.of(context).backupFailed
+          : AppLocalizations.of(context).backupSuccess(res);
     });
   }
 
@@ -55,8 +55,8 @@ class _BackupPageState extends State<BackupPage> {
     setState(() {
       _busy = false;
       _status = content == null
-          ? AppLocalizations.of(context)!.restoreFailed
-          : AppLocalizations.of(context)!.restoreSuccess(
+          ? AppLocalizations.of(context).restoreFailed
+          : AppLocalizations.of(context).restoreSuccess(
               content.substring(0, content.length > 100 ? 100 : content.length),
             );
     });
@@ -66,14 +66,17 @@ class _BackupPageState extends State<BackupPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Yedekleme')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).backupTitle)),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('JSON Veri (örnek):', style: theme.textTheme.labelLarge),
+              Text(
+                AppLocalizations.of(context).jsonDataExample,
+                style: theme.textTheme.labelLarge,
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: _dataCtrl,
@@ -88,7 +91,7 @@ class _BackupPageState extends State<BackupPage> {
                     child: FilledButton.icon(
                       onPressed: _busy ? null : _backup,
                       icon: const Icon(Icons.cloud_upload),
-                      label: const Text('Drive\'a Yedekle'),
+                      label: Text(AppLocalizations.of(context).backupToDrive),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -96,7 +99,7 @@ class _BackupPageState extends State<BackupPage> {
                     child: OutlinedButton.icon(
                       onPressed: _busy ? null : _refreshList,
                       icon: const Icon(Icons.refresh),
-                      label: const Text('Listeyi Yenile'),
+                      label: Text(AppLocalizations.of(context).refreshList),
                     ),
                   ),
                 ],
@@ -110,19 +113,25 @@ class _BackupPageState extends State<BackupPage> {
               const Divider(height: 24),
               Expanded(
                 child: _files.isEmpty
-                    ? const Center(child: Text('Yedek bulunamadı.'))
+                    ? Center(
+                        child: Text(
+                          AppLocalizations.of(context).noBackupsFound,
+                        ),
+                      )
                     : ListView.builder(
                         itemCount: _files.length,
                         itemBuilder: (_, i) {
                           final f = _files[i];
-                          final name = f.name ?? 'adsız';
+                          final name =
+                              f.name ??
+                              AppLocalizations.of(context).unnamedBackup;
                           final id = f.id ?? '';
                           return ListTile(
                             title: Text(name),
                             subtitle: Text(id),
                             trailing: TextButton(
                               onPressed: _busy ? null : () => _restore(id),
-                              child: const Text('Geri Yükle'),
+                              child: Text(AppLocalizations.of(context).restore),
                             ),
                           );
                         },

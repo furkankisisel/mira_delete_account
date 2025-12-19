@@ -76,14 +76,14 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
       data: themed,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(l10n.moodAnalytics ?? 'Mood Analytics'),
+          title: Text(l10n.moodAnalytics),
           centerTitle: true,
           bottom: TabBar(
             controller: _tabController,
             tabs: [
-              Tab(text: l10n.overview ?? 'Overview'),
-              Tab(text: l10n.trends ?? 'Trends'),
-              Tab(text: l10n.history ?? 'History'),
+              Tab(text: l10n.overview),
+              Tab(text: l10n.trends),
+              Tab(text: l10n.history),
             ],
           ),
         ),
@@ -110,14 +110,10 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
           children: [
             Icon(Icons.mood, size: 64, color: theme.colorScheme.outline),
             const SizedBox(height: 16),
-            Text(
-              l10n.noMoodData ?? 'No mood data yet',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(l10n.noMoodData, style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(
-              l10n.startTrackingMood ??
-                  'Start tracking your mood to see analytics',
+              l10n.startTrackingMood,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -137,7 +133,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
             children: [
               Expanded(
                 child: _buildSummaryCard(
-                  title: l10n.totalEntries ?? 'Total Entries',
+                  title: l10n.totalEntries,
                   value: _statistics!.totalEntries.toString(),
                   icon: Icons.event_note,
                   color: Colors.blue,
@@ -147,7 +143,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
               const SizedBox(width: 12),
               Expanded(
                 child: _buildSummaryCard(
-                  title: l10n.averageMood ?? 'Average Mood',
+                  title: l10n.averageMood,
                   value: _statistics!.averageMoodScore.toStringAsFixed(1),
                   icon: Icons.trending_up,
                   color: _getMoodColor(_statistics!.averageMoodScore),
@@ -160,7 +156,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
 
           // Mood Distribution
           Text(
-            l10n.moodDistribution ?? 'Mood Distribution',
+            l10n.moodDistribution,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -171,7 +167,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
 
           // Top Categories
           Text(
-            l10n.topCategories ?? 'Top Categories',
+            l10n.topCategories,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -191,10 +187,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
           children: [
             Icon(Icons.trending_up, size: 64, color: theme.colorScheme.outline),
             const SizedBox(height: 16),
-            Text(
-              l10n.noTrendData ?? 'Not enough data for trends',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(l10n.noTrendData, style: theme.textTheme.titleMedium),
           ],
         ),
       );
@@ -206,7 +199,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.moodTrend ?? 'Mood Trend (Last 30 Days)',
+            l10n.moodTrend,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -239,10 +232,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
           children: [
             Icon(Icons.history, size: 64, color: theme.colorScheme.outline),
             const SizedBox(height: 16),
-            Text(
-              l10n.noHistory ?? 'No mood history',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(l10n.noHistory, style: theme.textTheme.titleMedium),
           ],
         ),
       );
@@ -302,8 +292,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
   }
 
   Widget _buildMoodDistributionChart(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     if (_statistics == null || _statistics!.moodDistribution.isEmpty) {
-      return const Center(child: Text('No data available'));
+      return Center(child: Text(l10n.noMoodData));
     }
 
     final sections = _statistics!.moodDistribution.entries.map((entry) {
@@ -343,7 +334,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCategoryRow(
-            l10n.mostCommonMood ?? 'Most Common Mood',
+            l10n.mostCommonMood,
             _getMoodTitle(_statistics!.mostCommonMood, l10n),
             _getMoodIcon(_statistics!.mostCommonMood),
             _getMoodColor(_statistics!.mostCommonMood.index + 1.0),
@@ -351,7 +342,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
           ),
           const Divider(),
           _buildCategoryRow(
-            l10n.mostCommonEmotion ?? 'Most Common Emotion',
+            l10n.mostCommonEmotion,
             _getSubEmotionTitle(_statistics!.mostCommonSubEmotion, l10n),
             _getSubEmotionIcon(_statistics!.mostCommonSubEmotion),
             theme.colorScheme.primary,
@@ -359,7 +350,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
           ),
           const Divider(),
           _buildCategoryRow(
-            l10n.mostCommonReason ?? 'Most Common Reason',
+            l10n.mostCommonReason,
             _getReasonTitle(_statistics!.mostCommonReason, l10n),
             _getReasonIcon(_statistics!.mostCommonReason),
             theme.colorScheme.secondary,
@@ -389,19 +380,19 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
         return Theme(
           data: themed,
           child: AlertDialog(
-            title: Text(l10n.delete ?? 'Actions'),
-            content: Text(l10n.deleteEntryConfirm ?? ''),
+            title: Text(l10n.delete),
+            content: Text(l10n.deleteEntryConfirm),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(ctx);
                   _showEditEntryDialog(entry);
                 },
-                child: Text(l10n.edit ?? 'Edit'),
+                child: Text(l10n.edit),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: Text(l10n.cancel ?? 'Cancel'),
+                child: Text(l10n.cancel),
               ),
               TextButton(
                 onPressed: () async {
@@ -410,7 +401,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   await _loadData();
                 },
                 child: Text(
-                  l10n.delete ?? 'Delete',
+                  l10n.delete,
                   style: const TextStyle(color: Colors.red),
                 ),
               ),
@@ -445,14 +436,14 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
         return Theme(
           data: themed,
           child: AlertDialog(
-            title: Text(l10n.edit ?? 'Edit Entry'),
+            title: Text(l10n.edit),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DropdownButtonFormField<MoodLevel>(
-                    value: selectedMood,
-                    decoration: InputDecoration(labelText: l10n.mood ?? 'Mood'),
+                    initialValue: selectedMood,
+                    decoration: InputDecoration(labelText: l10n.mood),
                     items: MoodLevel.values
                         .map(
                           (m) => DropdownMenuItem(
@@ -467,9 +458,9 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<SubEmotion>(
-                    value: selectedSubEmotion,
+                    initialValue: selectedSubEmotion,
                     decoration: InputDecoration(
-                      labelText: l10n.selectSubEmotion ?? 'Sub-emotion',
+                      labelText: l10n.selectSubEmotion,
                     ),
                     items: SubEmotion.values
                         .map(
@@ -485,10 +476,8 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<ReasonCategory>(
-                    value: selectedReason,
-                    decoration: InputDecoration(
-                      labelText: l10n.selectReason ?? 'Reason',
-                    ),
+                    initialValue: selectedReason,
+                    decoration: InputDecoration(labelText: l10n.selectReason),
                     items: ReasonCategory.values
                         .map(
                           (r) => DropdownMenuItem(
@@ -504,9 +493,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                   const SizedBox(height: 8),
                   TextField(
                     controller: noteCtrl,
-                    decoration: InputDecoration(
-                      labelText: l10n.noteOptional ?? 'Note',
-                    ),
+                    decoration: InputDecoration(labelText: l10n.noteOptional),
                     maxLines: 3,
                   ),
                 ],
@@ -515,7 +502,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: Text(l10n.cancel ?? 'Cancel'),
+                child: Text(l10n.cancel),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -533,7 +520,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
                     await _loadData();
                   }
                 },
-                child: Text(l10n.save ?? 'Save'),
+                child: Text(l10n.save),
               ),
             ],
           ),
@@ -587,7 +574,8 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
   }
 
   Widget _buildTrendChart(ThemeData theme) {
-    if (_trendData.isEmpty) return const Center(child: Text('No data'));
+    final l10n = AppLocalizations.of(context);
+    if (_trendData.isEmpty) return Center(child: Text(l10n.noTrendData));
 
     final spots = _trendData.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.averageMoodScore);
@@ -688,7 +676,7 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.insights ?? 'Insights',
+            l10n.insights,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -712,11 +700,10 @@ class _MoodAnalyticsScreenState extends State<MoodAnalyticsScreen>
               Expanded(
                 child: Text(
                   isImproving
-                      ? (l10n.moodImproving ?? 'Your mood is improving!')
+                      ? (l10n.moodImproving)
                       : isWorsening
-                      ? (l10n.moodDeclining ??
-                            'Your mood seems to be declining')
-                      : (l10n.moodStable ?? 'Your mood is relatively stable'),
+                      ? (l10n.moodDeclining)
+                      : (l10n.moodStable),
                   style: theme.textTheme.bodyMedium,
                 ),
               ),

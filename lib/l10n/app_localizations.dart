@@ -377,37 +377,37 @@ abstract class AppLocalizations {
   /// No description provided for @badgeActive100dDesc.
   ///
   /// In tr, this message translates to:
-  /// **'100 farklı günde aktif ol'**
+  /// **'100 gün aktif ol'**
   String get badgeActive100dDesc;
 
   /// No description provided for @badgeActive100dTitle.
   ///
   /// In tr, this message translates to:
-  /// **'100 Gün Aktif'**
+  /// **'Yol Arkadaşı'**
   String get badgeActive100dTitle;
 
   /// No description provided for @badgeActive30dDesc.
   ///
   /// In tr, this message translates to:
-  /// **'30 farklı günde aktif ol'**
+  /// **'30 gün aktif ol'**
   String get badgeActive30dDesc;
 
   /// No description provided for @badgeActive30dTitle.
   ///
   /// In tr, this message translates to:
-  /// **'30 Gün Aktif'**
+  /// **'Bağlılık'**
   String get badgeActive30dTitle;
 
   /// No description provided for @badgeActive7dDesc.
   ///
   /// In tr, this message translates to:
-  /// **'7 farklı günde aktif ol'**
+  /// **'7 gün aktif ol'**
   String get badgeActive7dDesc;
 
   /// No description provided for @badgeActive7dTitle.
   ///
   /// In tr, this message translates to:
-  /// **'7 Gün Aktif'**
+  /// **'Isınma Turu'**
   String get badgeActive7dTitle;
 
   /// No description provided for @badgeCategoryActivity.
@@ -443,7 +443,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeCategoryXp.
   ///
   /// In tr, this message translates to:
-  /// **'XP'**
+  /// **'Tecrübe'**
   String get badgeCategoryXp;
 
   /// No description provided for @badgeFin100Desc.
@@ -455,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeFin100Title.
   ///
   /// In tr, this message translates to:
-  /// **'Finansçı 100'**
+  /// **'Finans Gurusu'**
   String get badgeFin100Title;
 
   /// No description provided for @badgeFin10Desc.
@@ -467,7 +467,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeFin10Title.
   ///
   /// In tr, this message translates to:
-  /// **'Finansçı 10'**
+  /// **'Hesaplı'**
   String get badgeFin10Title;
 
   /// No description provided for @badgeFin250Desc.
@@ -479,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeFin250Title.
   ///
   /// In tr, this message translates to:
-  /// **'Finansçı 250'**
+  /// **'Banker'**
   String get badgeFin250Title;
 
   /// No description provided for @badgeFin50Desc.
@@ -491,55 +491,55 @@ abstract class AppLocalizations {
   /// No description provided for @badgeFin50Title.
   ///
   /// In tr, this message translates to:
-  /// **'Finansçı 50'**
+  /// **'Ekonomist'**
   String get badgeFin50Title;
 
   /// No description provided for @badgeHabit100Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Toplamda 100 alışkanlık tamamla'**
+  /// **'100 alışkanlık tamamla'**
   String get badgeHabit100Desc;
 
   /// No description provided for @badgeHabit100Title.
   ///
   /// In tr, this message translates to:
-  /// **'Alışkanlık 100'**
+  /// **'Uzman'**
   String get badgeHabit100Title;
 
   /// No description provided for @badgeHabit10Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Toplamda 10 alışkanlık tamamla'**
+  /// **'10 alışkanlık tamamla'**
   String get badgeHabit10Desc;
 
   /// No description provided for @badgeHabit10Title.
   ///
   /// In tr, this message translates to:
-  /// **'Alışkanlık 10'**
+  /// **'Başlangıç'**
   String get badgeHabit10Title;
 
   /// No description provided for @badgeHabit200Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Toplamda 200 alışkanlık tamamla'**
+  /// **'200 alışkanlık tamamla'**
   String get badgeHabit200Desc;
 
   /// No description provided for @badgeHabit200Title.
   ///
   /// In tr, this message translates to:
-  /// **'Alışkanlık 200'**
+  /// **'Efsane'**
   String get badgeHabit200Title;
 
   /// No description provided for @badgeHabit50Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Toplamda 50 alışkanlık tamamla'**
+  /// **'50 alışkanlık tamamla'**
   String get badgeHabit50Desc;
 
   /// No description provided for @badgeHabit50Title.
   ///
   /// In tr, this message translates to:
-  /// **'Alışkanlık 50'**
+  /// **'İstikrarlı'**
   String get badgeHabit50Title;
 
   /// No description provided for @badgeLevel10Desc.
@@ -551,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeLevel10Title.
   ///
   /// In tr, this message translates to:
-  /// **'Seviye 10'**
+  /// **'Kalfa'**
   String get badgeLevel10Title;
 
   /// No description provided for @badgeLevel20Desc.
@@ -563,7 +563,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeLevel20Title.
   ///
   /// In tr, this message translates to:
-  /// **'Seviye 20'**
+  /// **'Usta'**
   String get badgeLevel20Title;
 
   /// No description provided for @badgeLevel5Desc.
@@ -575,7 +575,7 @@ abstract class AppLocalizations {
   /// No description provided for @badgeLevel5Title.
   ///
   /// In tr, this message translates to:
-  /// **'Seviye 5'**
+  /// **'Çırak'**
   String get badgeLevel5Title;
 
   /// No description provided for @badgeVision10Desc.
@@ -587,19 +587,19 @@ abstract class AppLocalizations {
   /// No description provided for @badgeVision10Title.
   ///
   /// In tr, this message translates to:
-  /// **'Vizyon Büyükustası'**
+  /// **'Geleceği Gören'**
   String get badgeVision10Title;
 
   /// No description provided for @badgeVision1Desc.
   ///
   /// In tr, this message translates to:
-  /// **'İlk vizyonunu oluştur'**
+  /// **'1 vizyon oluştur'**
   String get badgeVision1Desc;
 
   /// No description provided for @badgeVision1Title.
   ///
   /// In tr, this message translates to:
-  /// **'Vizyoner'**
+  /// **'Hayalperest'**
   String get badgeVision1Title;
 
   /// No description provided for @badgeVision5Desc.
@@ -611,43 +611,43 @@ abstract class AppLocalizations {
   /// No description provided for @badgeVision5Title.
   ///
   /// In tr, this message translates to:
-  /// **'Vizyon Ustası'**
+  /// **'Vizyoner'**
   String get badgeVision5Title;
 
   /// No description provided for @badgeVisionHabits3Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Bir vizyona 3+ alışkanlık bağla'**
+  /// **'Bir vizyona 3 alışkanlık bağla'**
   String get badgeVisionHabits3Desc;
 
   /// No description provided for @badgeVisionHabits3Title.
   ///
   /// In tr, this message translates to:
-  /// **'Bağlayıcı'**
+  /// **'Hedef Odaklı'**
   String get badgeVisionHabits3Title;
 
   /// No description provided for @badgeXp1000Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Toplam 1000 XP kazan'**
+  /// **'1000 XP topla'**
   String get badgeXp1000Desc;
 
   /// No description provided for @badgeXp1000Title.
   ///
   /// In tr, this message translates to:
-  /// **'1000 XP'**
+  /// **'Bilge'**
   String get badgeXp1000Title;
 
   /// No description provided for @badgeXp500Desc.
   ///
   /// In tr, this message translates to:
-  /// **'Toplam 500 XP kazan'**
+  /// **'500 XP topla'**
   String get badgeXp500Desc;
 
   /// No description provided for @badgeXp500Title.
   ///
   /// In tr, this message translates to:
-  /// **'500 XP'**
+  /// **'Tecrübeli'**
   String get badgeXp500Title;
 
   /// No description provided for @between1And360.
@@ -929,7 +929,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteEntryConfirm.
   ///
   /// In tr, this message translates to:
-  /// **'Bu girişi sil?'**
+  /// **'Bu kaydı silmek istediğinden emin misin?'**
   String get deleteEntryConfirm;
 
   /// No description provided for @deleteTransactionConfirm.
@@ -2306,6 +2306,132 @@ abstract class AppLocalizations {
   /// **'Hazır'**
   String get templatesTabReady;
 
+  /// No description provided for @enterPromoCode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen bir promosyon kodu girin'**
+  String get enterPromoCode;
+
+  /// No description provided for @promoCodeSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'🎉 Promosyon kodu başarıyla uygulandı! Premium erişiminiz aktifleştirildi.'**
+  String get promoCodeSuccess;
+
+  /// No description provided for @promoCodeAlreadyUsed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu hesapta daha önce bir promosyon kodu kullanılmış.'**
+  String get promoCodeAlreadyUsed;
+
+  /// No description provided for @promoCodeInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçersiz promosyon kodu. Lütfen kontrol edip tekrar deneyin.'**
+  String get promoCodeInvalid;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata: '**
+  String get errorPrefix;
+
+  /// No description provided for @promoCodeLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Promosyon Kodu'**
+  String get promoCodeLabel;
+
+  /// No description provided for @promoCodeActiveMessage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Premium erişiminiz promosyon kodu ile aktifleştirildi ✨'**
+  String get promoCodeActiveMessage;
+
+  /// No description provided for @promoCodeHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Promosyon kodunuzu girin'**
+  String get promoCodeHint;
+
+  /// No description provided for @applying.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulanıyor...'**
+  String get applying;
+
+  /// No description provided for @applyCode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kodu Uygula'**
+  String get applyCode;
+
+  /// No description provided for @visionSettingsTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Serbest pano ayarları'**
+  String get visionSettingsTooltip;
+
+  /// No description provided for @visionBoardViewTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pano görünümü'**
+  String get visionBoardViewTooltip;
+
+  /// No description provided for @visionFreeformTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Serbest pano'**
+  String get visionFreeformTooltip;
+
+  /// No description provided for @filterTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Filtrele'**
+  String get filterTooltip;
+
+  /// No description provided for @selectMonthTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ay seç'**
+  String get selectMonthTooltip;
+
+  /// No description provided for @analysisTooltip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Analiz'**
+  String get analysisTooltip;
+
+  /// No description provided for @shareBoard.
+  ///
+  /// In tr, this message translates to:
+  /// **'Panoyu paylaş'**
+  String get shareBoard;
+
+  /// No description provided for @roundCorners.
+  ///
+  /// In tr, this message translates to:
+  /// **'Köşeleri yuvarlat'**
+  String get roundCorners;
+
+  /// No description provided for @showText.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yazıları göster'**
+  String get showText;
+
+  /// No description provided for @showProgress.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlerlemeyi göster'**
+  String get showProgress;
+
+  /// No description provided for @myBoard.
+  ///
+  /// In tr, this message translates to:
+  /// **'Panom'**
+  String get myBoard;
+
   /// No description provided for @textLabel.
   ///
   /// In tr, this message translates to:
@@ -2641,6 +2767,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Vizyon başladı: {title}'**
   String visionStartedMessage(Object title);
+
+  /// No description provided for @visionStartLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vizyon başlangıcı: '**
+  String get visionStartLabel;
 
   /// No description provided for @visual.
   ///
@@ -3569,7 +3701,7 @@ abstract class AppLocalizations {
   /// No description provided for @addDate.
   ///
   /// In tr, this message translates to:
-  /// **'Tarih ekle'**
+  /// **'Tarih Ekle'**
   String get addDate;
 
   /// No description provided for @listNameHint.
@@ -3695,7 +3827,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectSubEmotion.
   ///
   /// In tr, this message translates to:
-  /// **'Alt duygu seç'**
+  /// **'Alt Duygu Seç'**
   String get selectSubEmotion;
 
   /// No description provided for @subEmotionExhausted.
@@ -3863,7 +3995,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectReason.
   ///
   /// In tr, this message translates to:
-  /// **'Sebep seç'**
+  /// **'Sebep Seç'**
   String get selectReason;
 
   /// No description provided for @reasonAcademic.
@@ -4001,7 +4133,7 @@ abstract class AppLocalizations {
   /// No description provided for @moodAnalytics.
   ///
   /// In tr, this message translates to:
-  /// **'Mood Analizi'**
+  /// **'Duygu Analizi'**
   String get moodAnalytics;
 
   /// No description provided for @overview.
@@ -4025,49 +4157,49 @@ abstract class AppLocalizations {
   /// No description provided for @noMoodData.
   ///
   /// In tr, this message translates to:
-  /// **'Henüz mood verisi yok'**
+  /// **'Henüz duygu verisi yok'**
   String get noMoodData;
 
   /// No description provided for @startTrackingMood.
   ///
   /// In tr, this message translates to:
-  /// **'Analitikleri görmek için mood\'unuzu takip etmeye başlayın'**
+  /// **'Analizleri görmek için duygu durumunu kaydetmeye başla'**
   String get startTrackingMood;
 
   /// No description provided for @totalEntries.
   ///
   /// In tr, this message translates to:
-  /// **'Toplam Girişler'**
+  /// **'Toplam Kayıt'**
   String get totalEntries;
 
   /// No description provided for @averageMood.
   ///
   /// In tr, this message translates to:
-  /// **'Ortalama Mood'**
+  /// **'Ortalama Duygu'**
   String get averageMood;
 
   /// No description provided for @moodDistribution.
   ///
   /// In tr, this message translates to:
-  /// **'Mood Dağılımı'**
+  /// **'Duygu Dağılımı'**
   String get moodDistribution;
 
   /// No description provided for @topCategories.
   ///
   /// In tr, this message translates to:
-  /// **'Üst Kategoriler'**
+  /// **'En İyi Kategoriler'**
   String get topCategories;
 
   /// No description provided for @mostCommonMood.
   ///
   /// In tr, this message translates to:
-  /// **'En Yaygın Mood'**
+  /// **'En Yaygın Duygu'**
   String get mostCommonMood;
 
   /// No description provided for @mostCommonEmotion.
   ///
   /// In tr, this message translates to:
-  /// **'En Yaygın Duygu'**
+  /// **'En Yaygın His'**
   String get mostCommonEmotion;
 
   /// No description provided for @mostCommonReason.
@@ -4085,7 +4217,7 @@ abstract class AppLocalizations {
   /// No description provided for @moodTrend.
   ///
   /// In tr, this message translates to:
-  /// **'Mood Trendi (Son 30 Gün)'**
+  /// **'Duygu Trendi (Son 30 Gün)'**
   String get moodTrend;
 
   /// No description provided for @insights.
@@ -4097,25 +4229,25 @@ abstract class AppLocalizations {
   /// No description provided for @moodImproving.
   ///
   /// In tr, this message translates to:
-  /// **'Mood\'unuz gelişiyor!'**
+  /// **'Duygu durumun iyileşiyor!'**
   String get moodImproving;
 
   /// No description provided for @moodDeclining.
   ///
   /// In tr, this message translates to:
-  /// **'Mood\'unuz düşüyor gibi görünüyor'**
+  /// **'Duygu durumun düşüşte'**
   String get moodDeclining;
 
   /// No description provided for @moodStable.
   ///
   /// In tr, this message translates to:
-  /// **'Mood\'unuz nispeten stabil'**
+  /// **'Duygu durumun nispeten dengeli'**
   String get moodStable;
 
   /// No description provided for @noHistory.
   ///
   /// In tr, this message translates to:
-  /// **'Mood geçmişi yok'**
+  /// **'Geçmiş kaydı yok'**
   String get noHistory;
 
   /// No description provided for @habitNotFound.
@@ -4637,7 +4769,7 @@ abstract class AppLocalizations {
   /// No description provided for @restoreLatest.
   ///
   /// In tr, this message translates to:
-  /// **'Son yeдеği geri yükle'**
+  /// **'Son yedеği geri yükle'**
   String get restoreLatest;
 
   /// No description provided for @backupSuccess.
@@ -4820,12 +4952,6 @@ abstract class AppLocalizations {
   /// **'Panoyu paylaş'**
   String get shareDashboard;
 
-  /// No description provided for @roundCorners.
-  ///
-  /// In tr, this message translates to:
-  /// **'Köşeleri yuvarlat'**
-  String get roundCorners;
-
   /// No description provided for @customUnit.
   ///
   /// In tr, this message translates to:
@@ -4934,35 +5060,35 @@ abstract class AppLocalizations {
   /// **'Premium Özellikler'**
   String get premiumFeatures;
 
-  /// No description provided for @featureDetailedAnalysis.
+  /// No description provided for @featureAdvancedHabits.
   ///
   /// In tr, this message translates to:
-  /// **'Detaylı Kişilik Analizleri'**
-  String get featureDetailedAnalysis;
+  /// **'Gelişmiş Alışkanlık Oluşturma'**
+  String get featureAdvancedHabits;
 
-  /// No description provided for @featureUnlimitedPalmReading.
+  /// No description provided for @featureVisionCreation.
   ///
   /// In tr, this message translates to:
-  /// **'Sınırsız El Okuma Hakkı'**
-  String get featureUnlimitedPalmReading;
+  /// **'Vizyon Oluşturma'**
+  String get featureVisionCreation;
 
-  /// No description provided for @featureAIInsights.
+  /// No description provided for @featureAdvancedFinance.
   ///
   /// In tr, this message translates to:
-  /// **'Yapay Zeka Destekli Öngörüler'**
-  String get featureAIInsights;
+  /// **'Gelişmiş Finans Özellikleri'**
+  String get featureAdvancedFinance;
 
-  /// No description provided for @featureAdFree.
+  /// No description provided for @featurePremiumThemes.
   ///
   /// In tr, this message translates to:
-  /// **'Reklamsız Kullanım'**
-  String get featureAdFree;
+  /// **'Premium Temalar'**
+  String get featurePremiumThemes;
 
-  /// No description provided for @featurePrioritySupport.
+  /// No description provided for @featureBackup.
   ///
   /// In tr, this message translates to:
-  /// **'Öncelikli Destek'**
-  String get featurePrioritySupport;
+  /// **'Yedekleme Özelliği'**
+  String get featureBackup;
 
   /// No description provided for @perMonth.
   ///
@@ -5051,7 +5177,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupToDrive.
   ///
   /// In tr, this message translates to:
-  /// **'Verilerinizi Google Drive\'da yedekleyin'**
+  /// **'Drive\'a Yedekle'**
   String get backupToDrive;
 
   /// No description provided for @adFreeExperience.
@@ -5353,6 +5479,180 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Ayın {days}. günleri'**
   String monthlyDays(Object days);
+
+  /// No description provided for @signInFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Giriş başarısız oldu. Lütfen tekrar deneyin.'**
+  String get signInFailed;
+
+  /// No description provided for @signInWithGoogleTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google hesabınla giriş yap'**
+  String get signInWithGoogleTitle;
+
+  /// No description provided for @signInWithGoogleDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam etmek için Google hesabını bağla. Profil bilgilerin otomatik dolacak.'**
+  String get signInWithGoogleDesc;
+
+  /// No description provided for @signInWithGoogleButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Google ile giriş yap'**
+  String get signInWithGoogleButton;
+
+  /// No description provided for @startTestTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kişilik testine başlamak ister misin?'**
+  String get startTestTitle;
+
+  /// No description provided for @startTestDesc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Testi tamamlarsan kişiliğine uygun öneriler ve önerilen alışkanlıklar alırsın. İstersen bu adımı şimdi atlayabilirsin.'**
+  String get startTestDesc;
+
+  /// No description provided for @skipTest.
+  ///
+  /// In tr, this message translates to:
+  /// **'Testi Atla'**
+  String get skipTest;
+
+  /// No description provided for @startTest.
+  ///
+  /// In tr, this message translates to:
+  /// **'Testi Başlat'**
+  String get startTest;
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedekleme'**
+  String get backupTitle;
+
+  /// No description provided for @jsonDataExample.
+  ///
+  /// In tr, this message translates to:
+  /// **'JSON Veri (örnek):'**
+  String get jsonDataExample;
+
+  /// No description provided for @refreshList.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listeyi Yenile'**
+  String get refreshList;
+
+  /// No description provided for @noBackupsFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yedek bulunamadı.'**
+  String get noBackupsFound;
+
+  /// No description provided for @unnamedBackup.
+  ///
+  /// In tr, this message translates to:
+  /// **'adsız'**
+  String get unnamedBackup;
+
+  /// No description provided for @restore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri Yükle'**
+  String get restore;
+
+  /// No description provided for @financeNet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Net'**
+  String get financeNet;
+
+  /// No description provided for @durationIndefinite.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süresiz'**
+  String get durationIndefinite;
+
+  /// No description provided for @durationMonths.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count} ay'**
+  String durationMonths(Object count);
+
+  /// No description provided for @fortuneProceedToEggs.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yumurtalara Geç'**
+  String get fortuneProceedToEggs;
+
+  /// No description provided for @fortuneSwipeInstruction.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yumurtayı sağa/sola kaydırarak değiştirin, üzerine dokununca cevap görünür'**
+  String get fortuneSwipeInstruction;
+
+  /// No description provided for @listCreated.
+  ///
+  /// In tr, this message translates to:
+  /// **'Liste oluşturuldu: {title}'**
+  String listCreated(Object title);
+
+  /// No description provided for @open.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aç'**
+  String get open;
+
+  /// No description provided for @openNotificationSettings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirim ayarlarını aç'**
+  String get openNotificationSettings;
+
+  /// No description provided for @openSystemSettings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sistem ayarlarını aç'**
+  String get openSystemSettings;
+
+  /// No description provided for @openBatteryOptimization.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pil optimizasyonunu aç'**
+  String get openBatteryOptimization;
+
+  /// No description provided for @habitReminderBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Alışkanlığını tamamlama zamanı!'**
+  String get habitReminderBody;
+
+  /// No description provided for @timerPause.
+  ///
+  /// In tr, this message translates to:
+  /// **'Duraklat'**
+  String get timerPause;
+
+  /// No description provided for @timerResume.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam'**
+  String get timerResume;
+
+  /// No description provided for @timerStop.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitir'**
+  String get timerStop;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gizlilik Politikası'**
+  String get privacyPolicyTitle;
 }
 
 class _AppLocalizationsDelegate

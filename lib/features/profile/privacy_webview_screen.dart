@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import '../../l10n/app_localizations.dart';
 
 class PrivacyWebViewScreen extends StatefulWidget {
   final Uri uri;
@@ -41,7 +40,7 @@ class _PrivacyWebViewScreenState extends State<PrivacyWebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gizlilik Politikası'),
+        title: Text(AppLocalizations.of(context).privacyPolicyTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),

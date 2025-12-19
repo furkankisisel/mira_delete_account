@@ -235,7 +235,7 @@ class _CharacterResultScreenState extends State<CharacterResultScreen> {
           // Create habit from recommendation using existing repository method
           // The repository will handle all the required fields
           final habit = Habit(
-            id: DateTime.now().millisecondsSinceEpoch.toString() + '_$index',
+            id: '${DateTime.now().millisecondsSinceEpoch}_$index',
             title: habitName,
             description: _getHabitDescription(
               context,

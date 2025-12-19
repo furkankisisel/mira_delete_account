@@ -140,22 +140,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backgroundPlate => 'Background plate';
 
   @override
-  String get badgeActive100dDesc => 'Be active on 100 different days';
+  String get badgeActive100dDesc => 'Be active for 100 days';
 
   @override
-  String get badgeActive100dTitle => 'Active 100 Days';
+  String get badgeActive100dTitle => 'Companion';
 
   @override
-  String get badgeActive30dDesc => 'Be active on 30 different days';
+  String get badgeActive30dDesc => 'Be active for 30 days';
 
   @override
-  String get badgeActive30dTitle => 'Active 30 Days';
+  String get badgeActive30dTitle => 'Committed';
 
   @override
-  String get badgeActive7dDesc => 'Be active on 7 different days';
+  String get badgeActive7dDesc => 'Be active for 7 days';
 
   @override
-  String get badgeActive7dTitle => 'Active 7 Days';
+  String get badgeActive7dTitle => 'Warming Up';
 
   @override
   String get badgeCategoryActivity => 'Activity';
@@ -173,109 +173,109 @@ class AppLocalizationsEn extends AppLocalizations {
   String get badgeCategoryVision => 'Vision';
 
   @override
-  String get badgeCategoryXp => 'XP';
+  String get badgeCategoryXp => 'Experience';
 
   @override
   String get badgeFin100Desc => 'Log 100 transactions';
 
   @override
-  String get badgeFin100Title => 'Financier 100';
+  String get badgeFin100Title => 'Finance Guru';
 
   @override
   String get badgeFin10Desc => 'Log 10 transactions';
 
   @override
-  String get badgeFin10Title => 'Financier 10';
+  String get badgeFin10Title => 'Thrifty';
 
   @override
   String get badgeFin250Desc => 'Log 250 transactions';
 
   @override
-  String get badgeFin250Title => 'Financier 250';
+  String get badgeFin250Title => 'Banker';
 
   @override
   String get badgeFin50Desc => 'Log 50 transactions';
 
   @override
-  String get badgeFin50Title => 'Financier 50';
+  String get badgeFin50Title => 'Economist';
 
   @override
-  String get badgeHabit100Desc => 'Complete 100 habits in total';
+  String get badgeHabit100Desc => 'Complete 100 habits';
 
   @override
-  String get badgeHabit100Title => 'Habit 100';
+  String get badgeHabit100Title => 'Expert';
 
   @override
-  String get badgeHabit10Desc => 'Complete 10 habits in total';
+  String get badgeHabit10Desc => 'Complete 10 habits';
 
   @override
-  String get badgeHabit10Title => 'Habit 10';
+  String get badgeHabit10Title => 'Starter';
 
   @override
-  String get badgeHabit200Desc => 'Complete 200 habits in total';
+  String get badgeHabit200Desc => 'Complete 200 habits';
 
   @override
-  String get badgeHabit200Title => 'Habit 200';
+  String get badgeHabit200Title => 'Legend';
 
   @override
-  String get badgeHabit50Desc => 'Complete 50 habits in total';
+  String get badgeHabit50Desc => 'Complete 50 habits';
 
   @override
-  String get badgeHabit50Title => 'Habit 50';
+  String get badgeHabit50Title => 'Consistent';
 
   @override
   String get badgeLevel10Desc => 'Reach level 10';
 
   @override
-  String get badgeLevel10Title => 'Level 10';
+  String get badgeLevel10Title => 'Journeyman';
 
   @override
   String get badgeLevel20Desc => 'Reach level 20';
 
   @override
-  String get badgeLevel20Title => 'Level 20';
+  String get badgeLevel20Title => 'Master';
 
   @override
   String get badgeLevel5Desc => 'Reach level 5';
 
   @override
-  String get badgeLevel5Title => 'Level 5';
+  String get badgeLevel5Title => 'Apprentice';
 
   @override
   String get badgeVision10Desc => 'Create 10 visions';
 
   @override
-  String get badgeVision10Title => 'Vision Grandmaster';
+  String get badgeVision10Title => 'Futurist';
 
   @override
-  String get badgeVision1Desc => 'Create your first vision';
+  String get badgeVision1Desc => 'Create 1 vision';
 
   @override
-  String get badgeVision1Title => 'Visionary';
+  String get badgeVision1Title => 'Dreamer';
 
   @override
   String get badgeVision5Desc => 'Create 5 visions';
 
   @override
-  String get badgeVision5Title => 'Vision Master';
+  String get badgeVision5Title => 'Visionary';
 
   @override
-  String get badgeVisionHabits3Desc => 'Link 3+ habits to a vision';
+  String get badgeVisionHabits3Desc => 'Link 3 habits to a vision';
 
   @override
-  String get badgeVisionHabits3Title => 'Connector';
+  String get badgeVisionHabits3Title => 'Goal Oriented';
 
   @override
-  String get badgeXp1000Desc => 'Earn a total of 1000 XP';
+  String get badgeXp1000Desc => 'Collect 1000 XP';
 
   @override
-  String get badgeXp1000Title => '1000 XP';
+  String get badgeXp1000Title => 'Wise';
 
   @override
-  String get badgeXp500Desc => 'Earn a total of 500 XP';
+  String get badgeXp500Desc => 'Collect 500 XP';
 
   @override
-  String get badgeXp500Title => '500 XP';
+  String get badgeXp500Title => 'Experienced';
 
   @override
   String get between1And360 => 'Between 1 and 360';
@@ -424,7 +424,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteCustomCategoryConfirm => 'Delete this custom category?';
 
   @override
-  String get deleteEntryConfirm => 'Delete this entry?';
+  String get deleteEntryConfirm =>
+      'Are you sure you want to delete this entry?';
 
   @override
   String deleteTransactionConfirm(Object title) {
@@ -1155,6 +1156,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get templatesTabReady => 'Ready';
 
   @override
+  String get enterPromoCode => 'Please enter a promo code';
+
+  @override
+  String get promoCodeSuccess =>
+      '🎉 Promo code applied successfully! Premium access activated.';
+
+  @override
+  String get promoCodeAlreadyUsed =>
+      'A promo code has already been used on this account.';
+
+  @override
+  String get promoCodeInvalid =>
+      'Invalid promo code. Please check and try again.';
+
+  @override
+  String get errorPrefix => 'Error: ';
+
+  @override
+  String get promoCodeLabel => 'Promo Code';
+
+  @override
+  String get promoCodeActiveMessage =>
+      'Your Premium access is activated via promo code ✨';
+
+  @override
+  String get promoCodeHint => 'Enter your promo code';
+
+  @override
+  String get applying => 'Applying...';
+
+  @override
+  String get applyCode => 'Apply Code';
+
+  @override
+  String get visionSettingsTooltip => 'Freeform board settings';
+
+  @override
+  String get visionBoardViewTooltip => 'Board view';
+
+  @override
+  String get visionFreeformTooltip => 'Freeform board';
+
+  @override
+  String get filterTooltip => 'Filter';
+
+  @override
+  String get selectMonthTooltip => 'Select month';
+
+  @override
+  String get analysisTooltip => 'Analysis';
+
+  @override
+  String get shareBoard => 'Share board';
+
+  @override
+  String get roundCorners => 'Round Corners';
+
+  @override
+  String get showText => 'Show text';
+
+  @override
+  String get showProgress => 'Show progress';
+
+  @override
+  String get myBoard => 'My Board';
+
+  @override
   String get textLabel => 'Text';
 
   @override
@@ -1336,6 +1404,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String visionStartedMessage(Object title) {
     return 'Vision started: $title';
   }
+
+  @override
+  String get visionStartLabel => 'Vision start: ';
 
   @override
   String get visual => 'Visual';
@@ -1901,7 +1972,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Let\'s describe this feeling in more detail';
 
   @override
-  String get selectSubEmotion => 'Select sub-emotion';
+  String get selectSubEmotion => 'Select Sub-emotion';
 
   @override
   String get subEmotionExhausted => 'Exhausted';
@@ -1985,7 +2056,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reasonSelection => 'What\'s the reason for this state?';
 
   @override
-  String get selectReason => 'Select reason';
+  String get selectReason => 'Select Reason';
 
   @override
   String get reasonAcademic => 'Academic';
@@ -2523,9 +2594,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareDashboard => 'Share Dashboard';
 
   @override
-  String get roundCorners => 'Round Corners';
-
-  @override
   String get customUnit => 'Custom Unit';
 
   @override
@@ -2580,19 +2648,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumFeatures => 'Premium Features';
 
   @override
-  String get featureDetailedAnalysis => 'Detailed Personality Analysis';
+  String get featureAdvancedHabits => 'Advanced Habit Creation';
 
   @override
-  String get featureUnlimitedPalmReading => 'Unlimited Palm Reading';
+  String get featureVisionCreation => 'Vision Creation';
 
   @override
-  String get featureAIInsights => 'AI Powered Insights';
+  String get featureAdvancedFinance => 'Advanced Finance Features';
 
   @override
-  String get featureAdFree => 'Ad-Free Experience';
+  String get featurePremiumThemes => 'Premium Themes';
 
   @override
-  String get featurePrioritySupport => 'Priority Support';
+  String get featureBackup => 'Backup Feature';
 
   @override
   String get perMonth => '/mo';
@@ -2637,7 +2705,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudBackup => 'Cloud Backup';
 
   @override
-  String get backupToDrive => 'Backup your data to Google Drive';
+  String get backupToDrive => 'Backup to Drive';
 
   @override
   String get adFreeExperience => 'Ad-Free Experience';
@@ -2804,4 +2872,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String monthlyDays(Object days) {
     return 'Days $days of the month';
   }
+
+  @override
+  String get signInFailed => 'Sign in failed. Please try again.';
+
+  @override
+  String get signInWithGoogleTitle => 'Sign in with Google';
+
+  @override
+  String get signInWithGoogleDesc =>
+      'Connect your Google account to continue. Your profile info will be filled automatically.';
+
+  @override
+  String get signInWithGoogleButton => 'Sign in with Google';
+
+  @override
+  String get startTestTitle => 'Do you want to start the personality test?';
+
+  @override
+  String get startTestDesc =>
+      'If you complete the test, you will get personalized suggestions and habit recommendations. You can skip this step if you wish.';
+
+  @override
+  String get skipTest => 'Skip Test';
+
+  @override
+  String get startTest => 'Start Test';
+
+  @override
+  String get backupTitle => 'Backup';
+
+  @override
+  String get jsonDataExample => 'JSON Data (example):';
+
+  @override
+  String get refreshList => 'Refresh List';
+
+  @override
+  String get noBackupsFound => 'No backups found.';
+
+  @override
+  String get unnamedBackup => 'unnamed';
+
+  @override
+  String get restore => 'Restore';
+
+  @override
+  String get financeNet => 'Net';
+
+  @override
+  String get durationIndefinite => 'Indefinite';
+
+  @override
+  String durationMonths(Object count) {
+    return '$count months';
+  }
+
+  @override
+  String get fortuneProceedToEggs => 'Proceed to Eggs';
+
+  @override
+  String get fortuneSwipeInstruction =>
+      'Swipe left/right to change the egg, tap to reveal the answer';
+
+  @override
+  String listCreated(Object title) {
+    return 'List created: $title';
+  }
+
+  @override
+  String get open => 'Open';
+
+  @override
+  String get openNotificationSettings => 'Open notification settings';
+
+  @override
+  String get openSystemSettings => 'Open system settings';
+
+  @override
+  String get openBatteryOptimization => 'Open battery optimization';
+
+  @override
+  String get habitReminderBody => 'Time to complete your habit!';
+
+  @override
+  String get timerPause => 'Pause';
+
+  @override
+  String get timerResume => 'Resume';
+
+  @override
+  String get timerStop => 'Stop';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
 }

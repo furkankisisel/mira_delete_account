@@ -587,7 +587,7 @@ class _SettingsTabState extends State<_SettingsTab> {
                                     profile.avatarPath!.isEmpty) &&
                                 (profile.avatarUrl == null ||
                                     profile.avatarUrl!.isEmpty)
-                            ? const Text('ğŸ‘¤', style: TextStyle(fontSize: 28))
+                            ? const Icon(Icons.person, size: 28)
                             : null,
                       ),
                       Positioned(
@@ -686,7 +686,7 @@ class _SettingsTabState extends State<_SettingsTab> {
               child:
                   (profile.avatarPath == null || profile.avatarPath!.isEmpty) &&
                       (profile.avatarUrl == null || profile.avatarUrl!.isEmpty)
-                  ? const Text('ğŸ‘¤', style: TextStyle(fontSize: 22))
+                  ? const Icon(Icons.person, size: 22)
                   : null,
             ),
             title: Text(

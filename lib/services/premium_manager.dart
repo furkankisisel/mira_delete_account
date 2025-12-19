@@ -70,7 +70,7 @@ class PremiumManager {
       await _loadPremiumStatus();
       final isValid = _checkPremiumValidity();
       debugPrint(
-        '[Premium] Initialized. isPremium=$isValid, expires=${expiryDate}, promoCode=$_usedPromoCode',
+        '[Premium] Initialized. isPremium=$isValid, expires=$expiryDate, promoCode=$_usedPromoCode',
       );
       _premiumStatusStream.add(isValid);
     } catch (e) {

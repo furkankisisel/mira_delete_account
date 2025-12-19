@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui' show FontFeature;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,7 +83,7 @@ class _LandscapeTimerScreenState extends State<LandscapeTimerScreen>
       : Theme.of(context).colorScheme.onSurfaceVariant;
   Color _trackColor(BuildContext context) => _useOledTheme
       ? Colors.white12
-      : Theme.of(context).colorScheme.surfaceVariant;
+      : Theme.of(context).colorScheme.surfaceContainerHighest;
   Color _primaryColor(BuildContext context) =>
       _useOledTheme ? Colors.white : _accent(context);
 

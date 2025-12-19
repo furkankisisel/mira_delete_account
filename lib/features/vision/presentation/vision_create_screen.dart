@@ -167,8 +167,9 @@ class _TemplatesTabState extends State<_TemplatesTab> {
   Future<List<_TemplateItem>> _loadTemplates() async {
     try {
       final raw = await _tryLoadTemplatesRaw();
-      if (raw == null)
+      if (raw == null) {
         throw Exception('assets/seeds/vision_templates.json bulunamadı');
+      }
       return raw
           .map(
             (e) => _TemplateItem(
@@ -504,10 +505,7 @@ class _TemplatesTabState extends State<_TemplatesTab> {
                       ).simpleTypeShort;
                     }
                     final rangeText =
-                        ' • ' +
-                        AppLocalizations.of(
-                          rootContext,
-                        ).dayRangeShort(rangeEnd, rangeStart);
+                        ' • ${AppLocalizations.of(rootContext).dayRangeShort(rangeEnd, rangeStart)}';
                     details = '$details$rangeText';
                     return ListTile(
                       leading: CircleAvatar(
@@ -889,10 +887,10 @@ class _ManualTabState extends State<_ManualTab> {
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Özel emoji',
-                    hintText: 'Örn: ✨',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).customEmoji,
+                    hintText: AppLocalizations.of(context).customEmojiHint,
+                    border: const OutlineInputBorder(),
                   ),
                   onChanged: (v) => custom = v.trim(),
                   onSubmitted: (_) {
@@ -951,10 +949,11 @@ class _ManualTabState extends State<_ManualTab> {
       firstDate: DateTime(now.year - 2),
       lastDate: DateTime(now.year + 5),
     );
-    if (picked != null)
+    if (picked != null) {
       setState(
         () => _startDate = DateTime(picked.year, picked.month, picked.day),
       );
+    }
   }
 
   @override
@@ -1153,8 +1152,8 @@ class _ManualTabState extends State<_ManualTab> {
             child: OutlinedButton(
               onPressed: _pickStartDate,
               child: Text(
-                'Vizyon başlangıcı: '
-                '${_startDate != null ? _startDate!.day.toString().padLeft(2, "0") + "/" + _startDate!.month.toString().padLeft(2, "0") + "/" + _startDate!.year.toString() : AppLocalizations.of(context).select}',
+                '${AppLocalizations.of(context).visionStartLabel}'
+                '${_startDate != null ? "${_startDate!.day.toString().padLeft(2, "0")}/${_startDate!.month.toString().padLeft(2, "0")}/${_startDate!.year}" : AppLocalizations.of(context).select}',
               ),
             ),
           ),
@@ -1371,9 +1370,9 @@ class _ManualTabState extends State<_ManualTab> {
     String? freqType;
     if (f != null) {
       final s = f.toString();
-      if (s.contains('daily'))
+      if (s.contains('daily')) {
         freqType = 'daily';
-      else if (s.contains('specificWeekdays'))
+      } else if (s.contains('specificWeekdays'))
         freqType = 'specificWeekdays';
       else if (s.contains('specificMonthDays'))
         freqType = 'specificMonthDays';
@@ -1399,21 +1398,21 @@ class _ManualTabState extends State<_ManualTab> {
       unit = (m['numericalUnit'] as String?) ?? unit;
       final t = m['numericalTargetType']?.toString();
       if (t != null) {
-        if (t.contains('exact'))
+        if (t.contains('exact')) {
           h.numericalTargetType = NumericalTargetType.exact;
-        else if (t.contains('maximum'))
+        } else if (t.contains('maximum'))
           h.numericalTargetType = NumericalTargetType.maximum;
         else
           h.numericalTargetType = NumericalTargetType.minimum;
       }
     } else if (habitType == HabitType.timer) {
       target = (m['timerTargetMinutes'] as num?)?.toInt() ?? target;
-      unit = 'dk';
+      unit = AppLocalizations.of(context).minutesSuffixShort;
       final t = m['timerTargetType']?.toString();
       if (t != null) {
-        if (t.contains('exact'))
+        if (t.contains('exact')) {
           h.timerTargetType = TimerTargetType.exact;
-        else if (t.contains('maximum'))
+        } else if (t.contains('maximum'))
           h.timerTargetType = TimerTargetType.maximum;
         else
           h.timerTargetType = TimerTargetType.minimum;
@@ -1475,8 +1474,9 @@ class _ManualTabState extends State<_ManualTab> {
         }
       }
       final e = m['endDate']?.toString();
-      if (e != null)
+      if (e != null) {
         endDate = DateTime.parse(e).toIso8601String().substring(0, 10);
+      }
     } catch (_) {}
 
     // Scheduled dates from activeOffsets
@@ -1592,9 +1592,9 @@ class _ManualTabState extends State<_ManualTab> {
       }
     } else if (selType is String) {
       final s = selType.toLowerCase();
-      if (s.contains('numerical'))
+      if (s.contains('numerical')) {
         type = 'numerical';
-      else if (s.contains('timer'))
+      } else if (s.contains('timer'))
         type = 'timer';
       else
         type = 'simple';
@@ -1626,9 +1626,9 @@ class _ManualTabState extends State<_ManualTab> {
     final f = m['frequencyType'];
     if (f != null) {
       final s = f.toString();
-      if (s.contains('daily'))
+      if (s.contains('daily')) {
         freqType = 'daily';
-      else if (s.contains('specificWeekdays'))
+      } else if (s.contains('specificWeekdays'))
         freqType = 'specificWeekdays';
       else if (s.contains('specificMonthDays'))
         freqType = 'specificMonthDays';

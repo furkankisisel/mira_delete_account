@@ -550,7 +550,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get finish => 'समाप्त';
 
   @override
-  String get historyTitle => 'Geçmiş';
+  String get historyTitle => 'History';
 
   @override
   String get fitness => 'फिटनेस';
@@ -1155,6 +1155,73 @@ class AppLocalizationsHi extends AppLocalizations {
   String get templatesTabReady => 'तैयार';
 
   @override
+  String get enterPromoCode => 'Please enter a promo code';
+
+  @override
+  String get promoCodeSuccess =>
+      '🎉 Promo code applied successfully! Premium access activated.';
+
+  @override
+  String get promoCodeAlreadyUsed =>
+      'A promo code has already been used on this account.';
+
+  @override
+  String get promoCodeInvalid =>
+      'Invalid promo code. Please check and try again.';
+
+  @override
+  String get errorPrefix => 'Error: ';
+
+  @override
+  String get promoCodeLabel => 'Promo Code';
+
+  @override
+  String get promoCodeActiveMessage =>
+      'Your Premium access is activated via promo code ✨';
+
+  @override
+  String get promoCodeHint => 'Enter your promo code';
+
+  @override
+  String get applying => 'Applying...';
+
+  @override
+  String get applyCode => 'Apply Code';
+
+  @override
+  String get visionSettingsTooltip => 'Freeform board settings';
+
+  @override
+  String get visionBoardViewTooltip => 'Board view';
+
+  @override
+  String get visionFreeformTooltip => 'Freeform board';
+
+  @override
+  String get filterTooltip => 'Filter';
+
+  @override
+  String get selectMonthTooltip => 'Select month';
+
+  @override
+  String get analysisTooltip => 'Analysis';
+
+  @override
+  String get shareBoard => 'Share board';
+
+  @override
+  String get roundCorners => 'Round Corners';
+
+  @override
+  String get showText => 'Show text';
+
+  @override
+  String get showProgress => 'Show progress';
+
+  @override
+  String get myBoard => 'My Board';
+
+  @override
   String get textLabel => 'टेक्स्ट';
 
   @override
@@ -1227,7 +1294,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get timerSaveSessionTitle => 'सत्र सहेजें';
 
   @override
-  String get timerQuickPresets => 'Hızlı Ayarlar';
+  String get timerQuickPresets => 'Quick Presets';
 
   @override
   String get timerSessionAlreadySaved => 'यह सत्र पहले ही सहेजा जा चुका है';
@@ -1254,10 +1321,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get timerType => 'टाइमर';
 
   @override
-  String get checkboxType => 'Onay Kutusu';
+  String get checkboxType => 'Checkbox';
 
   @override
-  String get subtasksType => 'Alt Görevler';
+  String get subtasksType => 'Subtasks';
 
   @override
   String get times => 'बार';
@@ -1333,6 +1400,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String visionStartedMessage(Object title) {
     return 'दृष्टि शुरू हुई: $title';
   }
+
+  @override
+  String get visionStartLabel => 'Vision start: ';
 
   @override
   String get visual => 'दृश्य';
@@ -1552,234 +1622,231 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get privacySecuritySubtitle =>
-      'Ayarları ve veri silme seçeneklerini yönetin';
+      'Manage settings and data deletion options';
 
   @override
   String get googleDrive => 'Google Drive';
 
   @override
-  String get reportBug => 'Hata Bildir';
+  String get reportBug => 'Report Bug';
 
   @override
-  String get reportBugSubtitle => 'Karşılaştığınız sorunları bildirin';
+  String get reportBugSubtitle => 'Report issues you encounter';
 
   @override
   String get reportBugDescription =>
-      'Karşılaştığınız sorunu aşağıya detaylı olarak yazın.';
+      'Describe the issue you encountered in detail below.';
 
   @override
-  String get yourEmailAddress => 'E-posta Adresiniz';
+  String get yourEmailAddress => 'Your Email Address';
 
   @override
-  String get issueDescription => 'Sorun Açıklaması';
+  String get issueDescription => 'Issue Description';
 
   @override
-  String get issueDescriptionHint => 'Sorunu detaylı olarak açıklayın...';
+  String get issueDescriptionHint => 'Describe the issue in detail...';
 
   @override
-  String get send => 'Gönder';
+  String get send => 'Send';
 
   @override
-  String get pleaseFillAllFields => 'Lütfen tüm alanları doldurun';
+  String get pleaseFillAllFields => 'Please fill all fields';
 
   @override
   String get bugReportSentSuccess =>
-      'Hata raporunuz başarıyla gönderildi. Teşekkür ederiz!';
+      'Your bug report has been sent successfully. Thank you!';
 
   @override
   String bugReportFailedStatus(Object statusCode) {
-    return 'Hata raporu gönderilemedi: $statusCode';
+    return 'Failed to send bug report: $statusCode';
   }
 
   @override
   String bugReportFailedError(Object error) {
-    return 'Hata raporu gönderilemedi: $error';
+    return 'Failed to send bug report: $error';
   }
 
   @override
-  String get resetOnboardingTitle => 'Tanıtımı Sıfırla?';
+  String get resetOnboardingTitle => 'Reset Onboarding?';
 
   @override
   String get resetOnboardingDescription =>
-      'Bu işlem mevcut kişilik testi sonuçlarınızı silecek ve testi tekrar yapmanızı sağlayacaktır.';
+      'This will clear your current personality results and let you retake the quiz.';
 
   @override
-  String get resetAction => 'Sıfırla';
+  String get resetAction => 'Reset';
 
   @override
   String get deleteAllDataConfirmContent =>
-      'Tüm uygulama verilerinizi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.';
+      'Are you sure you want to delete all your app data? This action cannot be undone.';
 
   @override
-  String get deleteAction => 'Sil';
+  String get deleteAction => 'Delete';
 
   @override
-  String get allDataDeleted => 'Tüm veriler silindi';
+  String get allDataDeleted => 'All data deleted';
 
   @override
-  String get diagnosticsData => 'Tanılama verileri';
+  String get diagnosticsData => 'Diagnostics data';
 
   @override
-  String get diagnosticsDataSubtitle =>
-      'Uygulama kullanımına dair anonim istatistikleri paylaş';
+  String get diagnosticsDataSubtitle => 'Share anonymous usage statistics';
 
   @override
-  String get crashReports => 'Çökme raporları';
+  String get crashReports => 'Crash reports';
 
   @override
-  String get crashReportsSubtitle =>
-      'Uygulama çökmelerinde anonim rapor gönder';
+  String get crashReportsSubtitle => 'Send anonymous reports on app crashes';
 
   @override
-  String get privacyPolicy => 'Gizlilik Politikası';
+  String get privacyPolicy => 'Privacy Policy';
 
   @override
-  String get deleteAllData => 'Tüm verileri sil';
+  String get deleteAllData => 'Delete all data';
 
   @override
-  String get stopwatchLabel => 'KRONOMETRE';
+  String get stopwatchLabel => 'STOPWATCH';
 
   @override
-  String get runningLabel => 'ÇALIŞIYOR';
+  String get runningLabel => 'RUNNING';
 
   @override
-  String get countdownLabel => 'GERİ SAYIM';
+  String get countdownLabel => 'COUNTDOWN';
 
   @override
-  String get focusLabel => 'ODAK';
+  String get focusLabel => 'FOCUS';
 
   @override
-  String get breakLabel => 'MOLA';
+  String get breakLabel => 'BREAK';
 
   @override
-  String get minLabel => 'dk';
+  String get minLabel => 'min';
 
   @override
-  String get emojiCategoryPopular => 'Popüler';
+  String get emojiCategoryPopular => 'Popular';
 
   @override
-  String get emojiCategoryHealth => 'Sağlık';
+  String get emojiCategoryHealth => 'Health';
 
   @override
-  String get emojiCategorySport => 'Spor';
+  String get emojiCategorySport => 'Sport';
 
   @override
-  String get emojiCategoryLife => 'Yaşam';
+  String get emojiCategoryLife => 'Life';
 
   @override
-  String get emojiCategoryProductivity => 'Üretkenlik';
+  String get emojiCategoryProductivity => 'Productivity';
 
   @override
-  String get emojiCategoryFood => 'Yiyecek';
+  String get emojiCategoryFood => 'Food';
 
   @override
-  String get emojiCategoryNature => 'Doğa';
+  String get emojiCategoryNature => 'Nature';
 
   @override
-  String get emojiCategoryAnimals => 'Hayvanlar';
+  String get emojiCategoryAnimals => 'Animals';
 
   @override
-  String get emojiCategoryCare => 'Bakım';
+  String get emojiCategoryCare => 'Care';
 
   @override
-  String get habitTypeLabel => 'Alışkanlık Tipi';
+  String get habitTypeLabel => 'Habit Type';
 
   @override
-  String get nameLabel => 'İsim';
+  String get nameLabel => 'Name';
 
   @override
-  String get descriptionLabel => 'Açıklama';
+  String get descriptionLabel => 'Description';
 
   @override
-  String get optionalLabel => 'opsiyonel';
+  String get optionalLabel => 'optional';
 
   @override
-  String get frequencyLabel => 'Sıklık';
+  String get frequencyLabel => 'Frequency';
 
   @override
-  String get dateRangeLabel => 'Tarih Aralığı';
+  String get dateRangeLabel => 'Date Range';
 
   @override
-  String get reminderLabel => 'Hatırlatıcı';
+  String get reminderLabel => 'Reminder';
 
   @override
-  String get advancedHabitTitle => 'Gelişmiş Alışkanlık';
+  String get advancedHabitTitle => 'Advanced Habit';
 
   @override
-  String get habitNamePlaceholder => 'Alışkanlık Adı';
+  String get habitNamePlaceholder => 'Habit Name';
 
   @override
-  String get numericTypeDesc => 'Sayı takibi';
+  String get numericTypeDesc => 'Number tracking';
 
   @override
-  String get checkboxTypeDesc => 'Basit işaretle';
+  String get checkboxTypeDesc => 'Simple check';
 
   @override
-  String get subtasksTypeDesc => 'Çoklu görev';
+  String get subtasksTypeDesc => 'Multi-task';
 
   @override
-  String get selectEmoji => 'Emoji seç';
+  String get selectEmoji => 'Select Emoji';
 
   @override
-  String get customEmoji => 'Özel Emoji';
+  String get customEmoji => 'Custom Emoji';
 
   @override
-  String get typeEmojiHint => 'Klavyeden bir emoji yazın';
+  String get typeEmojiHint => 'Type an emoji from keyboard';
 
   @override
-  String get everyDay => 'Her gün';
+  String get everyDay => 'Every day';
 
   @override
   String get periodic => 'आवधिक';
 
   @override
-  String get everyLabel => 'Her';
+  String get everyLabel => 'Every';
 
   @override
-  String get daysIntervalLabel => 'günde bir';
+  String get daysIntervalLabel => 'days';
 
   @override
-  String get offLabel => 'Kapalı';
+  String get offLabel => 'Off';
 
   @override
-  String get completeAllSubtasksToFinish =>
-      'tümünü tamamlayınca alışkanlık tamamlanır';
+  String get completeAllSubtasksToFinish => 'complete all to finish habit';
 
   @override
   String subtaskIndex(Object index) {
-    return 'Alt görev $index';
+    return 'Subtask $index';
   }
 
   @override
-  String get addSubtask => 'Alt Görev Ekle';
+  String get addSubtask => 'Add Subtask';
 
   @override
-  String get saveChanges => 'Değişiklikleri Kaydet';
+  String get saveChanges => 'Save Changes';
 
   @override
-  String get createHabitAction => 'Alışkanlık Oluştur';
+  String get createHabitAction => 'Create Habit';
 
   @override
-  String get selectDuration => 'Süre Seç';
+  String get selectDuration => 'Select Duration';
 
   @override
   String selectedDaysOfMonth(Object sorted) {
-    return 'Ayın $sorted. günleri';
+    return 'Days $sorted of the month';
   }
 
   @override
   String everyXDays(Object periodicDays) {
-    return 'Her $periodicDays günde bir';
+    return 'Every $periodicDays days';
   }
 
   @override
-  String get startDateLabel => 'Başlangıç';
+  String get startDateLabel => 'Start';
 
   @override
-  String get endDateLabel => 'Bitiş';
+  String get endDateLabel => 'End';
 
   @override
-  String get notSelected => 'Seçilmedi';
+  String get notSelected => 'Not selected';
 
   @override
   String get motivation => 'प्रेरणा';
@@ -2413,19 +2480,19 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get unlistedItems => 'Listelenmemiş';
+  String get unlistedItems => 'Unlisted Items';
 
   @override
-  String get unknownList => 'Bilinmeyen Liste';
+  String get unknownList => 'Unknown List';
 
   @override
-  String get signInWithGoogle => 'Google ile giriş yap';
+  String get signInWithGoogle => 'Sign in with Google';
 
   @override
-  String get backupNow => 'Hemen yedekle';
+  String get backupNow => 'Backup Now';
 
   @override
-  String get restoreLatest => 'Son yeдеği geri yükle';
+  String get restoreLatest => 'Restore Latest';
 
   @override
   String backupSuccess(Object id) {
@@ -2433,7 +2500,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get backupError => 'Yedekleme hatası';
+  String get backupError => 'Backup Error';
 
   @override
   String restoreSuccess(Object content) {
@@ -2441,95 +2508,92 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get restoreError => 'Geri yükleme hatası';
+  String get restoreError => 'Restore Error';
 
   @override
-  String get manageSubscription => 'Aboneliği yönet';
+  String get manageSubscription => 'Manage Subscription';
 
   @override
   String get manageSubscriptionSubtitle =>
-      'Mira Plus aboneliğini Google Play üzerinden düzenle';
+      'Manage Mira Plus subscription via Google Play';
 
   @override
-  String get deleteMyAccount => 'Hesabımı sil';
+  String get deleteMyAccount => 'Delete My Account';
 
   @override
   String get deleteAccountSubtitle =>
-      'Hesabınızın ve verilerinizin silinmesini talep edin';
+      'Request deletion of your account and data';
 
   @override
-  String get confirmDeleteAccount => 'Hesabı silmeyi onayla';
+  String get confirmDeleteAccount => 'Confirm Account Deletion';
 
   @override
   String get deleteAccountWarning =>
-      'Bu işlem geri alınamaz. Lütfen hesabınızla ilişkili e-posta adresini onaylayın.';
+      'This action cannot be undone. Please confirm the email associated with your account.';
 
   @override
-  String get yourEmail => 'E-posta adresiniz';
+  String get yourEmail => 'Your Email';
 
   @override
-  String get pleaseEnterEmail => 'Lütfen e-posta girin';
+  String get pleaseEnterEmail => 'Please enter email';
 
   @override
   String get deleteAccountRequestSuccess =>
-      'Hesap silme talebiniz başarıyla alındı';
+      'Your account deletion request has been successfully received';
 
   @override
-  String get deleteAccountFailed => 'Hesap silme başarısız';
+  String get deleteAccountFailed => 'Account deletion failed';
 
   @override
-  String get resetOnboarding => 'Tanıtımı sıfırla';
+  String get resetOnboarding => 'Reset Onboarding';
 
   @override
-  String get retakePersonalityTest => 'Kişilik testini tekrar yap';
+  String get retakePersonalityTest => 'Retake Personality Test';
 
   @override
-  String get processingWait => 'İşlem başlatılıyor, lütfen bekleyin...';
+  String get processingWait => 'Processing, please wait...';
 
   @override
-  String get checkingPurchases => 'Satın almalar kontrol ediliyor...';
+  String get checkingPurchases => 'Checking purchases...';
 
   @override
-  String get premiumPlans => 'Premium Planlar';
+  String get premiumPlans => 'Premium Plans';
 
   @override
-  String get restorePurchases => 'Satın Almaları Geri Yükle';
+  String get restorePurchases => 'Restore Purchases';
 
   @override
-  String get noPlansAvailable => 'Şu anda görüntülenecek plan yok.';
+  String get noPlansAvailable => 'No plans available at the moment.';
 
   @override
-  String get cannotOpenPlayStore => 'Play Store açılamıyor';
+  String get cannotOpenPlayStore => 'Cannot open Play Store';
 
   @override
-  String get subscriptionDetails => 'Abonelik Detayları';
+  String get subscriptionDetails => 'Subscription Details';
 
   @override
-  String get goToPlayStore => 'Play Store\'a Git';
+  String get goToPlayStore => 'Go to Play Store';
 
   @override
-  String get becomePremium => 'Premium Olun';
+  String get becomePremium => 'Become Premium';
 
   @override
-  String get premiumFeature => 'Premium Özellik';
+  String get premiumFeature => 'Premium Feature';
 
   @override
-  String get premiumBenefits => 'Premium avantajları:';
+  String get premiumBenefits => 'Premium benefits:';
 
   @override
-  String get later => 'Daha Sonra';
+  String get later => 'Later';
 
   @override
-  String get becomePremiumShort => 'Premium Ol';
+  String get becomePremiumShort => 'Get Premium';
 
   @override
-  String get shareDashboard => 'Panoyu paylaş';
+  String get shareDashboard => 'Share Dashboard';
 
   @override
-  String get roundCorners => 'Köşeleri yuvarlat';
-
-  @override
-  String get customUnit => 'Özel Birim';
+  String get customUnit => 'Custom Unit';
 
   @override
   String get pastelColors => 'हल्के रंग';
@@ -2580,166 +2644,165 @@ class AppLocalizationsHi extends AppLocalizations {
   String get unitKez => 'बार';
 
   @override
-  String get premiumFeatures => 'Premium Özellikler';
+  String get premiumFeatures => 'Premium Features';
 
   @override
-  String get featureDetailedAnalysis => 'Detaylı Kişilik Analizleri';
+  String get featureAdvancedHabits => 'Gelişmiş Alışkanlık Oluşturma';
 
   @override
-  String get featureUnlimitedPalmReading => 'Sınırsız El Okuma Hakkı';
+  String get featureVisionCreation => 'Vizyon Oluşturma';
 
   @override
-  String get featureAIInsights => 'Yapay Zeka Destekli Öngörüler';
+  String get featureAdvancedFinance => 'Gelişmiş Finans Özellikleri';
 
   @override
-  String get featureAdFree => 'Reklamsız Kullanım';
+  String get featurePremiumThemes => 'Premium Temalar';
 
   @override
-  String get featurePrioritySupport => 'Öncelikli Destek';
+  String get featureBackup => 'Yedekleme Özelliği';
 
   @override
-  String get perMonth => '/ay';
+  String get perMonth => '/mo';
 
   @override
-  String get perYear => '/yıl';
+  String get perYear => '/yr';
 
   @override
-  String get unlockAllFeatures => 'Tüm özellikleri açın ve sınırları kaldırın.';
+  String get unlockAllFeatures => 'Unlock all features and remove limits.';
 
   @override
-  String get flexiblePlan => 'Esnek plan, istediğin zaman iptal et';
+  String get flexiblePlan => 'Flexible plan, cancel anytime';
 
   @override
-  String get annualPlanDesc => '12 ay boyunca kesintisiz erişim';
+  String get annualPlanDesc => 'Uninterrupted access for 12 months';
 
   @override
-  String get trialInfo => '14 gün ücretsiz deneme, istediğin zaman iptal et.';
+  String get trialInfo => '14-day free trial, cancel anytime.';
 
   @override
-  String get miraPlusActive => 'Mira Plus Aktif';
+  String get miraPlusActive => 'Mira Plus Active';
 
   @override
-  String get miraPlusInactive => 'Mira Plus Aktif Değil';
+  String get miraPlusInactive => 'Mira Plus Inactive';
 
   @override
-  String get validity => 'Geçerlilik';
+  String get validity => 'Validity';
 
   @override
-  String get daysLeft => 'gün kaldı';
+  String get daysLeft => 'days left';
 
   @override
-  String get subscribeToEnjoyPremium =>
-      'Premium özelliklerin keyfini çıkarmak için abone olun';
+  String get subscribeToEnjoyPremium => 'Subscribe to enjoy premium features';
 
   @override
-  String get advancedAnalysis => 'İleri Seviye Analiz';
+  String get advancedAnalysis => 'Advanced Analysis';
 
   @override
-  String get detailedCharts => 'Detaylı grafikler ve istatistikler';
+  String get detailedCharts => 'Detailed charts and statistics';
 
   @override
-  String get cloudBackup => 'Bulut Yedekleme';
+  String get cloudBackup => 'Cloud Backup';
 
   @override
-  String get backupToDrive => 'Verilerinizi Google Drive\'da yedekleyin';
+  String get backupToDrive => 'Backup to Drive';
 
   @override
-  String get adFreeExperience => 'Reklamsız Deneyim';
+  String get adFreeExperience => 'Ad-Free Experience';
 
   @override
-  String get uninterruptedUsage => 'Kesintisiz kullanım';
+  String get uninterruptedUsage => 'Uninterrupted usage';
 
   @override
-  String get advancedTimer => 'Gelişmiş Timer';
+  String get advancedTimer => 'Advanced Timer';
 
   @override
-  String get pomodoroAndCustomTimers => 'Pomodoro ve özel zamanlayıcılar';
+  String get pomodoroAndCustomTimers => 'Pomodoro and custom timers';
 
   @override
-  String get personalizedInsights => 'Kişiselleştirilmiş İçgörüler';
+  String get personalizedInsights => 'Personalized Insights';
 
   @override
-  String get aiPoweredRecommendations => 'AI destekli öneriler';
+  String get aiPoweredRecommendations => 'AI powered recommendations';
 
   @override
-  String get buyPremium => 'Premium Satın Al';
+  String get buyPremium => 'Buy Premium';
 
   @override
-  String get manageOnGooglePlay => 'Aboneliği Google Play\'de Yönet';
+  String get manageOnGooglePlay => 'Manage on Google Play';
 
   @override
   String get manageSubscriptionDesc =>
-      'Plan değiştir, iptal et veya fatura bilgilerini gör';
+      'Change plan, cancel or view billing info';
 
   @override
-  String get billingHistory => 'Fatura Geçmişi';
+  String get billingHistory => 'Billing History';
 
   @override
   String get viewInvoicesOnPlayStore =>
-      'Google Play Store\'dan faturalarınızı görüntüleyin';
+      'View your invoices on Google Play Store';
 
   @override
-  String get seeFullSubscriptionInfo => 'Tam abonelik bilgilerinizi görün';
+  String get seeFullSubscriptionInfo => 'See full subscription info';
 
   @override
-  String get helpAndSupport => 'Yardım ve Destek';
+  String get helpAndSupport => 'Help & Support';
 
   @override
-  String get howToCancel => 'Nasıl iptal ederim?';
+  String get howToCancel => 'How to cancel?';
 
   @override
   String get cancelInstructions =>
-      'Google Play Store → Abonelikler → Mira Plus → İptal Et';
+      'Google Play Store → Subscriptions → Mira Plus → Cancel';
 
   @override
-  String get whatHappensIfCancel => 'İptal edersem ne olur?';
+  String get whatHappensIfCancel => 'What happens if I cancel?';
 
   @override
   String get cancelEffect =>
-      'Abonelik süreniz bitene kadar premium özelliklerden faydalanmaya devam edersiniz.';
+      'You continue to enjoy premium features until your subscription ends.';
 
   @override
-  String get ifTrialCancelled => 'Ücretsiz deneme iptal edilirse?';
+  String get ifTrialCancelled => 'If free trial is cancelled?';
 
   @override
   String get trialCancelEffect =>
-      'Ücretsiz deneme sırasında iptal ederseniz hemen ücretlendirilmezsiniz.';
+      'If you cancel during the free trial, you won\'t be charged immediately.';
 
   @override
-  String get canIGetRefund => 'Geri ödeme alabilir miyim?';
+  String get canIGetRefund => 'Can I get a refund?';
 
   @override
   String get refundPolicy =>
-      'Geri ödeme talepleri Google Play politikalarına tabidir. Play Store\'dan başvurabilirsiniz.';
+      'Refund requests are subject to Google Play policies. You can apply from Play Store.';
 
   @override
-  String get active => 'Aktif';
+  String get active => 'Active';
 
   @override
-  String get inactive => 'İnaktif';
+  String get inactive => 'Inactive';
 
   @override
-  String get daysRemaining => 'Kalan Gün';
+  String get daysRemaining => 'Days Remaining';
 
   @override
   String get usePlayStoreToManage =>
-      'Aboneliğinizi yönetmek için Google Play Store\'u kullanın.';
+      'Use Google Play Store to manage your subscription.';
 
   @override
-  String get thisFeatureIsPremium => 'Bu özellik Premium\'da';
+  String get thisFeatureIsPremium => 'This feature is Premium';
 
   @override
   String get mustBePremiumToUse =>
-      'Bu özelliği kullanmak için Premium abonesi olmalısınız.';
+      'You must be a Premium subscriber to use this feature.';
 
   @override
-  String get advancedAnalysisAndReports => 'İleri seviye analiz ve raporlar';
+  String get advancedAnalysisAndReports => 'Advanced analysis and reports';
 
   @override
-  String get unlimitedDataStorage => 'Sınırsız veri depolama';
+  String get unlimitedDataStorage => 'Unlimited data storage';
 
   @override
-  String get freeTrial14Days => '14 gün ücretsiz deneme';
+  String get freeTrial14Days => '14-day free trial';
 
   @override
   String get backupFailed => 'बैकअप विफल';
@@ -2753,59 +2816,153 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get optional => 'opsiyonel';
+  String get optional => 'optional';
 
   @override
-  String get newHabit => 'Yeni Alışkanlık';
+  String get newHabit => 'New Habit';
 
   @override
-  String get typeEmoji => 'Klavyeden bir emoji yazın';
+  String get typeEmoji => 'Type an emoji from keyboard';
 
   @override
-  String get habitNameHint => 'Örn: Su içmek, Kitap okumak...';
+  String get habitNameHint => 'Ex: Drink water, Read book...';
 
   @override
-  String get weekDaysShort => 'Pzt,Sal,Çar,Per,Cum,Cmt,Paz';
+  String get weekDaysShort => 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
 
   @override
-  String get every => 'Her';
+  String get every => 'Every';
 
   @override
-  String get daysInterval => 'günde bir';
+  String get daysInterval => 'days';
 
   @override
-  String get today => 'Bugün';
+  String get today => 'Today';
 
   @override
-  String get monthsShort => 'Oca,Şub,Mar,Nis,May,Haz,Tem,Ağu,Eyl,Eki,Kas,Ara';
+  String get monthsShort => 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec';
 
   @override
-  String get tomorrow => 'Yarın';
+  String get tomorrow => 'Tomorrow';
 
   @override
-  String get yesterday => 'Dün';
+  String get yesterday => 'Yesterday';
 
   @override
   String daysLater(Object days) {
-    return '$days gün sonra';
+    return '$days days later';
   }
 
   @override
   String daysAgo(Object days) {
-    return '$days gün önce';
+    return '$days days ago';
   }
 
   @override
-  String get off => 'Kapalı';
+  String get off => 'Off';
 
   @override
-  String get createHabit => 'Alışkanlık Oluştur';
+  String get createHabit => 'Create Habit';
 
   @override
-  String get pickTime => 'Saat Seç';
+  String get pickTime => 'Pick Time';
 
   @override
   String monthlyDays(Object days) {
-    return 'Ayın $days. günleri';
+    return 'Days $days of the month';
   }
+
+  @override
+  String get signInFailed => 'Sign in failed. Please try again.';
+
+  @override
+  String get signInWithGoogleTitle => 'Sign in with Google';
+
+  @override
+  String get signInWithGoogleDesc =>
+      'Connect your Google account to continue. Your profile info will be filled automatically.';
+
+  @override
+  String get signInWithGoogleButton => 'Sign in with Google';
+
+  @override
+  String get startTestTitle => 'Do you want to start the personality test?';
+
+  @override
+  String get startTestDesc =>
+      'If you complete the test, you will get personalized suggestions and habit recommendations. You can skip this step if you wish.';
+
+  @override
+  String get skipTest => 'Skip Test';
+
+  @override
+  String get startTest => 'Start Test';
+
+  @override
+  String get backupTitle => 'Backup';
+
+  @override
+  String get jsonDataExample => 'JSON Data (example):';
+
+  @override
+  String get refreshList => 'Refresh List';
+
+  @override
+  String get noBackupsFound => 'No backups found.';
+
+  @override
+  String get unnamedBackup => 'unnamed';
+
+  @override
+  String get restore => 'Restore';
+
+  @override
+  String get financeNet => 'Net';
+
+  @override
+  String get durationIndefinite => 'Indefinite';
+
+  @override
+  String durationMonths(Object count) {
+    return '$count months';
+  }
+
+  @override
+  String get fortuneProceedToEggs => 'Proceed to Eggs';
+
+  @override
+  String get fortuneSwipeInstruction =>
+      'Swipe left/right to change the egg, tap to reveal the answer';
+
+  @override
+  String listCreated(Object title) {
+    return 'List created: $title';
+  }
+
+  @override
+  String get open => 'Open';
+
+  @override
+  String get openNotificationSettings => 'Open notification settings';
+
+  @override
+  String get openSystemSettings => 'Open system settings';
+
+  @override
+  String get openBatteryOptimization => 'Open battery optimization';
+
+  @override
+  String get habitReminderBody => 'Time to complete your habit!';
+
+  @override
+  String get timerPause => 'Pause';
+
+  @override
+  String get timerResume => 'Resume';
+
+  @override
+  String get timerStop => 'Stop';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
 }

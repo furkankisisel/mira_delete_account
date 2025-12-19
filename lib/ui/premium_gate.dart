@@ -69,7 +69,7 @@ class _DefaultPremiumUpsell extends StatelessWidget {
           const Icon(Icons.workspace_premium, size: 32),
           const SizedBox(height: 12),
           Text(
-            AppLocalizations.of(context)!.thisFeatureIsPremium,
+            AppLocalizations.of(context).thisFeatureIsPremium,
             style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
@@ -80,7 +80,7 @@ class _DefaultPremiumUpsell extends StatelessWidget {
                 () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
                 ),
-            child: Text(AppLocalizations.of(context)!.becomePremium),
+            child: Text(AppLocalizations.of(context).becomePremium),
           ),
         ],
       ),
@@ -99,25 +99,26 @@ Future<void> showPremiumDialog(
     context: context,
     builder: (ctx) {
       return AlertDialog(
-        title: Text(AppLocalizations.of(context)!.premiumFeature),
+        title: Text(AppLocalizations.of(context).premiumFeature),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppLocalizations.of(context)!.mustBePremiumToUse),
+            Text(AppLocalizations.of(context).mustBePremiumToUse),
             const SizedBox(height: 12),
-            Text(AppLocalizations.of(context)!.premiumBenefits),
+            Text(AppLocalizations.of(context).premiumBenefits),
             const SizedBox(height: 8),
-            Bullet(AppLocalizations.of(context)!.advancedAnalysisAndReports),
-            Bullet(AppLocalizations.of(context)!.unlimitedDataStorage),
-            Bullet(AppLocalizations.of(context)!.adFreeExperience),
-            Bullet(AppLocalizations.of(context)!.freeTrial14Days),
+            Bullet(AppLocalizations.of(context).featureAdvancedHabits),
+            Bullet(AppLocalizations.of(context).featureVisionCreation),
+            Bullet(AppLocalizations.of(context).featureAdvancedFinance),
+            Bullet(AppLocalizations.of(context).featurePremiumThemes),
+            Bullet(AppLocalizations.of(context).featureBackup),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppLocalizations.of(context)!.later),
+            child: Text(AppLocalizations.of(context).later),
           ),
           FilledButton(
             onPressed: () {
@@ -130,7 +131,7 @@ Future<void> showPremiumDialog(
                 );
               }
             },
-            child: Text(AppLocalizations.of(context)!.becomePremiumShort),
+            child: Text(AppLocalizations.of(context).becomePremiumShort),
           ),
         ],
       );
@@ -141,7 +142,7 @@ Future<void> showPremiumDialog(
 class Bullet extends StatelessWidget {
   final String text;
 
-  const Bullet(this.text);
+  const Bullet(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {

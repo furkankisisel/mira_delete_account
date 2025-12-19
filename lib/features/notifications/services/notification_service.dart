@@ -5,6 +5,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import '../data/notification_settings_repository.dart';
 import '../../habit/domain/habit_model.dart';
+import '../../../l10n/app_localizations.dart';
 
 class NotificationService {
   NotificationService._();
@@ -14,6 +15,11 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   bool _initialized = false;
   NotificationSettingsRepository? _settingsRepo;
+  AppLocalizations? _l10n;
+
+  void updateLocalizations(AppLocalizations l10n) {
+    _l10n = l10n;
+  }
 
   static const String _timerChannelId = 'mira_timer_channel';
   static const String _timerChannelName = 'Timer Notifications';
@@ -145,20 +151,20 @@ class NotificationService {
         if (isRunning)
           AndroidNotificationAction(
             'pause',
-            '⏸ Duraklat',
+            _l10n?.timerPause ?? '⏸ Duraklat',
             showsUserInterface: true, // Must be true for actions to work
             cancelNotification: false,
           )
         else
           AndroidNotificationAction(
             'resume',
-            '▶ Devam',
+            _l10n?.timerResume ?? '▶ Devam',
             showsUserInterface: true, // Must be true for actions to work
             cancelNotification: false,
           ),
         AndroidNotificationAction(
           'stop',
-          '⏹ Bitir',
+          _l10n?.timerStop ?? '⏹ Bitir',
           showsUserInterface: true,
           cancelNotification: false,
         ),
@@ -303,7 +309,7 @@ class NotificationService {
 
     final emoji = habit.emoji ?? '✅';
     final title = '$emoji ${habit.title}';
-    final body = 'Alışkanlığını tamamlama zamanı!';
+    final body = _l10n?.habitReminderBody ?? 'Alışkanlığını tamamlama zamanı!';
 
     try {
       await _plugin.zonedSchedule(

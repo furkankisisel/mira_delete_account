@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mira/l10n/app_localizations.dart';
 import '../../../../core/utils/emoji_presets.dart';
 
 /// Emoji ve renk seçici widget.
@@ -76,7 +77,12 @@ class EmojiColorPicker extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Emoji Seç', style: theme.textTheme.titleSmall),
+                      Text(
+                        AppLocalizations.of(
+                          context,
+                        ).chooseEmoji.replaceAll(':', ''),
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         'Dokunarak değiştir',

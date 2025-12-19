@@ -4,6 +4,8 @@ import '../../l10n/app_localizations.dart';
 import '../../core/timer/timer_controller.dart';
 import '../../design_system/theme/theme_variations.dart';
 import '../../design_system/tokens/colors.dart';
+import '../../services/premium_manager.dart';
+import '../../ui/premium_gate.dart';
 import '../habit/domain/habit_repository.dart';
 import '../habit/domain/habit_types.dart';
 import 'widgets/landscape_timer_screen.dart';
@@ -120,7 +122,12 @@ class _TimerScreenState extends State<TimerScreen>
                   size: 20,
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
+                // Premium kontrolü
+                if (!PremiumManager.instance.isPremium) {
+                  await showPremiumDialog(context);
+                  return;
+                }
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) =>
@@ -246,7 +253,7 @@ class _TimerScreenState extends State<TimerScreen>
     String? subtitle,
     Color? progressColor,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final accent = progressColor ?? _getAccentColor(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -789,7 +796,7 @@ class _TimerScreenState extends State<TimerScreen>
   }
 
   Widget _buildStopwatch(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isRunning =
         controller.isRunning && controller.activeMode == TimerMode.stopwatch;
     final elapsed = controller.elapsed;
@@ -831,7 +838,7 @@ class _TimerScreenState extends State<TimerScreen>
   }
 
   Widget _buildCountdown(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final rem = controller.countdownRemaining;
     final total = controller.countdownTotal;
     final hasDuration = controller.hasCountdown;
@@ -1405,7 +1412,7 @@ class _TimerScreenState extends State<TimerScreen>
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: selectedId,
+              initialValue: selectedId,
               decoration: InputDecoration(
                 labelText: l10n.habit,
                 border: OutlineInputBorder(
@@ -1531,7 +1538,7 @@ class _TimerScreenState extends State<TimerScreen>
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: selectedId,
+              initialValue: selectedId,
               decoration: InputDecoration(
                 labelText: l10n.habit,
                 border: OutlineInputBorder(
@@ -1940,7 +1947,7 @@ class _TimerScreenState extends State<TimerScreen>
     required IconData icon,
     required Color accent,
   }) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 

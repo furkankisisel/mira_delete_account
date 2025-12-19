@@ -36,8 +36,9 @@ IconData materialIconFromCodePoint(int codePoint) {
   if (codePoint == Icons.local_fire_department.codePoint) {
     return Icons.local_fire_department;
   }
-  if (codePoint == Icons.hourglass_bottom.codePoint)
+  if (codePoint == Icons.hourglass_bottom.codePoint) {
     return Icons.hourglass_bottom;
+  }
   if (codePoint == Icons.restart_alt.codePoint) return Icons.restart_alt;
   if (codePoint == Icons.flag.codePoint) return Icons.flag;
   if (codePoint == Icons.save.codePoint) return Icons.save;

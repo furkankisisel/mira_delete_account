@@ -51,7 +51,7 @@ void main() async {
                 // Use an encoder with indentation for readability
                 final encoder = JsonEncoder.withIndent('  ');
                 final newContent = encoder.convert(arbData);
-                await file.writeAsString(newContent + '\n');
+                await file.writeAsString('$newContent\n');
                 print('  Updated placeholders in $stepOfKey in ${file.path}');
               } else {
                 print('  No "type" attribute to remove in $stepOfKey placeholders.');

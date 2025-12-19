@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mira/l10n/app_localizations.dart';
 
 /// Sıklık seçici widget.
 /// Günlük, Haftalık, Aylık, Yıllık ve Periyodik seçenekleri sunar.
@@ -423,7 +424,7 @@ class _YearDayPicker extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: () => _pickDate(context),
             icon: const Icon(Icons.add),
-            label: const Text('Tarih Ekle'),
+            label: Text(AppLocalizations.of(context).addDate),
           ),
         ],
       ),

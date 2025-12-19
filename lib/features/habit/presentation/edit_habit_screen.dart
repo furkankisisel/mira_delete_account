@@ -120,6 +120,12 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                         context,
                       ).numericalType,
                       HabitType.timer => AppLocalizations.of(context).timerType,
+                      HabitType.checkbox => AppLocalizations.of(
+                        context,
+                      ).simpleTypeShort,
+                      HabitType.subtasks => AppLocalizations.of(
+                        context,
+                      ).advancedHabit,
                     }),
                     avatar: const Icon(Icons.category),
                   ),
@@ -148,8 +154,9 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                         },
                         validator: (v) {
                           final n = int.tryParse(v ?? '');
-                          if (n == null || n <= 0)
+                          if (n == null || n <= 0) {
                             return AppLocalizations.of(context).invalidValue;
+                          }
                           return null;
                         },
                       ),
@@ -256,8 +263,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            AppLocalizations.of(context).reminder ??
-                                'Hatırlatıcı',
+                            AppLocalizations.of(context).reminder,
                             style: theme.textTheme.titleMedium,
                           ),
                         ],
@@ -266,8 +272,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(
-                          AppLocalizations.of(context).enableReminder ??
-                              'Hatırlatıcıyı Etkinleştir',
+                          AppLocalizations.of(context).enableReminder,
                         ),
                         value: _reminderEnabled,
                         onChanged: (v) => setState(() => _reminderEnabled = v),
@@ -280,8 +285,7 @@ class _EditHabitScreenState extends State<EditHabitScreen> {
                           title: Text(
                             _reminderTime != null
                                 ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
-                                : (AppLocalizations.of(context).selectTime ??
-                                      'Zaman Seç'),
+                                : AppLocalizations.of(context).selectTime,
                           ),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: _selectReminderTime,

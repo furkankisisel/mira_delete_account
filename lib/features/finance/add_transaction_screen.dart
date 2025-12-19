@@ -217,8 +217,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               String fmt(DateTime d) => DateFormat('d MMM', locale).format(d);
               final preview = nextDates.map(fmt).join(', ');
               final durationSummary = _recurringForever
-                  ? 'Süresiz'
-                  : '${_recurringMonths} ay';
+                  ? l10n.durationIndefinite
+                  : l10n.durationMonths(_recurringMonths);
               return Container(
                 decoration: BoxDecoration(
                   color: scheme.surfaceContainerHighest,

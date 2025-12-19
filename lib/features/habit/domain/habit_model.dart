@@ -189,9 +189,9 @@ class Habit {
     final numTypeStr = json['numericalTargetType']?.toString();
     NumericalTargetType numType = NumericalTargetType.minimum;
     if (numTypeStr != null) {
-      if (numTypeStr.contains('exact'))
+      if (numTypeStr.contains('exact')) {
         numType = NumericalTargetType.exact;
-      else if (numTypeStr.contains('maximum'))
+      } else if (numTypeStr.contains('maximum'))
         numType = NumericalTargetType.maximum;
       else
         numType = NumericalTargetType.minimum;
@@ -208,9 +208,9 @@ class Habit {
     }
     TimerTargetType timType = TimerTargetType.minimum;
     if (timTypeStr != null) {
-      if (timTypeStr.contains('exact'))
+      if (timTypeStr.contains('exact')) {
         timType = TimerTargetType.exact;
-      else if (timTypeStr.contains('maximum'))
+      } else if (timTypeStr.contains('maximum'))
         timType = TimerTargetType.maximum;
       else
         timType = TimerTargetType.minimum;

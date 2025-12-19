@@ -17,7 +17,7 @@ class DashboardScreen extends StatelessWidget {
   final ThemeVariant variant;
   @override
   Widget build(BuildContext context) {
-    // final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       child: Column(
@@ -350,7 +350,7 @@ class _HabitMiniCardState extends State<_HabitMiniCard> {
                           ),
                         ),
                         Text(
-                          '${widget.habit.currentStreak} gün • $doneCount/7',
+                          '${AppLocalizations.of(context).streakDays(widget.habit.currentStreak)} • $doneCount/7',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant
                                 .withValues(alpha: 0.7),
@@ -443,8 +443,7 @@ class _HabitMiniCardState extends State<_HabitMiniCard> {
   String _dateLabel(DateTime d) => '${d.day}/${d.month}';
 
   String _dayName(DateTime d) {
-    const days = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-    return days[d.weekday % 7];
+    return DateFormat.E(AppLocalizations.of(context).localeName).format(d);
   }
 
   bool _isToday(DateTime d) {

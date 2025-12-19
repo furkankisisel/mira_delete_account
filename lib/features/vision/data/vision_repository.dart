@@ -305,14 +305,12 @@ class VisionRepository {
         int? endDayRaw = (h['endDay'] as num?)?.toInt();
         // If endDay not provided, default to computed vision duration
         endDayRaw = (endDayRaw ?? durationDays).clamp(1, durationDays);
-        final int? endDay = endDayRaw.clamp(1, 365);
+        final int endDay = endDayRaw.clamp(1, 365);
         final DateTime startDt = base.add(Duration(days: startDay - 1));
-        final DateTime? endDt = endDay != null
-            ? base.add(Duration(days: endDay - 1))
-            : null;
+        final DateTime endDt = base.add(Duration(days: endDay - 1));
         final today = base.toIso8601String().split('T').first;
         final String startKey = _dateKey(startDt);
-        final String? endKey = endDt != null ? _dateKey(endDt) : null;
+        final String endKey = _dateKey(endDt);
         final List<String>? schedule = _buildSchedule(
           base: base,
           startDay: startDay,
@@ -640,8 +638,9 @@ class VisionRepository {
     required int? endDay,
     required Map<String, dynamic> tpl,
   }) {
-    if (endDay == null)
+    if (endDay == null) {
       return null; // open-ended: treat as daily without explicit list
+    }
     int s = startDay;
     int e = endDay;
     if (e < s) {
@@ -720,8 +719,9 @@ class VisionRepository {
         final n = ((tpl['periodicDays'] as num?)?.toInt() ?? 1);
         final step = n <= 0 ? 1 : n;
         for (int o = s; o <= e; o++) {
-          if ((o - s) % step == 0)
+          if ((o - s) % step == 0) {
             out.add(_dateKey(base.add(Duration(days: o))));
+          }
         }
         return out;
       default:
@@ -905,8 +905,9 @@ class VisionRepository {
       }
     }
 
-    if (normalizedOld == null || _isSameDay(normalizedOld, normalizedNew))
+    if (normalizedOld == null || _isSameDay(normalizedOld, normalizedNew)) {
       return;
+    }
 
     final DateTime sourceBase = normalizedOld;
 
@@ -1230,24 +1231,29 @@ class VisionRepository {
   static String _iconNameFromIcon(IconData icon) {
     // Extend as needed; default to check_circle
     if (icon.codePoint == Icons.water_drop.codePoint) return 'water_drop';
-    if (icon.codePoint == Icons.fitness_center.codePoint)
+    if (icon.codePoint == Icons.fitness_center.codePoint) {
       return 'fitness_center';
+    }
     if (icon.codePoint == Icons.restaurant.codePoint) return 'restaurant';
     if (icon.codePoint == Icons.school.codePoint) return 'school';
     if (icon.codePoint == Icons.groups.codePoint) return 'groups';
-    if (icon.codePoint == Icons.account_balance_wallet.codePoint)
+    if (icon.codePoint == Icons.account_balance_wallet.codePoint) {
       return 'account_balance_wallet';
+    }
     if (icon.codePoint == Icons.receipt_long.codePoint) return 'receipt_long';
     if (icon.codePoint == Icons.smoke_free.codePoint) return 'smoke_free';
     if (icon.codePoint == Icons.phonelink_off.codePoint) return 'phonelink_off';
-    if (icon.codePoint == Icons.notifications_off.codePoint)
+    if (icon.codePoint == Icons.notifications_off.codePoint) {
       return 'notifications_off';
+    }
     if (icon.codePoint == Icons.book.codePoint) return 'book';
-    if (icon.codePoint == Icons.free_breakfast.codePoint)
+    if (icon.codePoint == Icons.free_breakfast.codePoint) {
       return 'free_breakfast';
+    }
     if (icon.codePoint == Icons.bedtime.codePoint ||
-        icon.codePoint == Icons.dark_mode.codePoint)
+        icon.codePoint == Icons.dark_mode.codePoint) {
       return 'dark_mode';
+    }
     if (icon.codePoint == Icons.no_drinks.codePoint) return 'no_drinks';
     if (icon.codePoint == Icons.icecream.codePoint) return 'icecream';
     if (icon.codePoint == Icons.no_food.codePoint) return 'no_food';

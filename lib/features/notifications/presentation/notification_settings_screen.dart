@@ -234,7 +234,7 @@ class _NotificationSettingsScreenState
                             );
                           },
                           icon: const Icon(Icons.open_in_new),
-                          label: const Text('Open'),
+                          label: Text(l10n.open),
                         ),
                       ),
                     ],
@@ -284,20 +284,20 @@ class _NotificationSettingsScreenState
                                 type: sys.AppSettingsType.notification,
                               ),
                               icon: const Icon(Icons.notifications_active),
-                              label: const Text('Open notification settings'),
+                              label: Text(l10n.openNotificationSettings),
                             ),
                             OutlinedButton.icon(
                               onPressed: () =>
                                   sys.AppSettings.openAppSettings(),
                               icon: const Icon(Icons.settings),
-                              label: const Text('Open system settings'),
+                              label: Text(l10n.openSystemSettings),
                             ),
                             OutlinedButton.icon(
                               onPressed: () => sys.AppSettings.openAppSettings(
                                 type: sys.AppSettingsType.batteryOptimization,
                               ),
                               icon: const Icon(Icons.battery_saver),
-                              label: const Text('Open battery optimization'),
+                              label: Text(l10n.openBatteryOptimization),
                             ),
                           ],
                         ),

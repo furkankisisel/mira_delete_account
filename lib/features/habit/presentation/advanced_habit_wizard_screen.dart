@@ -585,7 +585,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
         title: Text(
           widget.isEditing ? l10n.editHabit : l10n.createAdvancedHabit,
         ),
-        backgroundColor: colorScheme.surfaceVariant,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(80),
           child: Column(
@@ -611,7 +611,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
               const SizedBox(height: 8),
               LinearProgressIndicator(
                 value: (_currentStep + 1) / _totalSteps,
-                backgroundColor: colorScheme.surfaceVariant,
+                backgroundColor: colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
               const SizedBox(height: 16),
@@ -726,7 +726,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? category.color.withOpacity(0.1)
-                        : colorScheme.surfaceVariant,
+                        : colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected ? category.color : colorScheme.outline,
@@ -825,7 +825,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? category.color.withOpacity(0.1)
-                          : colorScheme.surfaceVariant,
+                          : colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isSelected
@@ -973,7 +973,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
         decoration: BoxDecoration(
           color: isSelected
               ? colorScheme.primaryContainer
-              : colorScheme.surfaceVariant,
+              : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? colorScheme.primary : colorScheme.outline,
@@ -1065,7 +1065,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.5),
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: colorScheme.outline.withOpacity(0.5)),
       ),
@@ -1171,7 +1171,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.5),
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: colorScheme.outline.withOpacity(0.5)),
       ),
@@ -1354,7 +1354,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
-              fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+              fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
             ),
             onChanged: (value) => setState(() {}),
           ),
@@ -1370,7 +1370,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
-              fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+              fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
             ),
             maxLines: 4,
             minLines: 3,
@@ -1399,8 +1399,9 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                   builder: (buttonCtx) => OutlinedButton.icon(
                     onPressed: () async {
                       final emoji = await _openEmojiPopup(buttonCtx);
-                      if (emoji != null && emoji.isNotEmpty)
+                      if (emoji != null && emoji.isNotEmpty) {
                         setState(() => _selectedEmoji = emoji);
+                      }
                     },
                     icon: Text(
                       _selectedEmoji,
@@ -1699,7 +1700,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
         decoration: BoxDecoration(
           color: isSelected
               ? colorScheme.primaryContainer
-              : colorScheme.surfaceVariant,
+              : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? colorScheme.primary : colorScheme.outline,
@@ -1785,7 +1786,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1831,7 +1832,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1905,7 +1906,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1990,7 +1991,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -2154,7 +2155,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(color: colorScheme.outline),
                   borderRadius: BorderRadius.circular(12),
-                  color: colorScheme.surfaceVariant.withOpacity(0.3),
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 ),
                 child: Row(
                   children: [
@@ -2204,7 +2205,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                     color: colorScheme.outline.withOpacity(0.5),
                   ),
                   borderRadius: BorderRadius.circular(12),
-                  color: colorScheme.surfaceVariant.withOpacity(0.1),
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.1),
                 ),
                 child: Row(
                   children: [
@@ -2230,7 +2231,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
                   decoration: BoxDecoration(
                     border: Border.all(color: colorScheme.outline),
                     borderRadius: BorderRadius.circular(12),
-                    color: colorScheme.surfaceVariant.withOpacity(0.3),
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
                   ),
                   child: Row(
                     children: [
@@ -2256,7 +2257,7 @@ class _AdvancedHabitWizardScreenState extends State<AdvancedHabitWizardScreen> {
           // Reminder Section
           Card(
             elevation: 0,
-            color: colorScheme.surfaceVariant.withOpacity(0.5),
+            color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../onboarding/presentation/onboarding_screen.dart';
 import '../onboarding/data/onboarding_repository.dart';
+import 'package:mira/l10n/app_localizations.dart';
 
 /// Screen shown after successful sign-in to choose whether to start the test or skip it.
 class TestChoiceScreen extends StatelessWidget {
@@ -38,7 +39,7 @@ class TestChoiceScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Kişilik testine başlamak ister misin?',
+                AppLocalizations.of(context).startTestTitle,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
@@ -46,7 +47,7 @@ class TestChoiceScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Testi tamamlarsan kişiliğine uygun öneriler ve önerilen alışkanlıklar alırsın. İstersen bu adımı şimdi atlayabilirsin.',
+                AppLocalizations.of(context).startTestDesc,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -58,14 +59,14 @@ class TestChoiceScreen extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _skipTest(context),
-                      child: const Text('Testi Atla'),
+                      child: Text(AppLocalizations.of(context).skipTest),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton(
                       onPressed: () => _startTest(context),
-                      child: const Text('Testi Başlat'),
+                      child: Text(AppLocalizations.of(context).startTest),
                     ),
                   ),
                 ],

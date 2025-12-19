@@ -340,8 +340,9 @@ class HabitRepository extends ChangeNotifier {
     final habit = findById(habitId);
     if (habit == null ||
         (habit.habitType != HabitType.simple &&
-            habit.habitType != HabitType.checkbox))
+            habit.habitType != HabitType.checkbox)) {
       return;
+    }
     habit.applyDailyReset(DateTime.now());
     final beforeCompleted = habit.isCompleted;
     habit.isCompleted = !habit.isCompleted;
@@ -402,8 +403,9 @@ class HabitRepository extends ChangeNotifier {
     final habit = findById(habitId);
     if (habit == null ||
         (habit.habitType != HabitType.simple &&
-            habit.habitType != HabitType.checkbox))
+            habit.habitType != HabitType.checkbox)) {
       return;
+    }
     final dateKey = _dateStr(date);
     // Başlangıç tarihinden önceye yazma
     if (dateKey.compareTo(habit.startDate) < 0) return;

@@ -121,7 +121,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
               decoration: BoxDecoration(
                 // Use a stronger surfaceVariant in dark mode so the card separates
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? colorScheme.surfaceVariant.withValues(alpha: 0.18)
+                    ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.18)
                     : widget.habitColor.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -262,7 +262,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? colorScheme.surfaceVariant.withValues(alpha: 0.06)
+                    ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.06)
                     : colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
@@ -316,7 +316,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
                 gradient: Theme.of(context).brightness == Brightness.dark
                     ? LinearGradient(
                         colors: [
-                          colorScheme.surfaceVariant.withValues(alpha: 0.12),
+                          colorScheme.surfaceContainerHighest.withValues(alpha: 0.12),
                           colorScheme.surface.withValues(alpha: 0.04),
                         ],
                         begin: Alignment.topLeft,
@@ -377,7 +377,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
         color: Theme.of(context).brightness == Brightness.dark
             ? Theme.of(
                 context,
-              ).colorScheme.surfaceVariant.withValues(alpha: 0.10)
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.10)
             : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
@@ -574,11 +574,12 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
           // overall: show every Nth label to avoid crowding
           final step = (count / 6).ceil();
           if (step <= 0) return const Text('');
-          if (idx % step == 0)
+          if (idx % step == 0) {
             return Text(
               '${idx + 1}',
               style: Theme.of(context).textTheme.labelSmall,
             );
+          }
           return const Text('');
         }
       }
@@ -723,7 +724,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
           date.month == today.month &&
           date.day == today.day;
       final bool beforeStart = date.isBefore(startDate);
-      final bool afterEnd = endDate != null && date.isAfter(endDate!);
+      final bool afterEnd = endDate != null && date.isAfter(endDate);
       final bool inFuture = date.isAfter(today);
       final bool disabled = beforeStart || inFuture || afterEnd;
       bool hasEntry = habit.dailyLog.containsKey(dateKey);
@@ -1134,7 +1135,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
-            ? colorScheme.surfaceVariant.withValues(alpha: 0.06)
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.06)
             : colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -1292,7 +1293,7 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? colorScheme.surfaceVariant.withValues(alpha: 0.08)
+                  ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.08)
                   : colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
@@ -1687,8 +1688,9 @@ class _HabitAnalysisScreenState extends State<HabitAnalysisScreen> {
     if (_liveHabit == null) return 0;
     int count = 0;
     _liveHabit!.dailyLog.forEach((_, raw) {
-      if (HabitRepository.evaluateCompletionForProgress(_liveHabit!, raw))
+      if (HabitRepository.evaluateCompletionForProgress(_liveHabit!, raw)) {
         count++;
+      }
     });
     return count;
   }
@@ -1932,7 +1934,7 @@ class _ManualValueDialogState extends State<_ManualValueDialog> {
               ),
               Text(
                 parsed != null
-                    ? '${parsed}${widget.effectiveUnitLabel.isNotEmpty ? " ${widget.effectiveUnitLabel}" : ""}'
+                    ? '$parsed${widget.effectiveUnitLabel.isNotEmpty ? " ${widget.effectiveUnitLabel}" : ""}'
                     : '0',
                 style: widget.theme.textTheme.labelSmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,

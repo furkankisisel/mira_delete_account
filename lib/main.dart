@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
@@ -46,8 +46,9 @@ void main() async {
     );
   } catch (_) {
     // ignore: avoid_print
-    if (kDebugMode)
+    if (kDebugMode) {
       debugPrint('Firebase.initializeApp skipped in this context');
+    }
   }
   runApp(const MiraApp());
 }
@@ -152,18 +153,21 @@ class _MiraAppState extends State<MiraApp> {
       int reminderCount = 0;
       for (final habit in habits) {
         if (kDebugMode) debugPrint('   Checking habit: ${habit.title}');
-        if (kDebugMode)
+        if (kDebugMode) {
           debugPrint('     - reminderEnabled: ${habit.reminderEnabled}');
-        if (kDebugMode)
+        }
+        if (kDebugMode) {
           debugPrint('     - reminderTime: ${habit.reminderTime}');
+        }
 
         if (habit.reminderEnabled && habit.reminderTime != null) {
           reminderCount++;
           await NotificationService.instance.scheduleHabitReminder(habit);
         }
       }
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('✅ Initialized $reminderCount habit reminders');
+      }
     } catch (e) {
       if (kDebugMode) debugPrint('❌ Error initializing habit reminders: $e');
       // ignore failures
@@ -426,6 +430,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    NotificationService.instance.updateLocalizations(l10n);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -442,7 +447,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
               valueListenable: _visionFreeform,
               builder: (context, isFreeform, _) => isFreeform
                   ? IconButton(
-                      tooltip: 'Serbest pano ayarları',
+                      tooltip: l10n.visionSettingsTooltip,
                       icon: const Icon(Icons.tune),
                       onPressed: () => _showFreeformSettings(context),
                     )
@@ -452,14 +457,16 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
             ValueListenableBuilder<bool>(
               valueListenable: _visionFreeform,
               builder: (context, isFreeform, _) => IconButton(
-                tooltip: isFreeform ? 'Pano görünümü' : 'Serbest pano',
+                tooltip: isFreeform
+                    ? l10n.visionBoardViewTooltip
+                    : l10n.visionFreeformTooltip,
                 icon: Icon(isFreeform ? Icons.grid_view : Icons.open_in_full),
                 onPressed: () => _visionFreeform.value = !isFreeform,
               ),
             ),
           if (_currentIndex == 1)
             IconButton(
-              tooltip: 'Filtrele',
+              tooltip: l10n.filterTooltip,
               icon: const Icon(Icons.filter_list),
               onPressed: () => _habitKey.currentState?.showFilterSheet(),
             ),
@@ -471,13 +478,13 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
             ),
           if (_currentIndex == 2)
             IconButton(
-              tooltip: 'Ay seç',
+              tooltip: l10n.selectMonthTooltip,
               icon: const Icon(Icons.calendar_month_outlined),
               onPressed: () => _financeKey.currentState?.showMonthPicker(),
             ),
           if (_currentIndex == 2)
             IconButton(
-              tooltip: 'Analiz',
+              tooltip: l10n.analysisTooltip,
               icon: const Icon(Icons.insights_outlined),
               onPressed: () {
                 final month =
@@ -582,7 +589,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
           children: [
             ListTile(
               leading: const Icon(Icons.ios_share_outlined),
-              title: const Text('Panoyu paylaş'),
+              title: Text(AppLocalizations.of(context).shareBoard),
               onTap: () async {
                 Navigator.pop(ctx);
                 await _shareVisionBoard(context);
@@ -592,7 +599,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
             ValueListenableBuilder<bool>(
               valueListenable: _visionRoundCorners,
               builder: (_, val, __) => SwitchListTile(
-                title: const Text('Köşeleri yuvarlat'),
+                title: Text(AppLocalizations.of(context).roundCorners),
                 value: val,
                 onChanged: (v) => _visionRoundCorners.value = v,
               ),
@@ -600,7 +607,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
             ValueListenableBuilder<bool>(
               valueListenable: _visionShowText,
               builder: (_, val, __) => SwitchListTile(
-                title: const Text('Yazıları göster'),
+                title: Text(AppLocalizations.of(context).showText),
                 value: val,
                 onChanged: (v) => _visionShowText.value = v,
               ),
@@ -608,7 +615,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
             ValueListenableBuilder<bool>(
               valueListenable: _visionShowProgress,
               builder: (_, val, __) => SwitchListTile(
-                title: const Text('İlerlemeyi göster'),
+                title: Text(AppLocalizations.of(context).showProgress),
                 value: val,
                 onChanged: (v) => _visionShowProgress.value = v,
               ),
@@ -642,7 +649,7 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
         mimeType: 'image/png',
       );
       await SharePlus.instance.share(
-        ShareParams(text: 'Panom', files: [xfile]),
+        ShareParams(text: AppLocalizations.of(context).myBoard, files: [xfile]),
       );
     } catch (_) {
       // silent

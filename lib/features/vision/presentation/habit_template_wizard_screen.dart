@@ -77,8 +77,9 @@ class _HabitTemplateWizardScreenState extends State<HabitTemplateWizardScreen> {
   bool _canNext() {
     switch (_step) {
       case 0:
-        if (!(_type == 'simple' || _type == 'numerical' || _type == 'timer'))
+        if (!(_type == 'simple' || _type == 'numerical' || _type == 'timer')) {
           return false;
+        }
         if (_type == 'simple') return true;
         return (_target ?? 0) > 0;
       case 1:

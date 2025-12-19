@@ -71,8 +71,9 @@ Map<String, dynamic> _readArb(File file) {
   try {
     final raw = file.readAsStringSync();
     final jsonMap = json.decode(raw);
-    if (jsonMap is Map<String, dynamic>)
+    if (jsonMap is Map<String, dynamic>) {
       return Map<String, dynamic>.from(jsonMap);
+    }
   } catch (e) {
     stderr.writeln('Failed to read ${file.path}: $e');
   }
@@ -94,7 +95,7 @@ void _writeArb(File file, Map<String, dynamic> map) {
   }
 
   final encoder = const JsonEncoder.withIndent('  ');
-  final content = encoder.convert(sorted) + '\n';
+  final content = '${encoder.convert(sorted)}\n';
   file.writeAsStringSync(content);
 }
 

@@ -81,9 +81,9 @@ class _CreateHabitScreenState extends State<CreateHabitScreen>
       // Load frequency
       final ft = h.frequencyType?.toLowerCase();
       if (ft != null) {
-        if (ft.contains('daily'))
+        if (ft.contains('daily')) {
           _selectedFrequency = 'daily';
-        else if (ft.contains('specificweekdays'))
+        } else if (ft.contains('specificweekdays'))
           _selectedFrequency = 'weekly';
         else if (ft.contains('specificmonthdays'))
           _selectedFrequency = 'monthly';
@@ -383,7 +383,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen>
                         selectedColor: _selectedColor.withOpacity(0.18),
                         backgroundColor: Theme.of(
                           ctx,
-                        ).colorScheme.surfaceVariant.withOpacity(0.4),
+                        ).colorScheme.surfaceContainerHighest.withOpacity(0.4),
                         shape: StadiumBorder(
                           side: BorderSide(
                             color: sel
@@ -452,7 +452,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.isEditing ? l10n.editHabit : l10n.createHabitTitle),
-        backgroundColor: colorScheme.surfaceVariant,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         elevation: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
@@ -479,7 +479,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen>
               const SizedBox(height: 8),
               LinearProgressIndicator(
                 value: (_currentStep + 1) / _totalSteps,
-                backgroundColor: colorScheme.surfaceVariant,
+                backgroundColor: colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
               const SizedBox(height: 12),
@@ -580,7 +580,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen>
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceVariant.withOpacity(0.5),
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: colorScheme.outline),
               ),
@@ -849,7 +849,7 @@ class _CreateHabitScreenState extends State<CreateHabitScreen>
           const SizedBox(height: 32),
           Card(
             elevation: 0,
-            color: colorScheme.surfaceVariant.withOpacity(0.5),
+            color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -959,7 +959,7 @@ class _FrequencyButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? colorScheme.primaryContainer
-                : colorScheme.surfaceVariant.withOpacity(0.5),
+                : colorScheme.surfaceContainerHighest.withOpacity(0.5),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected ? colorScheme.primary : colorScheme.outline,
@@ -1015,10 +1015,11 @@ class _WeeklyDayPicker extends StatelessWidget {
           selected: isSel,
           onSelected: (v) {
             final s = {...selected};
-            if (v)
+            if (v) {
               s.add(day);
-            else
+            } else {
               s.remove(day);
+            }
             onChanged(s);
           },
         );
@@ -1046,10 +1047,11 @@ class _MonthDayPicker extends StatelessWidget {
           selected: isSel,
           onSelected: (v) {
             final s = {...selected};
-            if (v)
+            if (v) {
               s.add(day);
-            else
+            } else {
               s.remove(day);
+            }
             onChanged(s);
           },
         );

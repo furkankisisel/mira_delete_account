@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
 import '../services/premium_manager.dart';
-import '../services/iap_service.dart';
 import '../config/constants.dart';
 import '../l10n/app_localizations.dart';
 import 'subscription_screen.dart';
@@ -51,7 +50,10 @@ class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd MMMM yyyy', 'tr_TR').format(date);
+    return DateFormat(
+      'dd MMMM yyyy',
+      Localizations.localeOf(context).toString(),
+    ).format(date);
   }
 
   int _daysRemaining() {
@@ -81,15 +83,17 @@ class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.cannotOpenPlayStore),
+            content: Text(AppLocalizations.of(context).cannotOpenPlayStore),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${AppLocalizations.of(context).errorPrefix}$e'),
+          ),
+        );
       }
     }
   }
@@ -215,28 +219,28 @@ class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
                     ),
                     const SizedBox(height: 16),
                     _FeatureTile(
-                      icon: Icons.analytics_outlined,
-                      title: l10n.advancedAnalysis,
+                      icon: Icons.add_task_outlined,
+                      title: l10n.featureAdvancedHabits,
                       description: l10n.detailedCharts,
                     ),
                     _FeatureTile(
-                      icon: Icons.cloud_sync,
-                      title: l10n.cloudBackup,
+                      icon: Icons.visibility_outlined,
+                      title: l10n.featureVisionCreation,
                       description: l10n.backupToDrive,
                     ),
                     _FeatureTile(
-                      icon: Icons.block,
-                      title: l10n.adFreeExperience,
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: l10n.featureAdvancedFinance,
                       description: l10n.uninterruptedUsage,
                     ),
                     _FeatureTile(
-                      icon: Icons.schedule,
-                      title: l10n.advancedTimer,
+                      icon: Icons.palette_outlined,
+                      title: l10n.featurePremiumThemes,
                       description: l10n.pomodoroAndCustomTimers,
                     ),
                     _FeatureTile(
-                      icon: Icons.psychology,
-                      title: l10n.personalizedInsights,
+                      icon: Icons.backup_outlined,
+                      title: l10n.featureBackup,
                       description: l10n.aiPoweredRecommendations,
                     ),
                     const SizedBox(height: 24),
@@ -332,7 +336,7 @@ class _ManageSubscriptionScreenState extends State<ManageSubscriptionScreen> {
   }
 
   void _showSubscriptionDetails(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

@@ -180,7 +180,7 @@ class _FortuneEggsScreenState extends State<FortuneEggsScreen>
         FilledButton.icon(
           onPressed: _proceedToEggs,
           icon: const Icon(Icons.arrow_forward),
-          label: Text('Yumurtalara Geç'),
+          label: Text(l10n.fortuneProceedToEggs),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
@@ -239,7 +239,7 @@ class _FortuneEggsScreenState extends State<FortuneEggsScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Yumurtayı sağa/sola kaydırarak değiştirin, üzerine dokununca cevap görünür',
+                      l10n.fortuneSwipeInstruction,
                       style: Theme.of(context).textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
