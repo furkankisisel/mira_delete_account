@@ -31,7 +31,7 @@ class NotificationService {
     await _configureLocalTimeZone();
 
     const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
+      '@drawable/ic_stat_notification',
     );
     const iosSettings = DarwinInitializationSettings(
       requestSoundPermission: true,
@@ -142,11 +142,13 @@ class NotificationService {
       channelDescription: _timerChannelDescription,
       importance: Importance.low, // Changed to low to prevent sound/heads-up
       priority: Priority.low,
+      icon: 'ic_stat_notification',
       ongoing: true,
       autoCancel: false,
       playSound: false,
       enableVibration: false,
       onlyAlertOnce: true, // Critical: prevent re-alerting on update
+      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       actions: <AndroidNotificationAction>[
         if (isRunning)
           AndroidNotificationAction(
@@ -292,8 +294,10 @@ class NotificationService {
       channelDescription: 'Daily reminders for your habits',
       importance: Importance.high,
       priority: Priority.high,
+      icon: 'ic_stat_notification',
       playSound: playSound,
       enableVibration: vibrate,
+      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
     );
 
     final iosDetails = DarwinNotificationDetails(

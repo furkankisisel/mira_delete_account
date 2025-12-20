@@ -5653,6 +5653,60 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Gizlilik Politikası'**
   String get privacyPolicyTitle;
+
+  /// No description provided for @miraPremium.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mira Premium'**
+  String get miraPremium;
+
+  /// No description provided for @visionTasks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görevler'**
+  String get visionTasks;
+
+  /// No description provided for @addTask.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev Ekle'**
+  String get addTask;
+
+  /// No description provided for @taskCompleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tamamlandı'**
+  String get taskCompleted;
+
+  /// No description provided for @taskPending.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bekliyor'**
+  String get taskPending;
+
+  /// No description provided for @noTasksYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz görev eklenmedi'**
+  String get noTasksYet;
+
+  /// No description provided for @deleteTaskConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu görevi silmek istediğinize emin misiniz?'**
+  String get deleteTaskConfirm;
+
+  /// No description provided for @taskAdded.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev eklendi'**
+  String get taskAdded;
+
+  /// No description provided for @manageVisionTasks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görevleri Yönet'**
+  String get manageVisionTasks;
 }
 
 class _AppLocalizationsDelegate

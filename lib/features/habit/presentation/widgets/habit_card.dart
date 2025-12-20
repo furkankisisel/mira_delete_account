@@ -303,8 +303,15 @@ class _HabitCardState extends State<HabitCard>
     }
   }
 
-  void _showMenu() {
+  void _showMenu() async {
     if (widget.readOnly) return;
+    // Unfocus any active input and wait for the keyboard/focus to settle
+    // This prevents gesture/focus conflicts when returning from other tabs
+    FocusScope.of(context).unfocus();
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (!mounted) return;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

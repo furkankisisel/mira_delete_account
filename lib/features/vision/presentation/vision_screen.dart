@@ -216,6 +216,10 @@ class _VisionScreenState extends State<VisionScreen> {
                     visions: visions,
                     onTap: _openVision,
                     onMenu: _menuFor,
+                    onAddTask: _showQuickAddTask,
+                    onToggleTask: (v, taskId) async {
+                      await _repo.toggleTask(v.id, taskId);
+                    },
                   );
           },
         ),
@@ -228,6 +232,48 @@ class _VisionScreenState extends State<VisionScreen> {
   }
 
   void _menuFor(Vision v) => _showVisionBottomSheet(v);
+
+  /// Quick add task dialog for board view
+  Future<void> _showQuickAddTask(Vision v) async {
+    final l10n = AppLocalizations.of(context);
+    final taskCtrl = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.addTask),
+        content: TextField(
+          controller: taskCtrl,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: l10n.taskTitle,
+            border: const OutlineInputBorder(),
+          ),
+          onSubmitted: (value) async {
+            if (value.trim().isNotEmpty) {
+              await _repo.addTask(v.id, value.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+            }
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              if (taskCtrl.text.trim().isNotEmpty) {
+                await _repo.addTask(v.id, taskCtrl.text.trim());
+                if (ctx.mounted) Navigator.pop(ctx);
+              }
+            },
+            child: Text(l10n.add),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> _openCreate() async {
     final created = await Navigator.of(context).push<Vision>(
@@ -595,6 +641,14 @@ class _VisionScreenState extends State<VisionScreen> {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.checklist_outlined),
+              title: Text(AppLocalizations.of(context).manageVisionTasks),
+              onTap: () {
+                Navigator.pop(ctx);
+                _manageTasks(v);
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.delete_outline, color: Colors.red[600]),
               title: Text(
                 AppLocalizations.of(context).delete,
@@ -662,6 +716,127 @@ class _VisionScreenState extends State<VisionScreen> {
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Opens a dialog to manage one-time tasks for a vision
+  Future<void> _manageTasks(Vision v) async {
+    final l10n = AppLocalizations.of(context);
+    final taskCtrl = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          // Get fresh vision from repository
+          final vision = _repo.visions.firstWhere(
+            (vis) => vis.id == v.id,
+            orElse: () => v,
+          );
+
+          return AlertDialog(
+            title: Text(l10n.visionTasks),
+            content: SizedBox(
+              width: 400,
+              height: 400,
+              child: Column(
+                children: [
+                  // Add new task input
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: taskCtrl,
+                          decoration: InputDecoration(
+                            hintText: l10n.addTask,
+                            border: const OutlineInputBorder(),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                          ),
+                          onSubmitted: (value) async {
+                            if (value.trim().isNotEmpty) {
+                              await _repo.addTask(v.id, value.trim());
+                              taskCtrl.clear();
+                              setDialogState(() {});
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle),
+                        onPressed: () async {
+                          if (taskCtrl.text.trim().isNotEmpty) {
+                            await _repo.addTask(v.id, taskCtrl.text.trim());
+                            taskCtrl.clear();
+                            setDialogState(() {});
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Task list
+                  Expanded(
+                    child: vision.tasks.isEmpty
+                        ? Center(
+                            child: Text(
+                              l10n.noTasksYet,
+                              style: TextStyle(color: Theme.of(ctx).hintColor),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: vision.tasks.length,
+                            itemBuilder: (_, i) {
+                              final task = vision.tasks[i];
+                              return ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: Checkbox(
+                                  value: task.isCompleted,
+                                  onChanged: (_) async {
+                                    await _repo.toggleTask(v.id, task.id);
+                                    setDialogState(() {});
+                                  },
+                                ),
+                                title: Text(
+                                  task.title,
+                                  style: TextStyle(
+                                    decoration: task.isCompleted
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                    color: task.isCompleted
+                                        ? Theme.of(ctx).hintColor
+                                        : null,
+                                  ),
+                                ),
+                                trailing: IconButton(
+                                  icon: Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.red[400],
+                                  ),
+                                  onPressed: () async {
+                                    await _repo.removeTask(v.id, task.id);
+                                    setDialogState(() {});
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.close),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -1318,15 +1493,18 @@ class _FreeformCard extends StatelessWidget {
               _CoverImage(path: vision.coverImage!)
             else
               DecoratedBox(decoration: BoxDecoration(color: color)),
-            if (vision.coverImage != null && vision.coverImage!.isNotEmpty)
+            // Apply subtle gradient only when showing text so text is readable
+            if (showText &&
+                vision.coverImage != null &&
+                vision.coverImage!.isNotEmpty)
               DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.12),
-                      Colors.black.withValues(alpha: 0.32),
+                      Colors.black.withValues(alpha: 0.1),
+                      Colors.black.withValues(alpha: 0.3),
                     ],
                   ),
                 ),
@@ -1674,111 +1852,291 @@ class _Board extends StatelessWidget {
   final List<Vision> visions;
   final void Function(Vision) onTap;
   final void Function(Vision) onMenu;
+  final void Function(Vision) onAddTask;
+  final void Function(Vision, String taskId) onToggleTask;
   const _Board({
     required this.visions,
     required this.onTap,
     required this.onMenu,
+    required this.onAddTask,
+    required this.onToggleTask,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       color: theme.scaffoldBackgroundColor,
-      child: GridView.builder(
+      child: ListView.separated(
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1,
-        ),
         itemCount: visions.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (_, i) {
           final v = visions[i];
           final color = Color(v.colorValue);
-          // Date badge removed: no date/off state computed for cards
+          final tasks = v.tasks;
+
           return GestureDetector(
             onTap: () => onTap(v),
             onLongPress: () => onMenu(v),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (v.coverImage != null && v.coverImage!.isNotEmpty)
-                    // In board grid, we want a full-bleed background look (cover)
-                    ColoredBox(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      child:
-                          (v.coverImage!.startsWith('/') ||
-                              v.coverImage!.contains('\\') ||
-                              v.coverImage!.contains(':\\'))
-                          ? Image.file(
-                              io.File(v.coverImage!),
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(v.coverImage!, fit: BoxFit.cover),
-                    )
-                  else
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            color.withValues(alpha: 0.85),
-                            color.withValues(alpha: 0.45),
-                          ],
-                        ),
-                      ),
-                    ),
-                  // Readability overlay (slight dark tint)
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.12),
-                          Colors.black.withValues(alpha: 0.32),
+            child: Container(
+              margin: const EdgeInsets.only(
+                bottom: 4,
+              ), // Slight spacing for shadow visibility
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), // Softer corners
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color,
+                    Color.lerp(color, Colors.black, 0.2)!, // Richer gradient
+                  ],
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header Area
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              v.emoji ?? '🎯',
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  v.title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                _CompactProgressBar(vision: v),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  // Date badge and expired overlay removed per requirement
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (v.coverImage == null || v.coverImage!.isEmpty)
-                          Text(
-                            v.emoji ?? '🎯',
-                            style: const TextStyle(fontSize: 40),
-                          ),
-                        if (v.coverImage == null || v.coverImage!.isEmpty)
-                          const SizedBox(height: 8),
-                        Text(
-                          v.title,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+
+                    // Tasks Section (Card-in-Card look)
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          width: 1,
                         ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: _ProgressBar(vision: v, color: Colors.white),
-                        ),
-                      ],
+                      ),
+                      child: Column(
+                        children: [
+                          if (tasks.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 4),
+                              child: Column(
+                                children: tasks
+                                    .map(
+                                      (task) => Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap: () => onToggleTask(v, task.id),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: task.isCompleted
+                                                        ? Colors.white
+                                                              .withValues(
+                                                                alpha: 0.9,
+                                                              )
+                                                        : Colors.transparent,
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                            alpha: 0.6,
+                                                          ),
+                                                      width: 2,
+                                                    ),
+                                                  ),
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: task.isCompleted
+                                                      ? Icon(
+                                                          Icons.check,
+                                                          size: 14,
+                                                          color: color,
+                                                        )
+                                                      : null,
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    task.title,
+                                                    style: TextStyle(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                            alpha:
+                                                                task.isCompleted
+                                                                ? 0.5
+                                                                : 0.95,
+                                                          ),
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      decoration:
+                                                          task.isCompleted
+                                                          ? TextDecoration
+                                                                .lineThrough
+                                                          : null,
+                                                      decorationColor: Colors
+                                                          .white
+                                                          .withValues(
+                                                            alpha: 0.5,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+
+                          // Add Task Button (always visible footer of the list)
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => onAddTask(v),
+                              borderRadius: BorderRadius.vertical(
+                                top: tasks.isEmpty
+                                    ? const Radius.circular(16)
+                                    : Radius.zero,
+                                bottom: const Radius.circular(16),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_circle_outline_rounded,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      l10n.addTask,
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class _CompactProgressBar extends StatelessWidget {
+  final Vision vision;
+  const _CompactProgressBar({required this.vision});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<double>(
+      future: VisionRepository.instance.calculateVisionProgress(vision.id),
+      builder: (context, snapshot) {
+        final progress = snapshot.data ?? 0.0;
+        final percent = (progress * 100).toInt();
+        return Row(
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 6,
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.white.withValues(alpha: 0.9),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$percent%',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -1827,8 +2185,8 @@ class _CoverImage extends StatelessWidget {
     final isFile =
         path.startsWith('/') || path.contains('\\') || path.contains(':\\');
     final Widget img = isFile
-        ? Image.file(io.File(path), fit: BoxFit.contain)
-        : Image.asset(path, fit: BoxFit.contain);
-    return ColoredBox(color: Colors.black.withValues(alpha: 0.05), child: img);
+        ? Image.file(io.File(path), fit: BoxFit.cover)
+        : Image.asset(path, fit: BoxFit.cover);
+    return img;
   }
 }

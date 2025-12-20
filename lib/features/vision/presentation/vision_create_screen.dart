@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mira/features/habit/domain/habit_model.dart';
 import 'package:mira/features/habit/domain/habit_repository.dart';
 import 'package:mira/features/habit/domain/habit_types.dart';
+import 'package:mira/features/habit/domain/subtask_model.dart';
 import 'package:mira/features/habit/presentation/advanced_habit_screen.dart';
 import '../../../l10n/app_localizations.dart';
 import 'package:flutter/services.dart'
@@ -1761,6 +1762,25 @@ class _ManualTabState extends State<_ManualTab> {
       }
     }
 
+    // Parse subtasks if present
+    List<Map<String, dynamic>>? subtasksList;
+    if (type == 'subtasks') {
+      final subtasksRaw = m['subtasks'] as List?;
+      if (subtasksRaw != null && subtasksRaw.isNotEmpty) {
+        subtasksList = subtasksRaw
+            .map((s) {
+              if (s is Subtask) {
+                return s.toJson();
+              } else if (s is Map) {
+                return Map<String, dynamic>.from(s);
+              }
+              return <String, dynamic>{};
+            })
+            .where((m) => m.isNotEmpty)
+            .toList();
+      }
+    }
+
     return VisionHabitTemplate(
       title: (m['title'] as String?)?.trim().isNotEmpty == true
           ? m['title']
@@ -1790,6 +1810,7 @@ class _ManualTabState extends State<_ManualTab> {
           : activeOffsets,
       reminderEnabled: reminderEnabled,
       reminderTime: reminderTime,
+      subtasks: subtasksList,
     );
   }
 
@@ -1808,6 +1829,8 @@ class _ManualTabState extends State<_ManualTab> {
     HabitType habitType = HabitType.simple;
     if (h.type == 'numerical') habitType = HabitType.numerical;
     if (h.type == 'timer') habitType = HabitType.timer;
+    if (h.type == 'subtasks') habitType = HabitType.subtasks;
+    if (h.type == 'checkbox') habitType = HabitType.checkbox;
 
     final baseDate = _startDate ?? DateTime.now();
     final base = DateTime(baseDate.year, baseDate.month, baseDate.day);
@@ -1829,6 +1852,17 @@ class _ManualTabState extends State<_ManualTab> {
       if (habitType == HabitType.timer) ...{
         'timerTargetMinutes': h.target ?? 1,
         if (h.timerTargetType != null) 'timerTargetType': h.timerTargetType,
+      },
+      if (habitType == HabitType.subtasks && h.subtasks != null) ...{
+        'subtasks': h.subtasks!
+            .map(
+              (s) => Subtask(
+                id: s['id']?.toString() ?? UniqueKey().toString(),
+                title: s['title']?.toString() ?? '',
+                isCompleted: false,
+              ),
+            )
+            .toList(),
       },
       'frequencyType': h.frequencyType ?? 'daily',
       'selectedWeekdays': h.selectedWeekdays ?? const <int>[],
@@ -2137,6 +2171,8 @@ class _ManualTabState extends State<_ManualTab> {
           final HabitType habitType = switch (template.type) {
             'numerical' => HabitType.numerical,
             'timer' => HabitType.timer,
+            'subtasks' => HabitType.subtasks,
+            'checkbox' => HabitType.checkbox,
             _ => HabitType.simple,
           };
 
@@ -2162,6 +2198,31 @@ class _ManualTabState extends State<_ManualTab> {
           // Use a const material icon directly to preserve tree-shaking
           const IconData habitIcon = Icons.check_circle;
 
+          // Parse subtasks if this is a subtask type habit
+          List<Subtask> subtasksList = [];
+          if (habitType == HabitType.subtasks && template.subtasks != null) {
+            subtasksList = template.subtasks!
+                .map(
+                  (s) => Subtask(
+                    id: s['id']?.toString() ?? UniqueKey().toString(),
+                    title: s['title']?.toString() ?? '',
+                    isCompleted: false,
+                  ),
+                )
+                .toList();
+          }
+
+          // Determine target count based on habit type
+          int targetCount =
+              template.target ??
+              (habitType == HabitType.simple
+                  ? 1
+                  : (habitType == HabitType.timer ? 10 : 1));
+          // For subtasks, target count should be the number of subtasks
+          if (habitType == HabitType.subtasks && subtasksList.isNotEmpty) {
+            targetCount = subtasksList.length;
+          }
+
           // Create habit
           final habit = Habit(
             id: habitId,
@@ -2170,11 +2231,7 @@ class _ManualTabState extends State<_ManualTab> {
             icon: habitIcon,
             emoji: template.emoji,
             color: Color(template.colorValue),
-            targetCount:
-                template.target ??
-                (habitType == HabitType.simple
-                    ? 1
-                    : (habitType == HabitType.timer ? 10 : 0)),
+            targetCount: targetCount,
             habitType: habitType,
             unit: habitType == HabitType.simple ? null : template.unit,
             currentStreak: 0,
@@ -2189,6 +2246,7 @@ class _ManualTabState extends State<_ManualTab> {
             reminderEnabled: template.reminderEnabled ?? false,
             reminderTime: template.reminderTime,
             linkedVisionId: widget.initial!.id, // Link to this vision
+            subtasks: subtasksList,
           );
 
           await repo.addHabit(habit);

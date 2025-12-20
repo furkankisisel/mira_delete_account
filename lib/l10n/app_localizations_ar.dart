@@ -2961,4 +2961,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get miraPremium => 'Mira Premium';
+
+  @override
+  String get visionTasks => 'Görevler';
+
+  @override
+  String get addTask => 'Görev Ekle';
+
+  @override
+  String get taskCompleted => 'Tamamlandı';
+
+  @override
+  String get taskPending => 'Bekliyor';
+
+  @override
+  String get noTasksYet => 'Henüz görev eklenmedi';
+
+  @override
+  String get deleteTaskConfirm => 'Bu görevi silmek istediğinize emin misiniz?';
+
+  @override
+  String get taskAdded => 'Görev eklendi';
+
+  @override
+  String get manageVisionTasks => 'Görevleri Yönet';
 }

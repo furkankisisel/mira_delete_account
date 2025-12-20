@@ -8,9 +8,11 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../../habit/domain/habit_repository.dart';
 import '../../habit/domain/habit_model.dart';
 import '../../habit/domain/habit_types.dart';
+import '../../habit/domain/subtask_model.dart';
 import 'vision_template.dart';
 
 import 'vision_model.dart';
+import 'vision_task_model.dart';
 
 class VisionRepository {
   static final instance = VisionRepository._();
@@ -23,6 +25,9 @@ class VisionRepository {
   List<Vision> _items = const [];
 
   Stream<List<Vision>> get stream => _controller.stream;
+
+  /// Public getter for the current list of visions
+  List<Vision> get visions => List.unmodifiable(_items);
 
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
@@ -84,6 +89,8 @@ class VisionRepository {
           final HabitType type = switch (typeStr) {
             'numerical' => HabitType.numerical,
             'timer' => HabitType.timer,
+            'subtasks' => HabitType.subtasks,
+            'checkbox' => HabitType.checkbox,
             _ => HabitType.simple,
           };
           int target =
@@ -173,6 +180,30 @@ class VisionRepository {
               timType = TimerTargetType.minimum;
             }
           }
+
+          // Parse subtasks for subtask type habits
+          List<Subtask> subtasksList = [];
+          if (type == HabitType.subtasks && h['subtasks'] != null) {
+            final subtasksData = h['subtasks'] as List;
+            subtasksList = subtasksData
+                .map((s) {
+                  if (s is Map) {
+                    return Subtask(
+                      id: s['id']?.toString() ?? UniqueKey().toString(),
+                      title: s['title']?.toString() ?? '',
+                      isCompleted: false,
+                    );
+                  }
+                  return null;
+                })
+                .whereType<Subtask>()
+                .toList();
+            // Update target count to subtask count
+            if (subtasksList.isNotEmpty) {
+              target = subtasksList.length;
+            }
+          }
+
           final habit = Habit(
             id: habitId,
             title: (h['title'] as String?) ?? 'Alışkanlık',
@@ -203,6 +234,7 @@ class VisionRepository {
               }
               return null;
             })(),
+            subtasks: subtasksList,
           );
           await habitRepo.addHabit(habit);
           linkedIds.add(habitId);
@@ -273,6 +305,8 @@ class VisionRepository {
         final HabitType type = switch (typeStr) {
           'numerical' => HabitType.numerical,
           'timer' => HabitType.timer,
+          'subtasks' => HabitType.subtasks,
+          'checkbox' => HabitType.checkbox,
           _ => HabitType.simple,
         };
         int target =
@@ -351,6 +385,30 @@ class VisionRepository {
             timType = TimerTargetType.minimum;
           }
         }
+
+        // Parse subtasks for subtask type habits
+        List<Subtask> subtasksList = [];
+        if (type == HabitType.subtasks && h['subtasks'] != null) {
+          final subtasksData = h['subtasks'] as List;
+          subtasksList = subtasksData
+              .map((s) {
+                if (s is Map) {
+                  return Subtask(
+                    id: s['id']?.toString() ?? UniqueKey().toString(),
+                    title: s['title']?.toString() ?? '',
+                    isCompleted: false,
+                  );
+                }
+                return null;
+              })
+              .whereType<Subtask>()
+              .toList();
+          // Update target count to subtask count
+          if (subtasksList.isNotEmpty) {
+            target = subtasksList.length;
+          }
+        }
+
         final habit = Habit(
           id: id,
           title: (h['title'] as String?) ?? 'Alışkanlık',
@@ -381,6 +439,7 @@ class VisionRepository {
             }
             return null;
           })(),
+          subtasks: subtasksList,
         );
         await habitRepo.addHabit(habit);
         linked.add(id);
@@ -469,6 +528,8 @@ class VisionRepository {
         final HabitType type = switch (typeStr) {
           'numerical' => HabitType.numerical,
           'timer' => HabitType.timer,
+          'subtasks' => HabitType.subtasks,
+          'checkbox' => HabitType.checkbox,
           _ => HabitType.simple,
         };
         int target =
@@ -550,6 +611,30 @@ class VisionRepository {
             timType = TimerTargetType.minimum;
           }
         }
+
+        // Parse subtasks for subtask type habits
+        List<Subtask> subtasksList = [];
+        if (type == HabitType.subtasks && h['subtasks'] != null) {
+          final subtasksData = h['subtasks'] as List;
+          subtasksList = subtasksData
+              .map((s) {
+                if (s is Map) {
+                  return Subtask(
+                    id: s['id']?.toString() ?? UniqueKey().toString(),
+                    title: s['title']?.toString() ?? '',
+                    isCompleted: false,
+                  );
+                }
+                return null;
+              })
+              .whereType<Subtask>()
+              .toList();
+          // Update target count to subtask count
+          if (subtasksList.isNotEmpty) {
+            target = subtasksList.length;
+          }
+        }
+
         final habit = Habit(
           id: id,
           title: (h['title'] as String?) ?? 'Alışkanlık',
@@ -580,6 +665,7 @@ class VisionRepository {
             }
             return null;
           })(),
+          subtasks: subtasksList,
         );
         await habitRepo.addHabit(habit);
         linked.add(id);
@@ -1260,7 +1346,85 @@ class VisionRepository {
     return 'check_circle';
   }
 
-  /// Calculates vision progress based on linked habits' completion rates.
+  // ─────────────────────────────────────────────────────────────────────────
+  // Task Management Methods
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Adds a new one-time task to a vision.
+  Future<void> addTask(String visionId, String taskTitle) async {
+    final index = _items.indexWhere((v) => v.id == visionId);
+    if (index == -1) return;
+
+    final vision = _items[index];
+    final newTask = VisionTask(
+      id: 'task_${DateTime.now().millisecondsSinceEpoch}',
+      title: taskTitle,
+      isCompleted: false,
+      createdAt: DateTime.now(),
+    );
+
+    final updatedTasks = [...vision.tasks, newTask];
+    _items[index] = vision.copyWith(tasks: updatedTasks);
+    await _persist();
+    _emit();
+  }
+
+  /// Toggles the completion status of a task.
+  Future<void> toggleTask(String visionId, String taskId) async {
+    final visionIndex = _items.indexWhere((v) => v.id == visionId);
+    if (visionIndex == -1) return;
+
+    final vision = _items[visionIndex];
+    final taskIndex = vision.tasks.indexWhere((t) => t.id == taskId);
+    if (taskIndex == -1) return;
+
+    final task = vision.tasks[taskIndex];
+    final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
+    final updatedTasks = [...vision.tasks];
+    updatedTasks[taskIndex] = updatedTask;
+
+    _items[visionIndex] = vision.copyWith(tasks: updatedTasks);
+    await _persist();
+    _emit();
+  }
+
+  /// Updates a task's title.
+  Future<void> updateTask(
+    String visionId,
+    String taskId,
+    String newTitle,
+  ) async {
+    final visionIndex = _items.indexWhere((v) => v.id == visionId);
+    if (visionIndex == -1) return;
+
+    final vision = _items[visionIndex];
+    final taskIndex = vision.tasks.indexWhere((t) => t.id == taskId);
+    if (taskIndex == -1) return;
+
+    final task = vision.tasks[taskIndex];
+    final updatedTask = task.copyWith(title: newTitle);
+    final updatedTasks = [...vision.tasks];
+    updatedTasks[taskIndex] = updatedTask;
+
+    _items[visionIndex] = vision.copyWith(tasks: updatedTasks);
+    await _persist();
+    _emit();
+  }
+
+  /// Removes a task from a vision.
+  Future<void> removeTask(String visionId, String taskId) async {
+    final visionIndex = _items.indexWhere((v) => v.id == visionId);
+    if (visionIndex == -1) return;
+
+    final vision = _items[visionIndex];
+    final updatedTasks = vision.tasks.where((t) => t.id != taskId).toList();
+
+    _items[visionIndex] = vision.copyWith(tasks: updatedTasks);
+    await _persist();
+    _emit();
+  }
+
+  /// Calculates vision progress based on linked habits' completion rates and one-time tasks.
   /// Returns a value between 0.0 and 1.0 representing overall completion percentage.
   Future<double> calculateVisionProgress(String visionId) async {
     final vision = _items.firstWhere(
@@ -1268,14 +1432,13 @@ class VisionRepository {
       orElse: () => throw Exception('Vision not found'),
     );
 
-    if (vision.linkedHabitIds.isEmpty) return 0.0;
-
     final habitRepo = HabitRepository.instance;
     await habitRepo.initialize();
 
     double totalProgress = 0.0;
-    int validHabitsCount = 0;
+    int itemCount = 0;
 
+    // Calculate habit progress
     for (final habitId in vision.linkedHabitIds) {
       final habit = habitRepo.findById(habitId);
       if (habit == null) continue;
@@ -1283,16 +1446,23 @@ class VisionRepository {
       final habitProgress = _calculateHabitProgress(habit, vision);
       if (habitProgress >= 0) {
         totalProgress += habitProgress;
-        validHabitsCount++;
+        itemCount++;
       }
     }
 
-    if (validHabitsCount == 0) return 0.0;
-    return totalProgress / validHabitsCount;
+    // Calculate task progress (each task is 0 or 1)
+    for (final task in vision.tasks) {
+      totalProgress += task.isCompleted ? 1.0 : 0.0;
+      itemCount++;
+    }
+
+    if (itemCount == 0) return 0.0;
+    return totalProgress / itemCount;
   }
 
   /// Calculates individual habit progress within the vision timeframe.
   /// Returns value between 0.0 and 1.0, or -1 if habit is invalid.
+  /// Now uses proportional progress: partial completion contributes proportionally.
   double _calculateHabitProgress(Habit habit, Vision vision) {
     // Parse habit dates
     final DateTime? habitStart = _tryParseDay(habit.startDate);
@@ -1306,14 +1476,112 @@ class VisionRepository {
     // Determine evaluation period
     final DateTime evaluationStart = habitStart;
     final DateTime today = DateTime.now();
-    final DateTime evaluationEnd = habitEnd ?? today;
+    final DateTime todayDate = DateTime(today.year, today.month, today.day);
+    final DateTime evaluationEnd = habitEnd ?? todayDate;
 
     // If habit hasn't started yet, progress is 0
-    if (evaluationStart.isAfter(today)) return 0.0;
+    if (evaluationStart.isAfter(todayDate)) return 0.0;
+
+    // Special handling for subtask habits:
+    // Calculate total subtasks completed / total subtasks possible across all days
+    if (habit.habitType == HabitType.subtasks) {
+      return _calculateSubtaskProgress(
+        habit,
+        evaluationStart,
+        evaluationEnd,
+        todayDate,
+      );
+    }
 
     // Calculate scheduled days within the period
     int scheduledDaysCount = 0;
-    int completedDaysCount = 0;
+    double totalDayProgress = 0.0;
+
+    // If habit has explicit schedule, use it
+    if (habit.scheduledDates != null && habit.scheduledDates!.isNotEmpty) {
+      final todayKey = _dateKey(todayDate);
+
+      for (final dateStr in habit.scheduledDates!) {
+        final date = _tryParseDay(dateStr);
+        if (date == null) continue;
+
+        // Only count days within the evaluation period and up to today
+        if (date.isBefore(evaluationStart) || date.isAfter(evaluationEnd)) {
+          continue;
+        }
+        if (date.isAfter(todayDate)) continue;
+
+        scheduledDaysCount++;
+
+        // Calculate proportional progress for that day
+        // For today, use current live progress
+        if (dateStr == todayKey) {
+          final todayProgress = habit.dailyLog[dateStr] ?? habit.currentStreak;
+          totalDayProgress += _calculateDayProgress(habit, todayProgress);
+        } else if (habit.dailyLog.containsKey(dateStr)) {
+          final loggedValue = habit.dailyLog[dateStr] ?? 0;
+          totalDayProgress += _calculateDayProgress(habit, loggedValue);
+        }
+      }
+    } else {
+      // Daily habit - count all days from start to end
+      DateTime currentDay = DateTime(
+        evaluationStart.year,
+        evaluationStart.month,
+        evaluationStart.day,
+      );
+      final endDay = evaluationEnd.isBefore(todayDate)
+          ? evaluationEnd
+          : todayDate;
+      final todayKey = _dateKey(todayDate);
+
+      while (!currentDay.isAfter(endDay)) {
+        scheduledDaysCount++;
+        final dayKey = _dateKey(currentDay);
+
+        // For today, use current live progress instead of just dailyLog
+        if (dayKey == todayKey) {
+          // Use currentStreak for today's live progress
+          final todayProgress = habit.dailyLog[dayKey] ?? habit.currentStreak;
+          totalDayProgress += _calculateDayProgress(habit, todayProgress);
+        } else if (habit.dailyLog.containsKey(dayKey)) {
+          final loggedValue = habit.dailyLog[dayKey] ?? 0;
+          totalDayProgress += _calculateDayProgress(habit, loggedValue);
+        }
+
+        currentDay = currentDay.add(const Duration(days: 1));
+      }
+    }
+
+    if (scheduledDaysCount == 0) return 0.0;
+    return totalDayProgress / scheduledDaysCount;
+  }
+
+  /// Calculates subtask habit progress as total completed / total possible across all days.
+  /// Uses subtasksLog to track individual subtask completions.
+  /// Example: 2 subtasks/day * 5 days = 10 total. If 6 completed = 60%.
+  double _calculateSubtaskProgress(
+    Habit habit,
+    DateTime evaluationStart,
+    DateTime evaluationEnd,
+    DateTime todayDate,
+  ) {
+    final int subtasksPerDay = habit.targetCount; // Number of subtasks per day
+    if (subtasksPerDay <= 0) return 0.0;
+
+    int totalPossibleSubtasks = 0;
+    int totalCompletedSubtasks = 0;
+    final todayKey = _dateKey(todayDate);
+
+    // Helper to count completed subtasks from subtasksLog entry
+    int countCompletedFromLog(List<Map<String, dynamic>> subtasksList) {
+      return subtasksList.where((s) => s['isCompleted'] == true).length;
+    }
+
+    // Helper to count completed from current live subtasks
+    int countCompletedFromLive(Habit h) {
+      return h.subtasks.where((s) => s.isCompleted).length;
+    }
 
     // If habit has explicit schedule, use it
     if (habit.scheduledDates != null && habit.scheduledDates!.isNotEmpty) {
@@ -1325,16 +1593,19 @@ class VisionRepository {
         if (date.isBefore(evaluationStart) || date.isAfter(evaluationEnd)) {
           continue;
         }
-        if (date.isAfter(today)) continue;
+        if (date.isAfter(todayDate)) continue;
 
-        scheduledDaysCount++;
+        totalPossibleSubtasks += subtasksPerDay;
 
-        // Check if completed on that day
-        if (habit.dailyLog.containsKey(dateStr)) {
-          final loggedValue = habit.dailyLog[dateStr] ?? 0;
-          if (_isDayCompleted(habit, loggedValue)) {
-            completedDaysCount++;
-          }
+        // Count completed subtasks for this day
+        if (dateStr == todayKey) {
+          // For today, use live subtasks state
+          totalCompletedSubtasks += countCompletedFromLive(habit);
+        } else if (habit.subtasksLog.containsKey(dateStr)) {
+          // For past days, use subtasksLog
+          totalCompletedSubtasks += countCompletedFromLog(
+            habit.subtasksLog[dateStr]!,
+          );
         }
       }
     } else {
@@ -1344,25 +1615,82 @@ class VisionRepository {
         evaluationStart.month,
         evaluationStart.day,
       );
-      final endDay = evaluationEnd.isBefore(today) ? evaluationEnd : today;
+      final endDay = evaluationEnd.isBefore(todayDate)
+          ? evaluationEnd
+          : todayDate;
 
       while (!currentDay.isAfter(endDay)) {
-        scheduledDaysCount++;
         final dayKey = _dateKey(currentDay);
+        totalPossibleSubtasks += subtasksPerDay;
 
-        if (habit.dailyLog.containsKey(dayKey)) {
-          final loggedValue = habit.dailyLog[dayKey] ?? 0;
-          if (_isDayCompleted(habit, loggedValue)) {
-            completedDaysCount++;
-          }
+        // Count completed subtasks for this day
+        if (dayKey == todayKey) {
+          // For today, use live subtasks state
+          totalCompletedSubtasks += countCompletedFromLive(habit);
+        } else if (habit.subtasksLog.containsKey(dayKey)) {
+          // For past days, use subtasksLog
+          totalCompletedSubtasks += countCompletedFromLog(
+            habit.subtasksLog[dayKey]!,
+          );
         }
 
         currentDay = currentDay.add(const Duration(days: 1));
       }
     }
 
-    if (scheduledDaysCount == 0) return 0.0;
-    return completedDaysCount / scheduledDaysCount;
+    if (totalPossibleSubtasks == 0) return 0.0;
+    return (totalCompletedSubtasks / totalPossibleSubtasks).clamp(0.0, 1.0);
+  }
+
+  /// Calculates proportional progress for a single day (0.0-1.0).
+  /// Partial completion contributes proportionally to total progress.
+  double _calculateDayProgress(Habit habit, int loggedValue) {
+    if (habit.targetCount <= 0) return loggedValue > 0 ? 1.0 : 0.0;
+
+    switch (habit.habitType) {
+      case HabitType.simple:
+      case HabitType.checkbox:
+        // Simple/checkbox: binary - either done or not
+        return loggedValue >= habit.targetCount ? 1.0 : 0.0;
+
+      case HabitType.subtasks:
+        // Subtasks: proportional based on completed subtasks
+        // loggedValue represents number of completed subtasks
+        // targetCount represents total number of subtasks
+        return (loggedValue / habit.targetCount).clamp(0.0, 1.0);
+
+      case HabitType.numerical:
+        switch (habit.numericalTargetType) {
+          case NumericalTargetType.minimum:
+            // Minimum: proportional progress towards target, capped at 1.0
+            return (loggedValue / habit.targetCount).clamp(0.0, 1.0);
+          case NumericalTargetType.exact:
+            // Exact: closer to target = higher progress
+            if (loggedValue == habit.targetCount) return 1.0;
+            final diff = (loggedValue - habit.targetCount).abs();
+            final maxDiff = habit.targetCount > 0 ? habit.targetCount : 1;
+            return (1.0 - (diff / maxDiff)).clamp(0.0, 1.0);
+          case NumericalTargetType.maximum:
+            // Maximum: if under target, it's complete; otherwise 0
+            return loggedValue <= habit.targetCount ? 1.0 : 0.0;
+        }
+
+      case HabitType.timer:
+        switch (habit.timerTargetType) {
+          case TimerTargetType.minimum:
+            // Minimum: proportional progress towards target, capped at 1.0
+            return (loggedValue / habit.targetCount).clamp(0.0, 1.0);
+          case TimerTargetType.exact:
+            // Exact: closer to target = higher progress
+            if (loggedValue == habit.targetCount) return 1.0;
+            final diff = (loggedValue - habit.targetCount).abs();
+            final maxDiff = habit.targetCount > 0 ? habit.targetCount : 1;
+            return (1.0 - (diff / maxDiff)).clamp(0.0, 1.0);
+          case TimerTargetType.maximum:
+            // Maximum: if under target, it's complete; otherwise 0
+            return loggedValue <= habit.targetCount ? 1.0 : 0.0;
+        }
+    }
   }
 
   /// Checks if a habit day is completed based on habit type and target.

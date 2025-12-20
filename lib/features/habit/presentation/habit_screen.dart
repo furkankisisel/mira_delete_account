@@ -736,7 +736,13 @@ class HabitScreenState extends State<HabitScreen> {
 
   void _resetFilters() {
     setState(() {
-      _selectedTypes = {HabitType.simple, HabitType.numerical, HabitType.timer};
+      _selectedTypes = {
+        HabitType.simple,
+        HabitType.numerical,
+        HabitType.timer,
+        HabitType.checkbox,
+        HabitType.subtasks,
+      };
       _completionFilter = CompletionFilter.all;
       _selectedListId = null;
     });
@@ -1144,6 +1150,9 @@ class HabitScreenState extends State<HabitScreen> {
         (v) => v?.id == habit.linkedVisionId,
         orElse: () => null,
       );
+
+      if (!mounted) return;
+
       if (vision != null) {
         final result = await Navigator.of(context).push<Map<String, dynamic>>(
           MaterialPageRoute(

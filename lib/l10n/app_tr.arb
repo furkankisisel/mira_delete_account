@@ -1081,5 +1081,15 @@
     "timerPause": "Duraklat",
     "timerResume": "Devam",
     "timerStop": "Bitir",
-    "privacyPolicyTitle": "Gizlilik Politikası"
+    "privacyPolicyTitle": "Gizlilik Politikası",
+    "miraPremium": "Mira Premium",
+    "visionTasks": "Görevler",
+    "addTask": "Görev Ekle",
+    "taskTitle": "Görev Başlığı",
+    "taskCompleted": "Tamamlandı",
+    "taskPending": "Bekliyor",
+    "noTasksYet": "Henüz görev eklenmedi",
+    "deleteTaskConfirm": "Bu görevi silmek istediğinize emin misiniz?",
+    "taskAdded": "Görev eklendi",
+    "manageVisionTasks": "Görevleri Yönet"
 }

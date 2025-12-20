@@ -414,6 +414,10 @@ class _PrototypeHomePageState extends State<PrototypeHomePage> {
   Widget _buildBody() => PageView.builder(
     controller: _pageController,
     onPageChanged: _onPageChanged,
+    // Disable swipe on Vision screen (index 3) to prevent accidental navigation
+    physics: _currentIndex == 3
+        ? const NeverScrollableScrollPhysics()
+        : const PageScrollPhysics(),
     itemCount: 5,
     itemBuilder: (context, index) => _buildPage(index),
   );

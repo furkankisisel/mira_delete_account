@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class VisionHabitTemplate {
   final String title;
   final String? description;
-  final String type; // 'simple' | 'numerical' | 'timer'
+  final String
+  type; // 'simple' | 'checkbox' | 'subtasks' | 'numerical' | 'timer'
   final int?
   target; // minutes for timer, value for numerical, ignored for simple
   final String? unit; // null for simple, e.g., 'dakika', 'adet'
@@ -28,6 +29,8 @@ class VisionHabitTemplate {
   // Reminder settings
   final bool? reminderEnabled;
   final TimeOfDay? reminderTime;
+  // Subtasks for subtask type habits
+  final List<Map<String, dynamic>>? subtasks;
 
   const VisionHabitTemplate({
     required this.title,
@@ -50,6 +53,7 @@ class VisionHabitTemplate {
     this.activeOffsets,
     this.reminderEnabled,
     this.reminderTime,
+    this.subtasks,
   });
 
   Map<String, dynamic> toJson() => {
@@ -77,6 +81,7 @@ class VisionHabitTemplate {
         'hour': reminderTime!.hour,
         'minute': reminderTime!.minute,
       },
+    if (subtasks != null) 'subtasks': subtasks,
   };
 
   static VisionHabitTemplate fromJson(Map<String, dynamic> m) =>
@@ -119,6 +124,9 @@ class VisionHabitTemplate {
           }
           return null;
         })(),
+        subtasks: (m['subtasks'] as List?)
+            ?.map((e) => Map<String, dynamic>.from(e as Map))
+            .toList(),
       );
 }
 

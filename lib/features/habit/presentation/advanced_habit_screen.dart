@@ -279,7 +279,7 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     try {
       _startDate = DateTime.parse(h.startDate);
     } catch (_) {}
-      if (h.endDate != null) {
+    if (h.endDate != null) {
       try {
         _endDate = DateTime.parse(h.endDate!);
       } catch (_) {}
@@ -451,6 +451,29 @@ class _AdvancedHabitScreenState extends State<AdvancedHabitScreen>
     }
     if (m['periodicDays'] != null) {
       _periodicDays = (m['periodicDays'] as num).toInt();
+    }
+
+    // Subtasks yükle (Map formatından)
+    if (m['subtasks'] != null) {
+      final subtasksData = m['subtasks'] as List;
+      for (final s in subtasksData) {
+        String id;
+        String title;
+        if (s is Subtask) {
+          id = s.id;
+          title = s.title;
+        } else if (s is Map) {
+          id = s['id']?.toString() ?? UniqueKey().toString();
+          title = s['title']?.toString() ?? '';
+        } else {
+          continue;
+        }
+        if (title.isNotEmpty) {
+          final controller = TextEditingController(text: title);
+          _subtaskControllers.add(controller);
+          _subtaskIds.add(id);
+        }
+      }
     }
   }
 

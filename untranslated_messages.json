@@ -4,7 +4,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "de": [
@@ -12,7 +20,26 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
+  ],
+
+  "en": [
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "es": [
@@ -20,7 +47,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "fr": [
@@ -28,7 +63,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "hi": [
@@ -36,7 +79,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "it": [
@@ -44,7 +95,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "ja": [
@@ -52,7 +111,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "ko": [
@@ -60,7 +127,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "nl": [
@@ -68,7 +143,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "pt": [
@@ -76,7 +159,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "ru": [
@@ -84,7 +175,15 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ],
 
   "zh": [
@@ -92,6 +191,14 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup"
+    "featureBackup",
+    "visionTasks",
+    "addTask",
+    "taskCompleted",
+    "taskPending",
+    "noTasksYet",
+    "deleteTaskConfirm",
+    "taskAdded",
+    "manageVisionTasks"
   ]
 }

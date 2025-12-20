@@ -290,7 +290,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          'Mira Premium',
+          AppLocalizations.of(context).miraPremium,
           style: Theme.of(
             context,
           ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
