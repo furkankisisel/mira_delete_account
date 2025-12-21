@@ -7,6 +7,8 @@ import 'data/transaction_model.dart';
 import 'data/transaction_repository.dart';
 import 'data/finance_category_repository.dart';
 import 'data/finance_category.dart';
+
+import 'data/budget_repository.dart';
 import 'add_transaction_screen.dart';
 
 class FinanceScreen extends StatefulWidget {
@@ -22,8 +24,10 @@ class FinanceScreenState extends State<FinanceScreen>
     with SingleTickerProviderStateMixin {
   late final TransactionRepository _repo;
   late final FinanceCategoryRepository _catRepo;
+  late final BudgetRepository _budgetRepo;
   DateTime _currentMonth = DateTime.now();
   bool _loading = true;
+  double? _plannedMonthlySpend;
 
   // Expose the currently selected month for global navigation actions
   DateTime get currentMonth => _currentMonth;
@@ -33,7 +37,15 @@ class FinanceScreenState extends State<FinanceScreen>
     super.initState();
     _repo = TransactionRepository();
     _catRepo = FinanceCategoryRepository();
-    Future.wait([_repo.initialize(), _catRepo.initialize()]).then((_) {
+    _budgetRepo = BudgetRepository();
+    Future.wait([
+      _repo.initialize(),
+      _catRepo.initialize(),
+      _budgetRepo.initialize(),
+    ]).then((_) {
+      _plannedMonthlySpend = _budgetRepo.getBudgetForMonth(
+        DateTime(_currentMonth.year, _currentMonth.month, 1),
+      );
       if (mounted) setState(() => _loading = false);
     });
   }
@@ -42,6 +54,7 @@ class FinanceScreenState extends State<FinanceScreen>
   void dispose() {
     _repo.dispose();
     _catRepo.dispose();
+    _budgetRepo.dispose();
     super.dispose();
   }
 
@@ -194,7 +207,18 @@ class FinanceScreenState extends State<FinanceScreen>
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
+                if (!_loading) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: _SpendingAdvisorCard(
+                      month: _currentMonth,
+                      budget: _plannedMonthlySpend,
+                      spent: expenseTotal,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 Expanded(
                   child: TabBarView(
                     children: [
@@ -341,6 +365,7 @@ class FinanceScreenState extends State<FinanceScreen>
     setState(() {
       final now = DateTime.now();
       _currentMonth = DateTime(now.year, now.month, 1);
+      _plannedMonthlySpend = _budgetRepo.getBudgetForMonth(_currentMonth);
     });
   }
 
@@ -436,6 +461,10 @@ class FinanceScreenState extends State<FinanceScreen>
                                   1,
                                 ),
                               );
+                              setState(() {
+                                _plannedMonthlySpend = _budgetRepo
+                                    .getBudgetForMonth(_currentMonth);
+                              });
                               Navigator.pop(context);
                             },
                             child: Text(_capitalize(label)),
@@ -460,6 +489,10 @@ class FinanceScreenState extends State<FinanceScreen>
                                 1,
                               ),
                             );
+                            setState(() {
+                              _plannedMonthlySpend = _budgetRepo
+                                  .getBudgetForMonth(_currentMonth);
+                            });
                             Navigator.pop(context);
                           },
                           icon: const Icon(Icons.today_outlined),
@@ -793,6 +826,104 @@ class _ExpensesSection extends StatelessWidget {
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SpendingAdvisorCard extends StatelessWidget {
+  const _SpendingAdvisorCard({
+    required this.month,
+    required this.budget,
+    required this.spent,
+  });
+  final DateTime month;
+  final double? budget;
+  final double spent;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeName = Localizations.localeOf(context).toString();
+    final nf = NumberFormat.simpleCurrency(
+      locale: localeName,
+      decimalDigits: 0,
+    );
+
+    // Calculate days remaining
+    final now = DateTime.now();
+    final isCurrentMonth = now.year == month.year && now.month == month.month;
+
+    if (!isCurrentMonth) {
+      return const SizedBox.shrink();
+    }
+
+    Color iconColor;
+    Color bgColor;
+    IconData icon;
+    String message;
+
+    if (budget == null || budget! <= 0) {
+      iconColor = Theme.of(context).colorScheme.primary;
+      bgColor = Theme.of(context).colorScheme.surfaceContainerHighest;
+      icon = Icons.help_outline_rounded;
+      message = l10n.spendingAdvisorNoBudget;
+    } else {
+      final endOfMonth = DateTime(now.year, now.month + 1, 0);
+      final daysLeft = endOfMonth.day - now.day + 1; // Include today
+      final remaining = budget! - spent;
+
+      if (remaining < 0) {
+        // Already over budget
+        iconColor = Theme.of(context).colorScheme.error;
+        bgColor = Theme.of(context).colorScheme.errorContainer;
+        icon = Icons.warning_amber_rounded;
+        message = l10n.spendingAdvisorOverBudget;
+      } else {
+        final dailySafe = remaining / daysLeft;
+
+        iconColor = const Color(0xFF2E7D32); // Success Green
+        bgColor = const Color(0xFFE8F5E9); // Light Green
+        icon = Icons.tips_and_updates_outlined;
+
+        message = l10n.spendingAdvisorSafe(nf.format(dailySafe));
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: iconColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: iconColor, size: 28),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.spendingAdvisorTitle,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: iconColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

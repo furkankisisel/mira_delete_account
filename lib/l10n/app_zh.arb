@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "关于",
     "aboutApp": "关于应用",
     "account": "账户",
@@ -29,6 +39,7 @@
     "addNoteOptional": "添加笔记（可选）",
     "addSpecialDays": "添加特殊日子",
     "addSubtask": "Add Subtask",
+    "addTask": "添加任务",
     "addText": "添加文本",
     "addToList": "添加到列表",
     "advancedAnalysis": "Advanced Analysis",
@@ -217,6 +228,7 @@
     "deleteListMessage": "此列表将被删除。选择如何处理关联的项目：",
     "deleteListTitle": "删除列表",
     "deleteMyAccount": "Delete My Account",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "您想删除此每日任务吗？此操作可以撤销。",
     "deleteTaskConfirmTitle": "删除任务？",
     "deleteTransactionConfirm": "删除记录“{title}”？",
@@ -452,6 +464,7 @@
     "manageSubscription": "管理订阅",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Manage Mira Plus subscription via Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "中等",
     "minLabel": "min",
     "mindfulness": "正念",
@@ -459,6 +472,7 @@
     "minutesSuffixShort": "分钟",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "月数",
     "monthCountHint": "例如：12",
     "monthSuffixShort": "月",
@@ -536,6 +550,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "未找到现成的愿景。",
     "noRecordsThisMonth": "本月无记录",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "尚未添加。",
     "notGranted": "未授予",
@@ -741,12 +756,19 @@
     "skipOnboarding": "跳过",
     "skipTest": "Skip Test",
     "social": "社交",
+    "socialFeedTitle": "Feed",
     "sound": "声音",
     "soundAlerts": "声音提醒",
     "soundSubtitle": "通知时播放声音",
     "specificDaysOfMonth": "特定月份的日期",
     "specificDaysOfWeek": "特定星期几",
     "specificDaysOfYear": "特定年份的日期",
+    "spendingAdvisorNoBudget": "设置预算以获取建议。",
+    "spendingAdvisorOnTrack": "太棒了！您的预算正如期进行。",
+    "spendingAdvisorOverBudget": "您已超出预算。停止支出。",
+    "spendingAdvisorSafe": "您每天可以花费 {amount}。",
+    "spendingAdvisorTitle": "支出顾问",
+    "spendingAdvisorWarning": "将每日支出减少 {amount} 以保持正轨。",
     "spendingLessThanDailyAvg": "太棒了！您的支出比每日平均水平少{amount}。",
     "spendingMoreThanDailyAvg": "警告！您的支出比每日平均水平多{amount}。",
     "start": "开始",
@@ -813,8 +835,11 @@
     "targetType": "目标类型",
     "targetValue": "目标值",
     "targetValueLabel": "目标值",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "任务已删除：{title}",
     "taskDescription": "描述（可选）",
+    "taskPending": "Pending",
     "taskTitle": "任务标题",
     "taskTitleRequired": "任务标题为必填项",
     "tellUsMore": "Tell us more",
@@ -923,6 +948,7 @@
     "visionStartFailed": "无法启动愿景。",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "愿景已启动：{title}",
+    "visionTasks": "Tasks",
     "visual": "视觉",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "周五",
@@ -954,6 +980,4 @@
     "yourEmail": "Your Email",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

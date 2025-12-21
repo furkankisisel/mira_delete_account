@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "Sobre",
     "account": "Conta",
     "achievements": "Conquistas",
@@ -27,6 +37,7 @@
     "addNoteOptional": "Adicionar nota (opcional)",
     "addSpecialDays": "Adicionar dias especiais",
     "addSubtask": "Add Subtask",
+    "addTask": "Adicionar tarefa",
     "addText": "Adicionar texto",
     "addToList": "Adicionar à lista",
     "advancedAnalysis": "Advanced Analysis",
@@ -215,6 +226,7 @@
     "deleteListMessage": "Esta lista será excluída. Escolha o que fazer com os itens vinculados:",
     "deleteListTitle": "Excluir lista",
     "deleteMyAccount": "Delete My Account",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "Deseja excluir esta tarefa diária? Esta ação pode ser desfeita.",
     "deleteTaskConfirmTitle": "Excluir tarefa?",
     "deleteTransactionConfirm": "Excluir o registro \"{title}\"?",
@@ -449,6 +461,7 @@
     "manageSubscription": "Gerenciar Assinatura",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Manage Mira Plus subscription via Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "Médio",
     "minLabel": "min",
     "mindfulness": "Mindfulness",
@@ -456,6 +469,7 @@
     "minutesSuffixShort": "min",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "Contagem de meses",
     "monthCountHint": "Ex: 12",
     "monthSuffixShort": "mês",
@@ -533,6 +547,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "Nenhuma visão pronta encontrada.",
     "noRecordsThisMonth": "Nenhum registro para este mês",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "Ainda não adicionado.",
     "notGranted": "Não concedido",
@@ -738,12 +753,19 @@
     "skipOnboarding": "Pular",
     "skipTest": "Skip Test",
     "social": "Social",
+    "socialFeedTitle": "Feed",
     "sound": "Som",
     "soundAlerts": "Alertas sonoros",
     "soundSubtitle": "Reproduzir som com notificações",
     "specificDaysOfMonth": "Dias Específicos do Mês",
     "specificDaysOfWeek": "Dias Específicos da Semana",
     "specificDaysOfYear": "Dias Específicos do Ano",
+    "spendingAdvisorNoBudget": "Defina um orçamento para receber conselhos.",
+    "spendingAdvisorOnTrack": "Ótimo! Você está no caminho certo com seu orçamento.",
+    "spendingAdvisorOverBudget": "Você estourou o orçamento. Pare de gastar.",
+    "spendingAdvisorSafe": "Você pode gastar {amount} por dia.",
+    "spendingAdvisorTitle": "Consultor de Despesas",
+    "spendingAdvisorWarning": "Reduza o gasto diário em {amount} para manter o controle.",
     "spendingLessThanDailyAvg": "Ótimo! Você está gastando {amount} a menos que a média diária.",
     "spendingMoreThanDailyAvg": "Atenção! Você está gastando {amount} a mais que a média diária.",
     "start": "Iniciar",
@@ -808,8 +830,11 @@
     "targetType": "Tipo de Meta",
     "targetValue": "Valor Alvo",
     "targetValueLabel": "Valor Alvo",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "Tarefa excluída: {title}",
     "taskDescription": "Descrição (Opcional)",
+    "taskPending": "Pending",
     "taskTitle": "Título da tarefa",
     "taskTitleRequired": "O título da tarefa é obrigatório",
     "tellUsMore": "Tell us more",
@@ -917,6 +942,7 @@
     "visionStartFailed": "Não foi possível iniciar a visão.",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "Visão iniciada: {title}",
+    "visionTasks": "Tasks",
     "visual": "Visual",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "Sex",
@@ -948,6 +974,4 @@
     "yourEmail": "Your Email",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

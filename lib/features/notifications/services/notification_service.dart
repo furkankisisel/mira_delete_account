@@ -30,9 +30,7 @@ class NotificationService {
   Future<void> initialize() async {
     await _configureLocalTimeZone();
 
-    const androidSettings = AndroidInitializationSettings(
-      '@drawable/ic_stat_notification',
-    );
+    const androidSettings = AndroidInitializationSettings('ic_stat_miralogo');
     const iosSettings = DarwinInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
@@ -142,13 +140,15 @@ class NotificationService {
       channelDescription: _timerChannelDescription,
       importance: Importance.low, // Changed to low to prevent sound/heads-up
       priority: Priority.low,
-      icon: 'ic_stat_notification',
+      icon: 'ic_stat_miralogo',
       ongoing: true,
       autoCancel: false,
       playSound: false,
       enableVibration: false,
       onlyAlertOnce: true, // Critical: prevent re-alerting on update
-      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+      largeIcon: const DrawableResourceAndroidBitmap(
+        '@drawable/ic_notification_large',
+      ),
       actions: <AndroidNotificationAction>[
         if (isRunning)
           AndroidNotificationAction(
@@ -294,10 +294,12 @@ class NotificationService {
       channelDescription: 'Daily reminders for your habits',
       importance: Importance.high,
       priority: Priority.high,
-      icon: 'ic_stat_notification',
+      icon: 'ic_stat_miralogo',
       playSound: playSound,
       enableVibration: vibrate,
-      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+      largeIcon: const DrawableResourceAndroidBitmap(
+        '@drawable/ic_notification_large',
+      ),
     );
 
     final iosDetails = DarwinNotificationDetails(

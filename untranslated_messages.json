@@ -4,15 +4,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "de": [
@@ -20,26 +12,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
-  ],
-
-  "en": [
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "es": [
@@ -47,15 +20,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "fr": [
@@ -63,15 +28,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "hi": [
@@ -79,15 +36,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "it": [
@@ -95,15 +44,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "ja": [
@@ -111,15 +52,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "ko": [
@@ -127,15 +60,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "nl": [
@@ -143,15 +68,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "pt": [
@@ -159,15 +76,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "ru": [
@@ -175,15 +84,7 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ],
 
   "zh": [
@@ -191,14 +92,6 @@
     "featureVisionCreation",
     "featureAdvancedFinance",
     "featurePremiumThemes",
-    "featureBackup",
-    "visionTasks",
-    "addTask",
-    "taskCompleted",
-    "taskPending",
-    "noTasksYet",
-    "deleteTaskConfirm",
-    "taskAdded",
-    "manageVisionTasks"
+    "featureBackup"
   ]
 }

@@ -69,8 +69,8 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
   late final TransactionRepository _repo;
   late final FinanceCategoryRepository _catRepo;
   late final BudgetRepository _budgetRepo;
-  bool _loading = true;
   double? _plannedMonthlySpend;
+  bool _loading = true;
 
   @override
   void initState() {
@@ -79,14 +79,14 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
     _catRepo = FinanceCategoryRepository();
     _budgetRepo = BudgetRepository();
     _mode = PeriodMode.month;
-    _selectedPeriod = DateTime(widget.month.year, widget.month.month, 1);
+    _selectedPeriod = widget.month;
     Future.wait([
       _repo.initialize(),
       _catRepo.initialize(),
       _budgetRepo.initialize(),
     ]).then((_) {
       _plannedMonthlySpend = _budgetRepo.getBudgetForMonth(
-        DateTime(widget.month.year, widget.month.month, 1),
+        DateTime(_selectedPeriod.year, _selectedPeriod.month, 1),
       );
       if (mounted) setState(() => _loading = false);
     });
@@ -150,45 +150,50 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _BudgetPlanner(
-                    month: _selectedPeriod,
-                    plannedMonthlySpend: _plannedMonthlySpend,
-                    onSave: (v) async {
-                      await _budgetRepo.setBudgetForMonth(
-                        DateTime(widget.month.year, widget.month.month, 1),
-                        v,
-                      );
-                      if (mounted) setState(() => _plannedMonthlySpend = v);
-                    },
-                    repo: _repo,
+                  _FinancialSummaryCard(
+                    income: incomeTotal,
+                    expense: expenseTotal,
+                    net: net,
                   ),
-                  const SizedBox(height: 12),
+
+                  const SizedBox(height: 24),
                   // Mode selector + period chooser
                   _ModeAndPeriodSelector(
                     mode: _mode,
                     selected: _selectedPeriod,
                     onModeChanged: (m) => setState(() => _mode = m),
-                    onPeriodChanged: (d) => setState(() => _selectedPeriod = d),
+                    onPeriodChanged: (d) {
+                      setState(() => _selectedPeriod = d);
+                      if (_mode == PeriodMode.month) {
+                        setState(() {
+                          _plannedMonthlySpend = _budgetRepo.getBudgetForMonth(
+                            DateTime(d.year, d.month, 1),
+                          );
+                        });
+                      }
+                    },
                   ),
                   const SizedBox(height: 12),
                   // Top KPIs
-                  _StatTile(
-                    label: AppLocalizations.of(context).incomeLabel,
-                    value: _formatCurrency(context, incomeTotal),
-                    color: Colors.green,
-                  ),
-                  const SizedBox(height: 8),
-                  _StatTile(
-                    label: AppLocalizations.of(context).expenseLabel,
-                    value: _formatCurrency(context, expenseTotal),
-                    color: Colors.redAccent,
-                  ),
-                  const SizedBox(height: 8),
-                  _StatTile(
-                    label: AppLocalizations.of(context).financeNet,
-                    value: _formatCurrency(context, net),
-                    color: net >= 0 ? Colors.green : Colors.redAccent,
-                  ),
+                  if (_mode == PeriodMode.month) ...[
+                    _BudgetPlanner(
+                      month: _selectedPeriod,
+                      plannedMonthlySpend: _plannedMonthlySpend,
+                      currentSpend: expenseTotal,
+                      onSave: (v) async {
+                        await _budgetRepo.setBudgetForMonth(
+                          DateTime(
+                            _selectedPeriod.year,
+                            _selectedPeriod.month,
+                            1,
+                          ),
+                          v,
+                        );
+                        if (mounted) setState(() => _plannedMonthlySpend = v);
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                   const SizedBox(height: 16),
                   // Removed delta chips (income/expense changes) as requested
                   Text(
@@ -357,276 +362,144 @@ class _FinanceAnalysisScreenState extends State<FinanceAnalysisScreen> {
   }
 }
 
-class _StatTile extends StatelessWidget {
-  const _StatTile({
-    required this.label,
-    required this.value,
-    required this.color,
+class _FinancialSummaryCard extends StatelessWidget {
+  const _FinancialSummaryCard({
+    required this.income,
+    required this.expense,
+    required this.net,
   });
-  final String label;
-  final String value;
-  final Color color;
+  final double income;
+  final double expense;
+  final double net;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).brightness == Brightness.light
-              ? Theme.of(context).colorScheme.outlineVariant.withOpacity(0.6)
-              : Colors.transparent,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: Theme.of(context).textTheme.bodyLarge),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BudgetPlanner extends StatefulWidget {
-  const _BudgetPlanner({
-    required this.month,
-    required this.plannedMonthlySpend,
-    required this.onSave,
-    required this.repo,
-  });
-  final DateTime month;
-  final double? plannedMonthlySpend;
-  final Future<void> Function(double) onSave;
-  final TransactionRepository repo;
-
-  @override
-  State<_BudgetPlanner> createState() => _BudgetPlannerState();
-}
-
-class _BudgetPlannerState extends State<_BudgetPlanner> {
-  late final TextEditingController _controller;
-  late NumberFormat _groupFormat;
-
-  @override
-  void initState() {
-    super.initState();
-    // Avoid accessing inherited widgets in initState; set up controller only.
-    _controller = TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Safe place to access Localizations/Theme.
-    _groupFormat = NumberFormat.decimalPattern(
-      Localizations.localeOf(context).toString(),
-    );
-    // Initialize or update text based on current locale and planned value.
-    _controller.text = widget.plannedMonthlySpend != null
-        ? _groupFormat.format(widget.plannedMonthlySpend!.round())
-        : '';
-  }
-
-  @override
-  void didUpdateWidget(covariant _BudgetPlanner oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.plannedMonthlySpend != widget.plannedMonthlySpend) {
-      // Reuse existing _groupFormat; it's updated in didChangeDependencies on locale change.
-      _controller.text = widget.plannedMonthlySpend != null
-          ? _groupFormat.format(widget.plannedMonthlySpend!.round())
-          : '';
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Compact savings card: show only current target and an Edit button which opens a dialog
     final l10n = AppLocalizations.of(context);
-    final localeName = Localizations.localeOf(context).toString();
-    final nf = NumberFormat.simpleCurrency(locale: localeName);
-    final target = widget.plannedMonthlySpend;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Helper to format currency
+    String fmt(double v) {
+      final nf = NumberFormat.simpleCurrency(
+        locale: Localizations.localeOf(context).toString(),
+        decimalDigits: 0,
+      );
+      return nf.format(v);
+    }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).brightness == Brightness.light
-              ? Theme.of(context).colorScheme.outlineVariant.withOpacity(0.6)
-              : Colors.transparent,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [cs.primary, Color.lerp(cs.primary, Colors.black, 0.2)!],
         ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.savingsBudgetPlan,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  target == null ? l10n.noDataThisMonth : nf.format(target),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          FilledButton(
-            onPressed: () async {
-              final newTarget = await _showEditBudgetDialog(
-                context,
-                widget.plannedMonthlySpend,
-                nf,
-                l10n,
-              );
-              if (newTarget != null && newTarget > 0) {
-                await widget.onSave(newTarget);
-                if (mounted) setState(() {});
-              }
-            },
-            child: Text(l10n.edit),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: cs.primary.withOpacity(0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-    );
-  }
-
-  Future<double?> _showEditBudgetDialog(
-    BuildContext context,
-    double? initial,
-    NumberFormat nf,
-    AppLocalizations l10n,
-  ) async {
-    final controller = TextEditingController(
-      text: initial != null ? initial.round().toString() : '',
-    );
-    final result = await showDialog<double?>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+      child: Column(
+        children: [
+          Text(
+            l10n.financeNet,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: Colors.white.withOpacity(0.8),
+              letterSpacing: 1,
+            ),
           ),
-          title: Text(l10n.edit),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 4),
+          Text(
+            fmt(net),
+            style: theme.textTheme.headlineLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -1,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
             children: [
-              TextField(
-                controller: controller,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: false,
-                  signed: false,
-                ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(
-                  labelText: l10n.plannedMonthlySpend,
-                  prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
+              Expanded(
+                child: _buildSubStat(
+                  context,
+                  label: l10n.incomeLabel,
+                  amount: fmt(income),
+                  icon: Icons.arrow_downward_rounded,
+                  iconColor: const Color(0xFF69F0AE), // Light Green accent
+                  textColor: Colors.white,
                 ),
               ),
-              const SizedBox(height: 8),
-              if (initial != null)
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    nf.format(initial),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.white.withOpacity(0.2),
+              ),
+              Expanded(
+                child: _buildSubStat(
+                  context,
+                  label: l10n.expenseLabel,
+                  amount: fmt(expense),
+                  icon: Icons.arrow_upward_rounded,
+                  iconColor: const Color(0xFFFF8A80), // Light Red accent
+                  textColor: Colors.white,
                 ),
+              ),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(l10n.cancel),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubStat(
+    BuildContext context, {
+    required String label,
+    required String amount,
+    required IconData icon,
+    required Color iconColor,
+    required Color textColor,
+  }) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 14, color: iconColor),
             ),
-            FilledButton(
-              onPressed: () {
-                final digits = controller.text.replaceAll(
-                  RegExp(r'[^0-9]'),
-                  '',
-                );
-                if (digits.isEmpty) return;
-                final v = double.tryParse(digits);
-                Navigator.of(ctx).pop(v);
-              },
-              child: Text(l10n.save),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: textColor.withOpacity(0.7),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
-        );
-      },
-    );
-    return result;
-  }
-}
-
-String _commentaryLocalized(
-  BuildContext context,
-  double? perDay,
-  double mtdAvgPerDay,
-) {
-  final l10n = AppLocalizations.of(context);
-  if (perDay == null) return l10n.enterMonthlyPlanToComputeDailyLimit;
-  final diff = perDay - mtdAvgPerDay;
-  if (diff.abs() < 0.01) return l10n.onDailyLimit;
-  if (diff > 0) {
-    return l10n.spendingLessThanDailyAvg(diff.toStringAsFixed(0));
-  } else {
-    return l10n.spendingMoreThanDailyAvg((diff.abs()).toStringAsFixed(0));
-  }
-}
-
-double? _parseNumeric(String text) {
-  final digits = text.replaceAll(RegExp(r'[^0-9]'), '');
-  if (digits.isEmpty) return null;
-  return double.tryParse(digits);
-}
-
-class _ThousandsFormatter extends TextInputFormatter {
-  _ThousandsFormatter(this._formatProvider);
-  final NumberFormat Function() _formatProvider;
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-    if (digits.isEmpty) {
-      return const TextEditingValue(
-        text: '',
-        selection: TextSelection.collapsed(offset: 0),
-      );
-    }
-    final nf = _formatProvider();
-    final number = int.parse(digits);
-    final formatted = nf.format(number);
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-      composing: TextRange.empty,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          amount,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -679,16 +552,20 @@ class _CategoryBreakdown extends StatelessWidget {
     return Column(
       children: [
         for (final e in entries)
-          _CategoryRow(
-            categoryId: e.key == '_none' ? null : e.key,
-            name: e.key == '_none'
-                ? AppLocalizations.of(context).other
-                : (cats[e.key]?.name ?? AppLocalizations.of(context).other),
-            color: e.key == '_none'
-                ? Theme.of(context).colorScheme.primary
-                : _colorForEmoji(cats[e.key]?.emoji, cats[e.key]?.type),
-            value: e.value,
-            onTap: onSelect,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: _CategoryRow(
+              categoryId: e.key == '_none' ? null : e.key,
+              name: e.key == '_none'
+                  ? AppLocalizations.of(context).other
+                  : (cats[e.key]?.name ?? AppLocalizations.of(context).other),
+              emoji: cats[e.key]?.emoji, // New param
+              color: e.key == '_none'
+                  ? Theme.of(context).colorScheme.primary
+                  : _colorForEmoji(cats[e.key]?.emoji, cats[e.key]?.type),
+              value: e.value,
+              onTap: onSelect,
+            ),
           ),
       ],
     );
@@ -701,10 +578,12 @@ class _CategoryRow extends StatelessWidget {
     required this.name,
     required this.color,
     required this.value,
+    this.emoji,
     this.onTap,
   });
   final String? categoryId;
   final String name;
+  final String? emoji; // added
   final Color color;
   final double value;
   final void Function(String? categoryId)? onTap;
@@ -712,29 +591,73 @@ class _CategoryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localeName = Localizations.localeOf(context).toString();
-    final nf = NumberFormat.simpleCurrency(locale: localeName);
-    return InkWell(
-      onTap: () => onTap?.call(categoryId),
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    final nf = NumberFormat.simpleCurrency(
+      locale: localeName,
+      decimalDigits: 0,
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onTap?.call(categoryId),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: emoji != null
+                      ? Text(emoji!, style: const TextStyle(fontSize: 20))
+                      : Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    name,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Text(
+                  nf.format(value),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: value >= 0 ? Colors.green : Colors.redAccent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            Expanded(child: Text(name)),
-            Text(
-              nf.format(value),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: value >= 0 ? Colors.green : Colors.redAccent,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -757,7 +680,6 @@ class _MonthlyTrendChart extends StatelessWidget {
     ).subtract(const Duration(days: 1));
     final days = end.day;
 
-    // Daily net totals (income - expense)
     final totals = List<double>.generate(days, (_) => 0.0);
     for (final tx in transactions) {
       final dayIdx = tx.date.day - 1;
@@ -766,7 +688,6 @@ class _MonthlyTrendChart extends StatelessWidget {
           : tx.amount;
     }
 
-    // Build bar groups and determine symmetric y-bounds
     final groups = <BarChartGroupData>[];
     double maxAbs = 0;
     for (var i = 0; i < days; i++) {
@@ -778,33 +699,27 @@ class _MonthlyTrendChart extends StatelessWidget {
           barRods: [
             BarChartRodData(
               toY: v,
-              color: isPos ? Colors.green : Colors.redAccent,
+              color: isPos
+                  ? const Color(0xFF69F0AE)
+                  : const Color(0xFFFF8A80), // Softer Mint/Coral
               width: 6,
-              borderRadius: isPos
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(3),
-                      topRight: Radius.circular(3),
-                    )
-                  : const BorderRadius.only(
-                      bottomLeft: Radius.circular(3),
-                      bottomRight: Radius.circular(3),
-                    ),
+              borderRadius: BorderRadius.circular(4),
+              backDrawRodData: BackgroundBarChartRodData(show: false),
             ),
           ],
         ),
       );
       if (v.abs() > maxAbs) maxAbs = v.abs();
     }
-    final maxY = ((maxAbs * 1.4).clamp(100.0, double.infinity)).toDouble();
+    final maxY = ((maxAbs * 1.2).clamp(100.0, double.infinity)).toDouble();
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 24, 12, 12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        // Borders removed
+        borderRadius: BorderRadius.circular(24),
       ),
-      height: 220,
+      height: 240,
       child: BarChart(
         BarChartData(
           minY: -maxY,
@@ -826,13 +741,21 @@ class _MonthlyTrendChart extends StatelessWidget {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 18,
+                reservedSize: 20,
+                interval: 5,
                 getTitlesWidget: (v, meta) {
                   final d = v.toInt();
-                  if (d == 1 || d == 15 || d == days) {
-                    return Text(
-                      '$d',
-                      style: Theme.of(context).textTheme.labelSmall,
+                  if (d > days) return const SizedBox.shrink();
+                  // Show every 5th day roughly
+                  if (d % 5 == 1 || d == days) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        '$d',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     );
                   }
                   return const SizedBox.shrink();
@@ -844,10 +767,26 @@ class _MonthlyTrendChart extends StatelessWidget {
             horizontalLines: [
               HorizontalLine(
                 y: 0,
-                color: Theme.of(context).colorScheme.outlineVariant,
+                color: Theme.of(context).dividerColor.withOpacity(0.5),
                 strokeWidth: 1,
+                dashArray: [4, 4],
               ),
             ],
+          ),
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (_) =>
+                  Theme.of(context).colorScheme.inverseSurface,
+              tooltipRoundedRadius: 8,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                return BarTooltipItem(
+                  rod.toY.toStringAsFixed(0),
+                  TextStyle(
+                    color: Theme.of(context).colorScheme.onInverseSurface,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -862,7 +801,6 @@ class _YearlyTrendChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Aggregate monthly totals for the year
     final months = List<double>.generate(12, (_) => 0.0);
     for (final tx in transactions) {
       if (tx.date.year != year) continue;
@@ -872,7 +810,6 @@ class _YearlyTrendChart extends StatelessWidget {
           : tx.amount;
     }
 
-    // Build bar groups
     final groups = <BarChartGroupData>[];
     double maxAbs = 0;
     for (var i = 0; i < 12; i++) {
@@ -884,32 +821,24 @@ class _YearlyTrendChart extends StatelessWidget {
           barRods: [
             BarChartRodData(
               toY: v,
-              color: isPos ? Colors.green : Colors.redAccent,
-              width: 10,
-              borderRadius: isPos
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    )
-                  : const BorderRadius.only(
-                      bottomLeft: Radius.circular(4),
-                      bottomRight: Radius.circular(4),
-                    ),
+              color: isPos ? const Color(0xFF69F0AE) : const Color(0xFFFF8A80),
+              width: 12,
+              borderRadius: BorderRadius.circular(6),
             ),
           ],
         ),
       );
       if (v.abs() > maxAbs) maxAbs = v.abs();
     }
-    final maxY = ((maxAbs * 1.4).clamp(100.0, double.infinity)).toDouble();
+    final maxY = ((maxAbs * 1.2).clamp(100.0, double.infinity)).toDouble();
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 24, 12, 12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
       ),
-      height: 220,
+      height: 240,
       child: BarChart(
         BarChartData(
           minY: -maxY,
@@ -931,15 +860,26 @@ class _YearlyTrendChart extends StatelessWidget {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 24,
+                reservedSize: 26,
                 getTitlesWidget: (v, meta) {
                   final m = v.toInt();
+                  if (m < 1 || m > 12) return const SizedBox.shrink();
+                  // Show Jan, Apr, Jul, Oct (Quarterly-ish) to avoid clutter
+                  /*
+                  if (m % 3 != 1) return const SizedBox.shrink();
+                  */
+
                   final label = DateFormat.MMM(
                     Localizations.localeOf(context).toString(),
                   ).format(DateTime(year, m, 1));
-                  return Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelSmall,
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      label[0], // Only first letter for compactness
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -949,10 +889,30 @@ class _YearlyTrendChart extends StatelessWidget {
             horizontalLines: [
               HorizontalLine(
                 y: 0,
-                color: Theme.of(context).colorScheme.outlineVariant,
+                color: Theme.of(context).dividerColor.withOpacity(0.5),
                 strokeWidth: 1,
+                dashArray: [4, 4],
               ),
             ],
+          ),
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (_) =>
+                  Theme.of(context).colorScheme.inverseSurface,
+              tooltipRoundedRadius: 8,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                final m = group.x.toInt();
+                final monthName = DateFormat.MMM(
+                  Localizations.localeOf(context).toString(),
+                ).format(DateTime(year, m, 1));
+                return BarTooltipItem(
+                  '$monthName\n${rod.toY.toStringAsFixed(0)}',
+                  TextStyle(
+                    color: Theme.of(context).colorScheme.onInverseSurface,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -982,15 +942,21 @@ class _ExpensePieChart extends StatelessWidget {
         .toList();
     if (expenses.isEmpty) {
       return Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-          // Borders removed
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(AppLocalizations.of(context).noExpenses),
+        alignment: Alignment.center,
+        child: Text(
+          AppLocalizations.of(context).noExpenses,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       );
     }
+
     final byCat = <String, double>{};
     for (final tx in expenses) {
       final id = tx.categoryId ?? '_none';
@@ -1001,33 +967,34 @@ class _ExpensePieChart extends StatelessWidget {
     final entries = byCat.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    // Deterministic fallback palette (reuse same hues as emoji mapper)
-    const fallbackPalette = <Color>[
-      Color(0xFFE53935), // red
-      Color(0xFFD81B60), // pink
-      Color(0xFF8E24AA), // purple
-      Color(0xFF5E35B1), // deepPurple
-      Color(0xFF3949AB), // indigo
-      Color(0xFF1E88E5), // blue
-      Color(0xFF039BE5), // lightBlue
-      Color(0xFF00ACC1), // cyan
-      Color(0xFF00897B), // teal
-      Color(0xFF43A047), // green
-      Color(0xFF7CB342), // lightGreen
-      Color(0xFFC0CA33), // lime
-      Color(0xFFFDD835), // yellow/amber
-      Color(0xFFFB8C00), // orange
-      Color(0xFFF4511E), // deepOrange
-      Color(0xFF6D4C41), // brown
-      Color(0xFF546E7A), // blueGrey
-    ];
+    // Consolidate tiny slices to 'Others' to avoid clutter if too many
+    // Not implementing consolidation logic now due to complexity, but styling ensures it looks good.
 
-    // Build a distinct color for each category id deterministically,
-    // preferring explicit category colors when available and falling back
-    // to emoji-based color or the palette while avoiding duplicates.
+    // Used Palette map logic... (reusing existing logic roughly or simplifying)
+    // For brevity, I'll copy the logic but clean implementation
+    const fallbackPalette = <Color>[
+      Color(0xFFE53935),
+      Color(0xFFD81B60),
+      Color(0xFF8E24AA),
+      Color(0xFF5E35B1),
+      Color(0xFF3949AB),
+      Color(0xFF1E88E5),
+      Color(0xFF039BE5),
+      Color(0xFF00ACC1),
+      Color(0xFF00897B),
+      Color(0xFF43A047),
+      Color(0xFF7CB342),
+      Color(0xFFC0CA33),
+      Color(0xFFFDD835),
+      Color(0xFFFB8C00),
+      Color(0xFFF4511E),
+      Color(0xFF6D4C41),
+      Color(0xFF546E7A),
+    ];
     final used = <int>{};
     final colorMap = <String, Color>{};
     var palIdx = 0;
+
     for (final entry in entries) {
       final id = entry.key;
       if (id == '_none') {
@@ -1038,19 +1005,13 @@ class _ExpensePieChart extends StatelessWidget {
       final cat = cats[id];
       Color chosen;
       if (cat != null) {
-        // If category has an explicit color and it's not already used, prefer it
         chosen = Color(cat.colorValue);
-        if (used.contains(chosen.value)) {
-          // try emoji-derived color next
+        if (used.contains(chosen.value))
           chosen = _colorForEmoji(cat.emoji, cat.type);
-        }
       } else {
         chosen = _colorForEmoji(null, null);
       }
-
-      // If still duplicate, pick next from fallback palette
       if (used.contains(chosen.value)) {
-        // find next unused palette color
         Color next;
         var attempts = 0;
         do {
@@ -1061,7 +1022,6 @@ class _ExpensePieChart extends StatelessWidget {
             attempts < fallbackPalette.length * 2);
         chosen = next;
       }
-
       colorMap[id] = chosen;
       used.add(chosen.value);
     }
@@ -1070,86 +1030,88 @@ class _ExpensePieChart extends StatelessWidget {
     for (final e in entries) {
       final color = colorMap[e.key] ?? Theme.of(context).colorScheme.primary;
       final percent = total == 0 ? 0 : (e.value / total) * 100;
+      final isLarge = idx == 0 || percent > 20;
+
       sections.add(
         PieChartSectionData(
           color: color,
           value: e.value,
-          radius: 46 + (idx == 0 ? 6 : 0),
-          title: '${percent.toStringAsFixed(0)}%',
-          titleStyle: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(color: _onColor(color)),
+          radius: isLarge ? 25 : 20, // Thinner donut
+          showTitle: false, // Hide titles on chart, show in legend
+          // We can show badges but let's keep it clean
         ),
       );
       idx++;
     }
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        // Borders removed
+        borderRadius: BorderRadius.circular(24),
       ),
-      height: 240,
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
+          SizedBox(
+            height: 200,
             child: PieChart(
               PieChartData(
                 sections: sections,
-                sectionsSpace: 2,
-                centerSpaceRadius: 34,
+                sectionsSpace: 4,
+                centerSpaceRadius: 60, // Donut hole
                 borderData: FlBorderData(show: false),
                 pieTouchData: PieTouchData(
                   touchCallback: (evt, resp) {
                     if (onSelect == null) return;
+                    if (evt.isInterestedForInteractions == false) return;
                     final idx = resp?.touchedSection?.touchedSectionIndex;
                     if (idx == null || idx < 0 || idx >= entries.length) return;
                     final entry = entries[idx];
-                    final isOther = entry.key == '_none';
-                    onSelect!(isOther ? null : entry.key);
+                    onSelect!(entry.key == '_none' ? null : entry.key);
                   },
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final e in entries.take(6))
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            color:
-                                colorMap[e.key] ??
-                                Theme.of(context).colorScheme.primary,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            e.key == '_none'
-                                ? AppLocalizations.of(context).other
-                                : (cats[e.key]?.name ??
-                                      AppLocalizations.of(context).other),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Text('${(e.value / total * 100).toStringAsFixed(0)}%'),
-                      ],
+          const SizedBox(height: 20),
+          // Legend
+          Column(
+            children: entries.take(5).map((e) {
+              final percent = (e.value / total * 100);
+              final catName = e.key == '_none'
+                  ? AppLocalizations.of(context).other
+                  : (cats[e.key]?.name ?? AppLocalizations.of(context).other);
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: colorMap[e.key],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
-                  ),
-              ],
-            ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        catName,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      '${percent.toStringAsFixed(1)}%',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -1512,4 +1474,273 @@ Future<int?> showCustomYearPicker({
       );
     },
   );
+}
+
+class _BudgetPlanner extends StatefulWidget {
+  const _BudgetPlanner({
+    required this.month,
+    required this.plannedMonthlySpend,
+    required this.currentSpend,
+    required this.onSave,
+  });
+  final DateTime month;
+  final double? plannedMonthlySpend;
+  final double currentSpend;
+  final Future<void> Function(double) onSave;
+
+  @override
+  State<_BudgetPlanner> createState() => _BudgetPlannerState();
+}
+
+class _BudgetPlannerState extends State<_BudgetPlanner> {
+  late final TextEditingController _controller;
+  late NumberFormat _groupFormat;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _groupFormat = NumberFormat.decimalPattern(
+      Localizations.localeOf(context).toString(),
+    );
+    _controller.text = widget.plannedMonthlySpend != null
+        ? _groupFormat.format(widget.plannedMonthlySpend!.round())
+        : '';
+  }
+
+  @override
+  void didUpdateWidget(covariant _BudgetPlanner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.plannedMonthlySpend != widget.plannedMonthlySpend) {
+      _controller.text = widget.plannedMonthlySpend != null
+          ? _groupFormat.format(widget.plannedMonthlySpend!.round())
+          : '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // If no budget is set, show a simple "Set Budget" card or button
+    final target = widget.plannedMonthlySpend;
+    final spent = widget.currentSpend;
+    final l10n = AppLocalizations.of(context);
+    final localeName = Localizations.localeOf(context).toString();
+    final nf = NumberFormat.simpleCurrency(
+      locale: localeName,
+      decimalDigits: 0,
+    );
+
+    // Calculate progress
+    double progress = 0.0;
+    Color progressColor = Theme.of(context).colorScheme.primary;
+
+    if (target != null && target > 0) {
+      progress = (spent / target).clamp(0.0, 1.0);
+      if (spent > target) {
+        progressColor = Theme.of(context).colorScheme.error;
+      } else if (progress > 0.85) {
+        progressColor = Colors.orange;
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.account_balance_wallet_outlined,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    l10n.savingsBudgetPlan,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                onPressed: () async {
+                  final newTarget = await _showEditBudgetDialog(
+                    context,
+                    widget.plannedMonthlySpend,
+                    nf,
+                    l10n,
+                  );
+                  if (newTarget != null && newTarget > 0) {
+                    await widget.onSave(newTarget);
+                  }
+                },
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                style: IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (target == null) ...[
+            Center(
+              child: TextButton.icon(
+                onPressed: () async {
+                  final newTarget = await _showEditBudgetDialog(
+                    context,
+                    null,
+                    nf,
+                    l10n,
+                  );
+                  if (newTarget != null && newTarget > 0) {
+                    await widget.onSave(newTarget);
+                  }
+                },
+                icon: const Icon(Icons.add),
+                label: Text(l10n.add),
+              ),
+            ),
+          ] else ...[
+            // Progress Bar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 12,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                valueColor: AlwaysStoppedAnimation(progressColor),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.expenseLabel,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    Text(
+                      nf.format(spent),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      l10n.savingsBudgetPlan,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    Text(
+                      nf.format(target),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+Future<double?> _showEditBudgetDialog(
+  BuildContext context,
+  double? initial,
+  NumberFormat nf,
+  AppLocalizations l10n,
+) async {
+  final controller = TextEditingController(
+    text: initial != null ? initial.round().toString() : '',
+  );
+  final result = await showDialog<double?>(
+    context: context,
+    builder: (ctx) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text(l10n.edit),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: false,
+                signed: false,
+              ),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                labelText: l10n.plannedMonthlySpend,
+                prefixIcon: const Icon(Icons.account_balance_wallet_outlined),
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (initial != null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  nf.format(initial),
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              final digits = controller.text.replaceAll(RegExp(r'[^0-9]'), '');
+              if (digits.isEmpty) return;
+              final v = double.tryParse(digits);
+              Navigator.of(ctx).pop(v);
+            },
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+    },
+  );
+  return result;
 }

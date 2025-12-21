@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "О приложении",
     "account": "Аккаунт",
     "achievements": "Достижения",
@@ -27,6 +37,7 @@
     "addNoteOptional": "Добавить заметку (опционально)",
     "addSpecialDays": "Добавить особые дни",
     "addSubtask": "Add Subtask",
+    "addTask": "Добавить задачу",
     "addText": "Добавить текст",
     "addToList": "Добавить в список",
     "advancedAnalysis": "Advanced Analysis",
@@ -215,6 +226,7 @@
     "deleteListMessage": "Этот список будет удален. Выберите, что делать со связанными элементами:",
     "deleteListTitle": "Удалить список",
     "deleteMyAccount": "Delete My Account",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "Вы хотите удалить эту ежедневную задачу? Это действие можно отменить.",
     "deleteTaskConfirmTitle": "Удалить задачу?",
     "deleteTransactionConfirm": "Удалить запись \"{title}\"?",
@@ -449,6 +461,7 @@
     "manageSubscription": "Управление подпиской",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Manage Mira Plus subscription via Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "Средне",
     "minLabel": "min",
     "mindfulness": "Осознанность",
@@ -456,6 +469,7 @@
     "minutesSuffixShort": "мин",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "Количество месяцев",
     "monthCountHint": "Пример: 12",
     "monthSuffixShort": "мес",
@@ -533,6 +547,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "Готовые видения не найдены.",
     "noRecordsThisMonth": "Нет записей за этот месяц",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "Еще не добавлено.",
     "notGranted": "Не предоставлено",
@@ -738,12 +753,19 @@
     "skipOnboarding": "Пропустить",
     "skipTest": "Skip Test",
     "social": "Социальное",
+    "socialFeedTitle": "Feed",
     "sound": "Звук",
     "soundAlerts": "Звуковые оповещения",
     "soundSubtitle": "Воспроизводить звук при уведомлениях",
     "specificDaysOfMonth": "Определенные дни месяца",
     "specificDaysOfWeek": "Определенные дни недели",
     "specificDaysOfYear": "Определенные дни года",
+    "spendingAdvisorNoBudget": "Установите бюджет, чтобы получить совет.",
+    "spendingAdvisorOnTrack": "Отлично! Вы укладываетесь в бюджет.",
+    "spendingAdvisorOverBudget": "Вы превысили бюджет. Прекратите траты.",
+    "spendingAdvisorSafe": "Вы можете тратить {amount} в день.",
+    "spendingAdvisorTitle": "Советник по расходам",
+    "spendingAdvisorWarning": "Сократите ежедневные расходы на {amount}, чтобы уложиться в бюджет.",
     "spendingLessThanDailyAvg": "Отлично! Вы тратите на {amount} меньше, чем в среднем в день.",
     "spendingMoreThanDailyAvg": "Внимание! Вы тратите на {amount} больше, чем в среднем в день.",
     "start": "Начать",
@@ -808,8 +830,11 @@
     "targetType": "Тип цели",
     "targetValue": "Целевое Значение",
     "targetValueLabel": "Целевое значение",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "Задача удалена: {title}",
     "taskDescription": "Описание (Необязательно)",
+    "taskPending": "Pending",
     "taskTitle": "Название задачи",
     "taskTitleRequired": "Требуется название задачи",
     "tellUsMore": "Tell us more",
@@ -917,6 +942,7 @@
     "visionStartFailed": "Не удалось начать видение.",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "Видение начато: {title}",
+    "visionTasks": "Tasks",
     "visual": "Визуальный",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "Пт",
@@ -948,6 +974,4 @@
     "yourEmail": "Your Email",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

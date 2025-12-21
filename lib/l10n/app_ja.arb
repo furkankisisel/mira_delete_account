@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "について",
     "account": "アカウント",
     "achievements": "成果",
@@ -27,6 +37,7 @@
     "addNoteOptional": "メモを追加（任意）",
     "addSpecialDays": "特別な日を追加",
     "addSubtask": "Add Subtask",
+    "addTask": "タスクを追加",
     "addText": "テキストを追加",
     "addToList": "リストに追加",
     "advancedAnalysis": "Advanced Analysis",
@@ -215,6 +226,7 @@
     "deleteListMessage": "このリストは削除されます。リンクされたアイテムの処理を選択してください:",
     "deleteListTitle": "リストを削除",
     "deleteMyAccount": "Delete My Account",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "この日課を削除しますか？この操作は元に戻すことができます。",
     "deleteTaskConfirmTitle": "タスクを削除しますか？",
     "deleteTransactionConfirm": "レコード「{title}」を削除しますか？",
@@ -449,6 +461,7 @@
     "manageSubscription": "サブスクリプションの管理",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Manage Mira Plus subscription via Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "普通",
     "minLabel": "min",
     "mindfulness": "マインドフルネス",
@@ -456,6 +469,7 @@
     "minutesSuffixShort": "分",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "月数",
     "monthCountHint": "例: 12",
     "monthSuffixShort": "月",
@@ -533,6 +547,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "既製のビジョンが見つかりません。",
     "noRecordsThisMonth": "今月の記録はありません",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "まだ追加されていません。",
     "notGranted": "未許可",
@@ -738,12 +753,19 @@
     "skipOnboarding": "スキップ",
     "skipTest": "Skip Test",
     "social": "ソーシャル",
+    "socialFeedTitle": "Feed",
     "sound": "サウンド",
     "soundAlerts": "音声アラート",
     "soundSubtitle": "通知でサウンドを再生",
     "specificDaysOfMonth": "特定の月の日にち",
     "specificDaysOfWeek": "特定の曜日",
     "specificDaysOfYear": "特定の年の日にち",
+    "spendingAdvisorNoBudget": "アドバイスを受けるには予算を設定してください。",
+    "spendingAdvisorOnTrack": "素晴らしい！予算通りに進んでいます。",
+    "spendingAdvisorOverBudget": "予算を超過しています。支出を控えてください。",
+    "spendingAdvisorSafe": "1日あたり{amount}使えます。",
+    "spendingAdvisorTitle": "支出アドバイザー",
+    "spendingAdvisorWarning": "予算内に収めるには、1日の支出を{amount}減らしてください。",
     "spendingLessThanDailyAvg": "素晴らしい！1日の平均より{amount}少なく使っています。",
     "spendingMoreThanDailyAvg": "警告！1日の平均より{amount}多く使っています。",
     "start": "開始",
@@ -808,8 +830,11 @@
     "targetType": "目標タイプ",
     "targetValue": "目標値",
     "targetValueLabel": "目標値",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "タスクが削除されました: {title}",
     "taskDescription": "説明（任意）",
+    "taskPending": "Pending",
     "taskTitle": "タスクタイトル",
     "taskTitleRequired": "タスクタイトルは必須です",
     "tellUsMore": "Tell us more",
@@ -917,6 +942,7 @@
     "visionStartFailed": "ビジョンを開始できませんでした。",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "ビジョンが開始されました: {title}",
+    "visionTasks": "Tasks",
     "visual": "ビジュアル",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "金",
@@ -948,6 +974,4 @@
     "yourEmail": "Your Email",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

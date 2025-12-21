@@ -54,6 +54,34 @@ class AppLocalizationsHi extends AppLocalizations {
   String get amountLabel => 'राशि';
 
   @override
+  String get socialFeedTitle => 'Feed';
+
+  @override
+  String get spendingAdvisorTitle => 'व्यय सलाहकार';
+
+  @override
+  String spendingAdvisorSafe(Object amount) {
+    return 'आप प्रतिदिन $amount खर्च कर सकते हैं।';
+  }
+
+  @override
+  String spendingAdvisorWarning(Object amount) {
+    return 'ट्रैक पर रहने के लिए दैनिक खर्च को $amount कम करें।';
+  }
+
+  @override
+  String get spendingAdvisorOnTrack =>
+      'बहुत बढ़िया! आप अपने बजट के साथ सही रास्ते पर हैं।';
+
+  @override
+  String get spendingAdvisorOverBudget =>
+      'आप बजट से अधिक हैं। खर्च करना बंद करें।';
+
+  @override
+  String get spendingAdvisorNoBudget =>
+      'सलाह प्राप्त करने के लिए बजट निर्धारित करें।';
+
+  @override
   String get appTitle => 'मीरा';
 
   @override
@@ -2124,66 +2152,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get skip => 'छोड़ें';
 
   @override
-  String get moodAnalytics => 'Mood Analytics';
-
-  @override
-  String get overview => 'Overview';
-
-  @override
-  String get trends => 'Trends';
-
-  @override
-  String get history => 'History';
-
-  @override
-  String get noMoodData => 'No mood data yet';
-
-  @override
-  String get startTrackingMood => 'Start tracking your mood to see analytics';
-
-  @override
-  String get totalEntries => 'Total Entries';
-
-  @override
-  String get averageMood => 'औसत मूड';
-
-  @override
-  String get moodDistribution => 'Mood Distribution';
-
-  @override
-  String get topCategories => 'Top Categories';
-
-  @override
-  String get mostCommonMood => 'Most Common Mood';
-
-  @override
-  String get mostCommonEmotion => 'Most Common Emotion';
-
-  @override
-  String get mostCommonReason => 'Most Common Reason';
-
-  @override
-  String get noTrendData => 'Not enough data for trends';
-
-  @override
-  String get moodTrend => 'Mood Trend (Last 30 Days)';
-
-  @override
-  String get insights => 'Insights';
-
-  @override
-  String get moodImproving => 'Your mood is improving!';
-
-  @override
-  String get moodDeclining => 'Your mood seems to be declining';
-
-  @override
-  String get moodStable => 'Your mood is relatively stable';
-
-  @override
-  String get noHistory => 'कोई इतिहास नहीं';
-
-  @override
   String get habitNotFound => 'आदत नहीं मिली।';
 
   @override
@@ -2940,6 +2908,66 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get moodAnalytics => 'Mood Analytics';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get trends => 'Trends';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get noMoodData => 'No mood data yet';
+
+  @override
+  String get startTrackingMood => 'Start tracking your mood to see analytics';
+
+  @override
+  String get totalEntries => 'Total Entries';
+
+  @override
+  String get averageMood => 'औसत मूड';
+
+  @override
+  String get moodDistribution => 'Mood Distribution';
+
+  @override
+  String get topCategories => 'Top Categories';
+
+  @override
+  String get mostCommonMood => 'Most Common Mood';
+
+  @override
+  String get mostCommonEmotion => 'Most Common Emotion';
+
+  @override
+  String get mostCommonReason => 'Most Common Reason';
+
+  @override
+  String get moodTrend => 'Mood Trend (Last 30 Days)';
+
+  @override
+  String get noTrendData => 'Not enough data for trends';
+
+  @override
+  String get insights => 'Insights';
+
+  @override
+  String get moodImproving => 'Your mood is improving!';
+
+  @override
+  String get moodDeclining => 'Your mood seems to be declining';
+
+  @override
+  String get moodStable => 'Your mood is relatively stable';
+
+  @override
+  String get noHistory => 'कोई इतिहास नहीं';
+
+  @override
   String get open => 'Open';
 
   @override
@@ -2970,26 +2998,26 @@ class AppLocalizationsHi extends AppLocalizations {
   String get miraPremium => 'Mira Premium';
 
   @override
-  String get visionTasks => 'Görevler';
+  String get visionTasks => 'Tasks';
 
   @override
-  String get addTask => 'Görev Ekle';
+  String get addTask => 'कार्य जोड़ें';
 
   @override
-  String get taskCompleted => 'Tamamlandı';
+  String get taskCompleted => 'Completed';
 
   @override
-  String get taskPending => 'Bekliyor';
+  String get taskPending => 'Pending';
 
   @override
-  String get noTasksYet => 'Henüz görev eklenmedi';
+  String get noTasksYet => 'No tasks added yet';
 
   @override
-  String get deleteTaskConfirm => 'Bu görevi silmek istediğinize emin misiniz?';
+  String get deleteTaskConfirm => 'Are you sure you want to delete this task?';
 
   @override
-  String get taskAdded => 'Görev eklendi';
+  String get taskAdded => 'Task added';
 
   @override
-  String get manageVisionTasks => 'Görevleri Yönet';
+  String get manageVisionTasks => 'Manage Tasks';
 }

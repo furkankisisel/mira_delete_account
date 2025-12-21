@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "حول",
     "aboutApp": "عن التطبيق",
     "account": "الحساب",
@@ -29,6 +39,7 @@
     "addNoteOptional": "إضافة ملاحظة (اختياري)",
     "addSpecialDays": "إضافة أيام خاصة",
     "addSubtask": "Add Subtask",
+    "addTask": "إضافة مهمة",
     "addText": "إضافة نص",
     "addToList": "إضافة إلى القائمة",
     "advancedAnalysis": "Advanced Analysis",
@@ -217,6 +228,7 @@
     "deleteListMessage": "سيتم حذف هذه القائمة. اختر ما يجب فعله بالعناصر المرتبطة:",
     "deleteListTitle": "حذف القائمة",
     "deleteMyAccount": "Delete My Account",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "هل تريد حذف هذه المهمة اليومية؟ يمكن التراجع عن هذا الإجراء.",
     "deleteTaskConfirmTitle": "حذف المهمة؟",
     "deleteTransactionConfirm": "حذف السجل \"{title}\"؟",
@@ -452,6 +464,7 @@
     "manageSubscription": "Manage Subscription",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Manage Mira Plus subscription via Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "متوسط",
     "minLabel": "min",
     "mindfulness": "اليقظة",
@@ -459,6 +472,7 @@
     "minutesSuffixShort": "دقيقة",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "عدد الأشهر",
     "monthCountHint": "مثال: 12",
     "monthSuffixShort": "شهر",
@@ -536,6 +550,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "لم يتم العثور على رؤى جاهزة.",
     "noRecordsThisMonth": "لا توجد سجلات لهذا الشهر",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "لم تتم الإضافة بعد.",
     "notGranted": "غير ممنوح",
@@ -741,12 +756,19 @@
     "skipOnboarding": "تخطي",
     "skipTest": "Skip Test",
     "social": "اجتماعي",
+    "socialFeedTitle": "Feed",
     "sound": "الصوت",
     "soundAlerts": "التنبيهات الصوتية",
     "soundSubtitle": "تشغيل الصوت مع الإشعارات",
     "specificDaysOfMonth": "أيام محددة من الشهر",
     "specificDaysOfWeek": "أيام محددة من الأسبوع",
     "specificDaysOfYear": "أيام محددة من السنة",
+    "spendingAdvisorNoBudget": "حدد ميزانية للحصول على المشورة.",
+    "spendingAdvisorOnTrack": "رائع! أنت تسير على الطريق الصحيح مع ميزانيتك.",
+    "spendingAdvisorOverBudget": "لقد تجاوزت الميزانية. توقف عن الإنفاق.",
+    "spendingAdvisorSafe": "يمكنك إنفاق {amount} يوميًا.",
+    "spendingAdvisorTitle": "مستشار الإنفاق",
+    "spendingAdvisorWarning": "قلل الإنفاق اليومي بمقدار {amount} للبقاء في المسار الصحيح.",
     "spendingLessThanDailyAvg": "رائع! أنت تنفق {amount} أقل من المتوسط اليومي.",
     "spendingMoreThanDailyAvg": "تحذير! أنت تنفق {amount} أكثر من المتوسط اليومي.",
     "start": "بدء",
@@ -813,8 +835,11 @@
     "targetType": "نوع الهدف",
     "targetValue": "القيمة المستهدفة",
     "targetValueLabel": "القيمة المستهدفة",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "تم حذف المهمة: {title}",
     "taskDescription": "الوصف (اختياري)",
+    "taskPending": "Pending",
     "taskTitle": "عنوان المهمة",
     "taskTitleRequired": "عنوان المهمة مطلوب",
     "tellUsMore": "Tell us more",
@@ -923,6 +948,7 @@
     "visionStartFailed": "تعذر بدء الرؤية.",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "بدأت الرؤية: {title}",
+    "visionTasks": "Tasks",
     "visual": "مرئي",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "الجمعة",
@@ -954,6 +980,4 @@
     "yourEmail": "Your Email",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

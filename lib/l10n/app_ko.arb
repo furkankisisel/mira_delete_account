@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "정보",
     "account": "계정",
     "achievements": "성취",
@@ -27,6 +37,7 @@
     "addNoteOptional": "메모 추가 (선택사항)",
     "addSpecialDays": "특별한 날 추가",
     "addSubtask": "Add Subtask",
+    "addTask": "작업 추가",
     "addText": "텍스트 추가",
     "addToList": "목록에 추가",
     "advancedAnalysis": "Advanced Analysis",
@@ -215,6 +226,7 @@
     "deleteListMessage": "이 목록이 삭제됩니다. 연결된 항목으로 수행할 작업을 선택하세요:",
     "deleteListTitle": "목록 삭제",
     "deleteMyAccount": "Delete My Account",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "이 일일 작업을 삭제하시겠습니까? 이 작업은 취소할 수 있습니다.",
     "deleteTaskConfirmTitle": "작업을 삭제하시겠습니까?",
     "deleteTransactionConfirm": "기록 '{title}'을(를) 삭제하시겠습니까?",
@@ -449,6 +461,7 @@
     "manageSubscription": "구독 관리",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Manage Mira Plus subscription via Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "보통",
     "minLabel": "min",
     "mindfulness": "마음챙김",
@@ -456,6 +469,7 @@
     "minutesSuffixShort": "분",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "개월 수",
     "monthCountHint": "예: 12",
     "monthSuffixShort": "개월",
@@ -533,6 +547,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "준비된 비전 없음.",
     "noRecordsThisMonth": "이번 달 기록 없음",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "아직 추가되지 않음.",
     "notGranted": "허용 안 됨",
@@ -738,12 +753,19 @@
     "skipOnboarding": "건너뛰기",
     "skipTest": "Skip Test",
     "social": "소셜",
+    "socialFeedTitle": "Feed",
     "sound": "소리",
     "soundAlerts": "소리 알림",
     "soundSubtitle": "알림 시 소리 재생",
     "specificDaysOfMonth": "특정 월일",
     "specificDaysOfWeek": "특정 요일",
     "specificDaysOfYear": "특정 연일",
+    "spendingAdvisorNoBudget": "조언을 받으려면 예산을 설정하세요.",
+    "spendingAdvisorOnTrack": "훌륭합니다! 예산 계획대로 진행되고 있습니다.",
+    "spendingAdvisorOverBudget": "예산을 초과했습니다. 지출을 중단하세요.",
+    "spendingAdvisorSafe": "하루에 {amount}을(를) 사용할 수 있습니다.",
+    "spendingAdvisorTitle": "지출 조언자",
+    "spendingAdvisorWarning": "목표를 유지하려면 일일 지출을 {amount} 줄이세요.",
     "spendingLessThanDailyAvg": "좋아요! 일일 평균보다 {amount} 적게 지출하고 있습니다.",
     "spendingMoreThanDailyAvg": "경고! 일일 평균보다 {amount} 더 많이 지출하고 있습니다.",
     "start": "시작",
@@ -808,8 +830,11 @@
     "targetType": "목표 유형",
     "targetValue": "목표 값",
     "targetValueLabel": "목표 값",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "작업 삭제됨: {title}",
     "taskDescription": "설명 (선택사항)",
+    "taskPending": "Pending",
     "taskTitle": "작업 제목",
     "taskTitleRequired": "작업 제목은 필수입니다",
     "tellUsMore": "Tell us more",
@@ -917,6 +942,7 @@
     "visionStartFailed": "비전을 시작할 수 없습니다.",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "비전 시작됨: {title}",
+    "visionTasks": "Tasks",
     "visual": "시각적",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "금",
@@ -948,6 +974,4 @@
     "yourEmail": "Your Email",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

@@ -12,6 +12,16 @@
             }
         }
     },
+    "@spendingAdvisorSafe": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
+    "@spendingAdvisorWarning": {
+        "placeholders": {
+            "amount": {}
+        }
+    },
     "about": "Acerca de",
     "aboutApp": "Acerca de la aplicación",
     "account": "Cuenta",
@@ -29,6 +39,7 @@
     "addNoteOptional": "Agregar nota (opcional)",
     "addSpecialDays": "Añadir días especiales",
     "addSubtask": "Add Subtask",
+    "addTask": "Añadir tarea",
     "addText": "Añadir texto",
     "addToList": "Añadir a la lista",
     "advancedAnalysis": "Advanced Analysis",
@@ -217,6 +228,7 @@
     "deleteListMessage": "Esta lista se eliminará. Elige qué hacer con los elementos vinculados:",
     "deleteListTitle": "Eliminar lista",
     "deleteMyAccount": "Eliminar mi cuenta",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
     "deleteTaskConfirmMessage": "¿Quieres eliminar esta tarea diaria? Esta acción se puede deshacer.",
     "deleteTaskConfirmTitle": "¿Eliminar tarea?",
     "deleteTransactionConfirm": "¿Eliminar el registro \"{title}\"?",
@@ -452,6 +464,7 @@
     "manageSubscription": "Gestionar Suscripción",
     "manageSubscriptionDesc": "Change plan, cancel or view billing info",
     "manageSubscriptionSubtitle": "Administra tu suscripción a Mira Plus a través de Google Play",
+    "manageVisionTasks": "Manage Tasks",
     "medium": "Medio",
     "minLabel": "min",
     "mindfulness": "Atención Plena",
@@ -459,6 +472,7 @@
     "minutesSuffixShort": "min",
     "miraPlusActive": "Mira Plus Active",
     "miraPlusInactive": "Mira Plus Inactive",
+    "miraPremium": "Mira Premium",
     "monthCount": "Número de meses",
     "monthCountHint": "Ej: 12",
     "monthSuffixShort": "mes",
@@ -536,6 +550,7 @@
     "noPlansAvailable": "No plans available at the moment.",
     "noReadyVisionsFound": "No se encontraron visiones listas.",
     "noRecordsThisMonth": "No hay registros para este mes",
+    "noTasksYet": "No tasks added yet",
     "noTrendData": "Not enough data for trends",
     "notAddedYet": "Aún no añadido.",
     "notGranted": "No concedido",
@@ -741,12 +756,19 @@
     "skipOnboarding": "Omitir",
     "skipTest": "Skip Test",
     "social": "Social",
+    "socialFeedTitle": "Feed",
     "sound": "Sonido",
     "soundAlerts": "Alertas de sonido",
     "soundSubtitle": "Reproducir sonido con notificaciones",
     "specificDaysOfMonth": "Días específicos del mes",
     "specificDaysOfWeek": "Días específicos de la semana",
     "specificDaysOfYear": "Días específicos del año",
+    "spendingAdvisorNoBudget": "Establece un presupuesto para recibir consejos.",
+    "spendingAdvisorOnTrack": "¡Genial! Estás al día con tu presupuesto.",
+    "spendingAdvisorOverBudget": "Estás por encima del presupuesto. Deja de gastar.",
+    "spendingAdvisorSafe": "Puedes gastar {amount} por día.",
+    "spendingAdvisorTitle": "Asesor de Gastos",
+    "spendingAdvisorWarning": "Reduce el gasto diario en {amount} para mantenerte al día.",
     "spendingLessThanDailyAvg": "¡Genial! Estás gastando {amount} menos que el promedio diario.",
     "spendingMoreThanDailyAvg": "¡Atención! Estás gastando {amount} más que el promedio diario.",
     "start": "Empezar",
@@ -812,8 +834,11 @@
     "targetType": "Tipo de objetivo",
     "targetValue": "Valor Objetivo",
     "targetValueLabel": "Valor Objetivo",
+    "taskAdded": "Task added",
+    "taskCompleted": "Completed",
     "taskDeletedMessage": "Tarea eliminada: {title}",
     "taskDescription": "Descripción (Opcional)",
+    "taskPending": "Pending",
     "taskTitle": "Título de la tarea",
     "taskTitleRequired": "El título de la tarea es obligatorio",
     "tellUsMore": "Tell us more",
@@ -922,6 +947,7 @@
     "visionStartFailed": "No se pudo iniciar la visión.",
     "visionStartLabel": "Vision start: ",
     "visionStartedMessage": "Visión iniciada: {title}",
+    "visionTasks": "Tasks",
     "visual": "Visual",
     "weekDaysShort": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     "weekdaysShortFri": "Vie",
@@ -953,6 +979,4 @@
     "yourEmail": "Tu correo electrónico",
     "yourEmailAddress": "Your Email Address",
     "yourMoodToday": "Your Mood Today"
-,
-    "miraPremium": "Mira Premium"
 }

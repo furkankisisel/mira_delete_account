@@ -118,7 +118,11 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
                 child: hasAny
                     ? IgnorePointer(
                         ignoring: true, // let taps hit the card InkWell
-                        child: _LineChart7(days: days, totals: totals),
+                        child: _LineChart7(
+                          days: days,
+                          totals: totals,
+                          color: isWorld ? worldPurple : scheme.primary,
+                        ),
                       )
                     : Center(
                         child: Text(
@@ -161,9 +165,14 @@ class _DashboardFinanceChartCardState extends State<DashboardFinanceChartCard> {
 }
 
 class _LineChart7 extends StatelessWidget {
-  const _LineChart7({required this.days, required this.totals});
+  const _LineChart7({
+    required this.days,
+    required this.totals,
+    required this.color,
+  });
   final List<DateTime> days;
   final List<double> totals;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -234,12 +243,12 @@ class _LineChart7 extends StatelessWidget {
             spots: spots,
             isCurved: true,
             preventCurveOverShooting: true,
-            color: theme.colorScheme.primary,
+            color: color,
             barWidth: 3,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              color: theme.colorScheme.primary.withValues(alpha: 0.08),
+              color: color.withValues(alpha: 0.08),
             ),
           ),
         ],
